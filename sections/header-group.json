@@ -11,37 +11,6 @@
   "type": "header",
   "name": "Header",
   "sections": {
-    "header_announcements_9jGBFp": {
-      "type": "header-announcements",
-      "blocks": {
-        "announcement_BxgCk9": {
-          "type": "_announcement",
-          "settings": {
-            "text": "Welcome to our store",
-            "link": "",
-            "font": "var(--font-subheading--family)",
-            "font_size": "0.75rem",
-            "weight": "",
-            "letter_spacing": "normal",
-            "case": "none"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "announcement_BxgCk9"
-      ],
-      "disabled": true,
-      "name": "t:names.announcement_bar",
-      "settings": {
-        "speed": 5,
-        "section_width": "page-width",
-        "color_scheme": "scheme-1",
-        "divider_width": 1,
-        "padding-block-start": 15,
-        "padding-block-end": 15
-      }
-    },
     "header_section": {
       "type": "header",
       "blocks": {
@@ -79,6 +48,7 @@
           "blocks": {}
         }
       },
+      "disabled": true,
       "settings": {
         "logo_position": "left",
         "menu_position": "center",
@@ -119,16 +89,21 @@
       "type": "custom-banner",
       "name": "Custom Banner",
       "settings": {
-        "banner_image": "shopify://shop_images/Frame.jpg",
-        "logo_text": "TISSO VISON",
-        "top_text": "Find the ideal gift for your loved ones.",
-        "top_button": "CHOOSE GIFT",
-        "button_link": "",
-        "heading": "The Gift Guide",
-        "description": "Discover joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
-        "main_button": "SHOP NOW",
+        "mobile_banner_image": "shopify://shop_images/Frame.png",
+        "desktop_logo_text": "TISSO VISON",
+        "mobile_logo_text": "TISSO VISON",
+        "desktop_top_text": "Find the ideal gift for your loved ones.",
+        "desktop_top_button": "CHOOSE GIFT",
+        "top_button_link": "",
+        "desktop_heading": "The Gift Guide",
+        "mobile_heading": "The Gift Guide",
+        "desktop_description": "Discover joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
+        "mobile_description": "Discover joy: Your Ultimate Holiday Gift Destination.",
+        "desktop_main_button": "SHOP NOW",
+        "mobile_main_button": "SHOP NOW",
         "main_button_link": "",
-        "bottom_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+        "mobile_menu_text": "Find the ideal gift for your loved ones.",
+        "mobile_menu_button": "CHOOSE GIFT"
       }
     },
     "header_announcements_cpkDPR": {
@@ -163,7 +138,6 @@
     }
   },
   "order": [
-    "header_announcements_9jGBFp",
     "header_section",
     "custom_banner_JrGULb",
     "header_announcements_cpkDPR"
