@@ -1,0 +1,441 @@
+<section class="eg-grid">
+  <h2>{{ section.settings.heading }}</h2>
+
+  <div class="eg-grid__items">
+    {% for block in section.blocks %}
+      {% assign product = block.settings.product %}
+      {% if product != blank %}
+        <div class="eg-grid__card" {{ block.shopify_attributes }}>
+          <img
+            src="{{ product.featured_image | image_url: width: 700 }}"
+            alt="{{ product.title | escape }}"
+            width="700"
+            height="850"
+            loading="lazy"
+          >
+
+          <button
+            type="button"
+            class="eg-grid__plus"
+            data-handle="{{ product.handle }}"
+          >
+            +
+          </button>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="eg-popup" id="EgPopup">
+    <div class="eg-popup__overlay" data-close></div>
+
+    <div class="eg-popup__box">
+      <button type="button" class="eg-popup__close" data-close>×</button>
+
+      <div class="eg-popup__inner">
+        <img id="EgImage" src="" alt="" width="350" height="450">
+
+        <div>
+          <h3 id="EgTitle"></h3>
+          <p id="EgPrice"></p>
+          <div id="EgDesc"></div>
+          <div id="EgOptions"></div>
+
+          <button type="button" id="EgCartBtn" class="eg-popup__cart">
+            ADD TO CART
+          </button>
+
+          <p id="EgMessage"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.eg-grid {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 55px 50px;
+  font-family: Arial, sans-serif;
+}
+
+.eg-grid h2 {
+  font-size: 32px;
+  margin: 0 0 28px;
+  font-weight: 500;
+}
+
+.eg-grid__items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.eg-grid__card {
+  position: relative;
+  background: #f4f4f4;
+  overflow: hidden;
+}
+
+.eg-grid__card img {
+  width: 100%;
+  height: 430px;
+  object-fit: cover;
+  display: block;
+}
+
+.eg-grid__plus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: #fff6c7;
+  color: #000;
+  font-size: 22px;
+  line-height: 24px;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.eg-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+}
+
+.eg-popup.is-open {
+  display: block;
+}
+
+.eg-popup__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+}
+
+.eg-popup__box {
+  position: relative;
+  background: #fff;
+  max-width: 660px;
+  margin: 80px auto;
+  padding: 24px;
+  z-index: 2;
+}
+
+.eg-popup__close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.eg-popup__inner {
+  display: grid;
+  grid-template-columns: 42% 1fr;
+  gap: 24px;
+}
+
+.eg-popup__inner img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.eg-popup h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+#EgDesc {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.eg-option {
+  margin-bottom: 14px;
+}
+
+.eg-option label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.eg-option__values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eg-option button {
+  border: 1px solid #000;
+  background: #fff;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.eg-option button.is-selected {
+  background: #000;
+  color: #fff;
+}
+
+.eg-popup__cart {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 749px) {
+  .eg-grid {
+    padding: 38px 16px;
+  }
+
+  .eg-grid__items {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .eg-grid__card img {
+    height: 230px;
+  }
+
+  .eg-popup__box {
+    margin: 30px 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .eg-popup__inner {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<script>
+(function () {
+  const popup = document.getElementById('EgPopup');
+  const image = document.getElementById('EgImage');
+  const title = document.getElementById('EgTitle');
+  const price = document.getElementById('EgPrice');
+  const desc = document.getElementById('EgDesc');
+  const optionsBox = document.getElementById('EgOptions');
+  const cartBtn = document.getElementById('EgCartBtn');
+  const message = document.getElementById('EgMessage');
+
+  let currentProduct = null;
+  let selectedOptions = [];
+
+  function money(cents) {
+    return (cents / 100).toLocaleString('en-US', {
+      style: 'currency',
+      currency: '{{ cart.currency.iso_code }}'
+    });
+  }
+
+  function openPopup() {
+    popup.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePopup() {
+    popup.classList.remove('is-open');
+    document.body.style.overflow = '';
+    message.textContent = '';
+  }
+
+  function selectedVariant() {
+    if (!currentProduct) return null;
+
+    return currentProduct.variants.find(function (variant) {
+      return variant.options.every(function (value, index) {
+        return value === selectedOptions[index];
+      });
+    });
+  }
+
+  function updatePrice() {
+    const variant = selectedVariant();
+    if (variant) price.textContent = money(variant.price);
+  }
+
+  function renderOptions() {
+    optionsBox.innerHTML = '';
+
+    currentProduct.options.forEach(function (optionName, optionIndex) {
+      const values = [];
+
+      currentProduct.variants.forEach(function (variant) {
+        const value = variant.options[optionIndex];
+        if (!values.includes(value)) values.push(value);
+      });
+
+      const wrap = document.createElement('div');
+      wrap.className = 'eg-option';
+
+      const label = document.createElement('label');
+      label.textContent = optionName;
+
+      const valuesWrap = document.createElement('div');
+      valuesWrap.className = 'eg-option__values';
+
+      values.forEach(function (value) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = value;
+
+        if (selectedOptions[optionIndex] === value) {
+          btn.classList.add('is-selected');
+        }
+
+        btn.addEventListener('click', function () {
+          selectedOptions[optionIndex] = value;
+
+          valuesWrap.querySelectorAll('button').forEach(function (item) {
+            item.classList.remove('is-selected');
+          });
+
+          btn.classList.add('is-selected');
+          updatePrice();
+        });
+
+        valuesWrap.appendChild(btn);
+      });
+
+      wrap.appendChild(label);
+      wrap.appendChild(valuesWrap);
+      optionsBox.appendChild(wrap);
+    });
+  }
+
+  async function loadProduct(handle) {
+    message.textContent = 'Loading...';
+
+    try {
+      const res = await fetch('/products/' + handle + '.js');
+      currentProduct = await res.json();
+
+      selectedOptions = currentProduct.variants[0].options.slice();
+
+      image.src = currentProduct.featured_image || '';
+      image.alt = currentProduct.title;
+      title.textContent = currentProduct.title;
+      desc.innerHTML = currentProduct.description || '';
+
+      renderOptions();
+      updatePrice();
+
+      message.textContent = '';
+      openPopup();
+    } catch (error) {
+      message.textContent = 'Product could not be loaded.';
+    }
+  }
+
+  async function addSoftWinterJacket() {
+    try {
+      const res = await fetch('/products/soft-winter-jacket.js');
+      const jacket = await res.json();
+
+      if (!jacket.variants || !jacket.variants[0]) return;
+
+      await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: jacket.variants[0].id,
+          quantity: 1
+        })
+      });
+    } catch (error) {
+      console.log('Soft Winter Jacket not found');
+    }
+  }
+
+  document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      loadProduct(btn.dataset.handle);
+    });
+  });
+
+  document.querySelectorAll('[data-close]').forEach(function (btn) {
+    btn.addEventListener('click', closePopup);
+  });
+
+  cartBtn.addEventListener('click', async function () {
+    const variant = selectedVariant();
+
+    if (!variant) {
+      message.textContent = 'Please select available options.';
+      return;
+    }
+
+    message.textContent = 'Adding...';
+
+    try {
+      await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: variant.id,
+          quantity: 1
+        })
+      });
+
+      if (selectedOptions.includes('Black') && selectedOptions.includes('Medium')) {
+        await addSoftWinterJacket();
+      }
+
+      message.textContent = 'Added to cart.';
+    } catch (error) {
+      message.textContent = 'Could not add to cart.';
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Custom Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Tisso vison in the wild"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_card",
+      "name": "Product card",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Choose product"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Custom Grid"
+    }
+  ]
+}
+{% endschema %}
