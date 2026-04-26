@@ -136,23 +136,36 @@
     height: 445px;
     background-image: url({{ section.settings.mobile_banner | image_url: width: 800 }});
     background-size: 100% auto;
-    background-position: center top;
+    background-position: center 178px;
+    background-repeat: no-repeat;
+    background-color: #fff;
   }
 
   .tisso-banner__top {
-    height: 48px;
-    grid-template-columns: 28px 1fr;
-    padding: 0 18px;
-    gap: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    align-items: center;
+    padding: 0 22px;
+    background: #fff;
+    z-index: 3;
   }
 
   .tisso-banner__top::before {
     content: "☰";
-    font-size: 16px;
+    font-size: 18px;
+    color: #000;
   }
 
   .tisso-banner__logo {
-    font-size: 13px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.5px;
   }
 
   .tisso-banner__tagline,
@@ -161,39 +174,60 @@
   }
 
   .tisso-banner__content {
-    left: 22px;
-    right: 22px;
+    position: absolute;
     top: 96px;
+    left: 20px;
+    right: 20px;
     width: auto;
     text-align: center;
+    z-index: 2;
   }
 
   .tisso-banner__content h1 {
-    font-size: 28px;
-    margin-bottom: 14px;
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 700;
+    margin: 0 0 16px;
     letter-spacing: 0;
   }
 
   .tisso-banner__content p {
-    max-width: 250px;
+    max-width: 245px;
     margin: 0 auto;
     font-size: 11px;
     line-height: 1.35;
   }
 
   .tisso-banner__shop {
-    width: 140px;
-    height: 42px;
-    margin: 128px auto 0;
+    position: absolute;
+    top: 316px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 148px;
+    height: 44px;
+    margin: 0;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 24px;
-    font-size: 11px;
+    font-size: 12px;
+    text-decoration: none;
   }
 
   .tisso-banner__strip {
+    position: absolute;
     top: 421px;
+    left: 0;
+    right: 0;
     height: 24px;
+    background: #f4f4f4;
     font-size: 8px;
-    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 }
 </style>
