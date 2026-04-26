@@ -5,12 +5,16 @@
     {% for block in section.blocks %}
       {% assign product = block.settings.product %}
       {% if product != blank %}
-        <div class="tisso-grid__item" {{ block.shopify_attributes }}>
+        <div
+          class="tisso-grid__item"
+          style="--plus-x: {{ block.settings.plus_x }}%; --plus-y: {{ block.settings.plus_y }}%;"
+          {{ block.shopify_attributes }}
+        >
           <img
-            src="{{ product.featured_image | image_url: width: 700 }}"
+            src="{{ product.featured_image | image_url: width: 900 }}"
             alt="{{ product.title | escape }}"
-            width="700"
-            height="900"
+            width="900"
+            height="1100"
             loading="lazy"
           >
 
@@ -27,14 +31,14 @@
     {% endfor %}
   </div>
 
-  <div class="tisso-popup" id="TissoPopup">
+  <div class="tisso-popup" id="TissoPopup" aria-hidden="true">
     <div class="tisso-popup__overlay" data-close-popup></div>
 
     <div class="tisso-popup__box">
       <button type="button" class="tisso-popup__close" data-close-popup>×</button>
 
       <div class="tisso-popup__top">
-        <img id="TissoPopupImage" src="" alt="" width="180" height="180">
+        <img id="TissoPopupImage" src="" alt="" width="140" height="170">
 
         <div class="tisso-popup__info">
           <h3 id="TissoPopupTitle"></h3>
@@ -59,14 +63,17 @@
 .tisso-grid {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 55px 64px 80px;
-  font-family: Arial, Helvetica, sans-serif;
+  padding: 86px 176px 88px;
+  font-family: Georgia, 'Times New Roman', serif;
   color: #000;
+  background: #fff;
 }
 
 .tisso-grid h2 {
-  margin: 0 0 24px;
-  font-size: 24px;
+  margin: 0 0 42px;
+  text-align: left;
+  font-size: 31px;
+  line-height: 1;
   font-weight: 400;
 }
 
@@ -80,29 +87,33 @@
   position: relative;
   aspect-ratio: 1 / 1.28;
   overflow: hidden;
-  background: #f4f4f4;
+  background: #f5f5f5;
 }
 
 .tisso-grid__item img {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
 }
 
 .tisso-grid__plus {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 23px;
-  height: 23px;
+  left: var(--plus-x, 55%);
+  top: var(--plus-y, 55%);
+  width: 19px;
+  height: 19px;
   border: 0;
   border-radius: 50%;
-  background: #f5f0d9;
+  background: #f8f3df;
   color: #000;
-  font-size: 20px;
-  line-height: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 17px;
+  padding: 0;
   cursor: pointer;
   transform: translate(-50%, -50%);
+  z-index: 3;
 }
 
 .tisso-popup {
@@ -110,6 +121,7 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .tisso-popup.is-open {
@@ -119,90 +131,99 @@
 .tisso-popup__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.18);
+  background: rgba(0,0,0,.18);
 }
 
 .tisso-popup__box {
   position: relative;
   z-index: 2;
   width: 390px;
+  min-height: 448px;
+  margin: 60px auto;
   background: #fff;
-  margin: 70px auto;
-  padding: 28px 26px 30px;
   border: 1px solid #000;
+  padding: 24px 24px 28px;
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
 }
 
 .tisso-popup__close {
   position: absolute;
-  top: 14px;
-  right: 18px;
+  top: 12px;
+  right: 16px;
   border: 0;
   background: transparent;
-  font-size: 28px;
+  color: #000;
+  font-size: 26px;
   line-height: 1;
   cursor: pointer;
-  color: #000;
+  padding: 0;
 }
 
 .tisso-popup__top {
   display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 16px;
-  margin-bottom: 14px;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .tisso-popup__top img {
-  width: 150px;
-  height: 175px;
+  width: 140px;
+  height: 170px;
+  display: block;
   object-fit: cover;
+  background: #f5f5f5;
 }
 
 .tisso-popup__info h3 {
-  margin: 8px 24px 14px 0;
-  font-size: 20px;
-  line-height: 1.15;
+  margin: 8px 26px 12px 0;
+  font-size: 18px;
+  line-height: 1.18;
   font-weight: 400;
 }
 
 .tisso-popup__info p {
-  margin: 0 0 14px;
-  font-size: 20px;
+  margin: 0 0 12px;
+  font-size: 19px;
   line-height: 1;
 }
 
 #TissoPopupDescription {
-  font-size: 16px;
-  line-height: 1.12;
+  max-height: 76px;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.08;
 }
 
 .tisso-option {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .tisso-option__label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 16px;
+  margin: 0 0 7px;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .tisso-colors {
   display: grid;
   grid-template-columns: 1fr 1fr;
   border: 1px solid #000;
+  height: 50px;
 }
 
 .tisso-color {
   position: relative;
-  min-height: 50px;
+  min-width: 0;
   border: 0;
-  background: #fff;
-  font-size: 20px;
-  text-align: left;
-  padding: 0 14px 0 20px;
-  cursor: pointer;
   border-right: 1px solid #000;
+  background: #fff;
+  color: #000;
+  font-size: 18px;
+  text-align: left;
+  padding: 0 12px 0 20px;
+  cursor: pointer;
 }
 
 .tisso-color:last-child {
@@ -214,7 +235,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 6px;
+  width: 5px;
   height: 100%;
   background: var(--swatch-color, #000);
 }
@@ -223,72 +244,98 @@
   box-shadow: inset 0 0 0 2px #000;
 }
 
+.tisso-size-wrap {
+  position: relative;
+}
+
 .tisso-size {
   width: 100%;
   height: 50px;
   border: 1px solid #000;
   background: #fff;
-  font-size: 17px;
-  padding: 0 16px;
+  color: #000;
+  font-size: 16px;
+  padding: 0 54px 0 14px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.tisso-size-wrap::after {
+  content: "⌄";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 54px;
+  height: 50px;
+  border-left: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  pointer-events: none;
 }
 
 .tisso-popup__cart {
   width: 100%;
-  height: 58px;
+  height: 56px;
   margin-top: 34px;
+  border: 0;
   background: #000;
   color: #fff;
-  border: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 46px;
+  cursor: pointer;
 }
 
 .tisso-popup__cart span {
-  font-size: 34px;
+  font-size: 31px;
   line-height: 1;
 }
 
 .tisso-popup__message {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   font-size: 13px;
 }
 
 @media screen and (max-width: 749px) {
   .tisso-grid {
-    padding: 34px 28px 50px;
+    padding: 39px 20px 26px;
   }
 
   .tisso-grid h2 {
     text-align: center;
-    font-size: 16px;
-    margin-bottom: 18px;
+    font-size: 28px;
+    line-height: 1.08;
+    margin-bottom: 24px;
   }
 
   .tisso-grid__items {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 4px;
   }
 
   .tisso-grid__item {
-    aspect-ratio: 1 / 1.25;
+    aspect-ratio: 1 / 1.28;
   }
 
   .tisso-grid__plus {
-    width: 20px;
-    height: 20px;
-    font-size: 17px;
+    width: 18px;
+    height: 18px;
+    font-size: 15px;
+    line-height: 16px;
   }
 
   .tisso-popup__box {
     width: calc(100% - 32px);
-    margin: 16px auto;
-    padding: 26px 20px 28px;
-    max-height: 95vh;
+    max-width: 390px;
+    min-height: 448px;
+    margin: 14px auto;
+    padding: 24px 20px 28px;
+    max-height: calc(100vh - 28px);
     overflow-y: auto;
   }
 
@@ -304,18 +351,20 @@
 
   .tisso-popup__info h3 {
     font-size: 16px;
+    margin-top: 6px;
   }
 
   .tisso-popup__info p {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   #TissoPopupDescription {
-    font-size: 14px;
+    font-size: 12px;
+    line-height: 1.1;
   }
 
   .tisso-color {
-    font-size: 17px;
+    font-size: 16px;
   }
 }
 </style>
@@ -341,7 +390,7 @@
     Grey: '#b8b8b8',
     Gray: '#b8b8b8',
     Red: '#c90035',
-    Blue: '#1e56c5'
+    Blue: '#1f57c8'
   };
 
   function money(cents) {
@@ -353,11 +402,13 @@
 
   function openPopup() {
     popup.classList.add('is-open');
+    popup.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
   function closePopup() {
     popup.classList.remove('is-open');
+    popup.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     message.textContent = '';
   }
@@ -374,7 +425,18 @@
 
   function updatePrice() {
     const variant = getVariant();
-    if (variant) popupPrice.textContent = money(variant.price);
+    if (variant) {
+      popupPrice.textContent = money(variant.price);
+    }
+  }
+
+  function getValues(optionIndex) {
+    const values = [];
+    currentProduct.variants.forEach(function (variant) {
+      const value = variant.options[optionIndex];
+      if (!values.includes(value)) values.push(value);
+    });
+    return values;
   }
 
   function renderColorOption(optionName, optionIndex) {
@@ -388,13 +450,7 @@
     const valuesWrapper = document.createElement('div');
     valuesWrapper.className = 'tisso-colors';
 
-    const values = [];
-    currentProduct.variants.forEach(function (variant) {
-      const value = variant.options[optionIndex];
-      if (!values.includes(value)) values.push(value);
-    });
-
-    values.slice(0, 2).forEach(function (value) {
+    getValues(optionIndex).slice(0, 2).forEach(function (value) {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'tisso-color';
@@ -432,6 +488,9 @@
     label.className = 'tisso-option__label';
     label.textContent = optionName;
 
+    const selectWrap = document.createElement('div');
+    selectWrap.className = 'tisso-size-wrap';
+
     const select = document.createElement('select');
     select.className = 'tisso-size';
 
@@ -440,13 +499,7 @@
     placeholder.value = '';
     select.appendChild(placeholder);
 
-    const values = [];
-    currentProduct.variants.forEach(function (variant) {
-      const value = variant.options[optionIndex];
-      if (!values.includes(value)) values.push(value);
-    });
-
-    values.forEach(function (value) {
+    getValues(optionIndex).forEach(function (value) {
       const option = document.createElement('option');
       option.value = value;
       option.textContent = value;
@@ -460,8 +513,9 @@
       }
     });
 
+    selectWrap.appendChild(select);
     wrapper.appendChild(label);
-    wrapper.appendChild(select);
+    wrapper.appendChild(selectWrap);
     sizeBox.appendChild(wrapper);
   }
 
@@ -470,13 +524,11 @@
     sizeBox.innerHTML = '';
 
     currentProduct.options.forEach(function (optionName, index) {
-      const name = optionName.toLowerCase();
+      const lowerName = optionName.toLowerCase();
 
-      if (name.includes('color') || name.includes('colour')) {
+      if (lowerName.includes('color') || lowerName.includes('colour')) {
         renderColorOption(optionName, index);
-      }
-
-      if (name.includes('size')) {
+      } else if (lowerName.includes('size')) {
         renderSizeOption(optionName, index);
       }
     });
@@ -529,8 +581,12 @@
     });
   });
 
-  document.querySelectorAll('[data-close-popup]').forEach(function (button) {
-    button.addEventListener('click', closePopup);
+  document.querySelectorAll('[data-close-popup]').forEach(function (item) {
+    item.addEventListener('click', closePopup);
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closePopup();
   });
 
   addButton.addEventListener('click', async function () {
@@ -550,7 +606,10 @@
         body: JSON.stringify({ id: variant.id, quantity: 1 })
       });
 
-      if (selectedOptions.includes('Black') && selectedOptions.includes('Medium')) {
+      const hasBlack = selectedOptions.includes('Black');
+      const hasMedium = selectedOptions.includes('Medium') || selectedOptions.includes('M');
+
+      if (hasBlack && hasMedium) {
         await addSoftWinterJacket();
       }
 
@@ -582,6 +641,24 @@
           "type": "product",
           "id": "product",
           "label": "Choose product"
+        },
+        {
+          "type": "range",
+          "id": "plus_x",
+          "label": "Plus icon horizontal position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 55
+        },
+        {
+          "type": "range",
+          "id": "plus_y",
+          "label": "Plus icon vertical position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 55
         }
       ]
     }
