@@ -25,183 +25,165 @@
 </section>
 
 <style>
+.tisso-banner {
+  width: 100%;
+  max-width: 1440px;
+  height: 520px;
+  margin: 0 auto;
+  position: relative;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+  background-color: #fff;
+  background-image: url({{ section.settings.desktop_banner | image_url: width: 1800 }});
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.tisso-banner__top {
+  height: 56px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 190px;
+  align-items: center;
+  background: #fff;
+  padding: 0 52px;
+  box-sizing: border-box;
+}
+
+.tisso-banner__logo {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tisso-banner__tagline {
+  text-align: center;
+  font-size: 12px;
+}
+
+.tisso-banner__choose {
+  height: 44px;
+  background: #fff544;
+  color: #000;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  font-size: 12px;
+}
+
+.tisso-banner__content {
+  position: absolute;
+  left: 64px;
+  top: 250px;
+  width: 420px;
+}
+
+.tisso-banner__content h1 {
+  margin: 0 0 22px;
+  font-size: 52px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.tisso-banner__content p {
+  margin: 0;
+  max-width: 380px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.tisso-banner__shop {
+  margin-top: 28px;
+  width: 180px;
+  height: 48px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  font-size: 12px;
+}
+
+.tisso-banner__strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  text-align: center;
+}
+
+@media screen and (max-width: 749px) {
   .tisso-banner {
-    width: 100%;
-    max-width: 1440px;
-    height: 878px;
-    margin: 0 auto;
-    position: relative;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #000;
-    background-color: #fff;
-    background-image: url({{ section.settings.desktop_banner | image_url: width: 1800 }});
+    height: 445px;
+    background-image: url({{ section.settings.mobile_banner | image_url: width: 800 }});
     background-size: cover;
     background-position: center top;
-    background-repeat: no-repeat;
-    overflow: hidden;
   }
 
   .tisso-banner__top {
-    height: 64px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 214px;
-    align-items: center;
-    background: #fff;
-    padding: 0 52px;
-    box-sizing: border-box;
+    height: 48px;
+    grid-template-columns: 28px 1fr;
+    padding: 0 18px;
+    gap: 10px;
+  }
+
+  .tisso-banner__top::before {
+    content: "☰";
+    font-size: 16px;
   }
 
   .tisso-banner__logo {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
-
-  .tisso-banner__tagline {
-    text-align: center;
     font-size: 13px;
-    font-weight: 400;
   }
 
+  .tisso-banner__tagline,
   .tisso-banner__choose {
-    height: 44px;
-    background: #fff544;
-    color: #000;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
-    font-size: 13px;
-    font-weight: 500;
-    transition: transform 0.25s ease;
-  }
-
-  .tisso-banner__choose:hover,
-  .tisso-banner__shop:hover {
-    transform: translateY(-2px);
+    display: none;
   }
 
   .tisso-banner__content {
-    position: absolute;
-    left: 64px;
-    top: 360px;
-    width: 440px;
-  }
-
-  .tisso-banner__content h1 {
-    margin: 0 0 32px;
-    font-size: 56px;
-    line-height: 1.02;
-    font-weight: 700;
-    letter-spacing: -1px;
-  }
-
-  .tisso-banner__content p {
-    margin: 0;
-    max-width: 390px;
-    font-size: 15px;
-    line-height: 1.45;
-    font-weight: 400;
-  }
-
-  .tisso-banner__shop {
-    margin-top: 34px;
-    width: 210px;
-    height: 52px;
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 38px;
-    font-size: 13px;
-    font-weight: 500;
-    transition: transform 0.25s ease;
-  }
-
-  .tisso-banner__strip {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 34px;
-    background: #f4f4f4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    letter-spacing: 0.2px;
+    left: 22px;
+    right: 22px;
+    top: 88px;
+    width: auto;
     text-align: center;
   }
 
-  @media screen and (max-width: 749px) {
-    .tisso-banner {
-      height: 445px;
-      background-image: url({{ section.settings.mobile_banner | image_url: width: 800 }});
-      background-size: cover;
-      background-position: center top;
-    }
-
-    .tisso-banner__top {
-      height: 48px;
-      grid-template-columns: 32px 1fr;
-      padding: 0 18px;
-      gap: 12px;
-    }
-
-    .tisso-banner__top::before {
-      content: "☰";
-      font-size: 16px;
-      line-height: 1;
-    }
-
-    .tisso-banner__logo {
-      font-size: 13px;
-      text-align: left;
-    }
-
-    .tisso-banner__tagline,
-    .tisso-banner__choose {
-      display: none;
-    }
-
-    .tisso-banner__content {
-      left: 24px;
-      right: 24px;
-      top: 98px;
-      width: auto;
-      text-align: center;
-    }
-
-    .tisso-banner__content h1 {
-      font-size: 28px;
-      line-height: 1.1;
-      margin-bottom: 16px;
-    }
-
-    .tisso-banner__content p {
-      max-width: 260px;
-      margin: 0 auto;
-      font-size: 11px;
-      line-height: 1.35;
-    }
-
-    .tisso-banner__shop {
-      width: 140px;
-      height: 42px;
-      margin: 126px auto 0;
-      gap: 24px;
-      font-size: 11px;
-    }
-
-    .tisso-banner__strip {
-      height: 24px;
-      font-size: 8px;
-      padding: 0 8px;
-    }
+  .tisso-banner__content h1 {
+    font-size: 28px;
+    margin-bottom: 14px;
   }
+
+  .tisso-banner__content p {
+    max-width: 250px;
+    margin: 0 auto;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .tisso-banner__shop {
+    width: 140px;
+    height: 42px;
+    margin: 128px auto 0;
+    gap: 24px;
+    font-size: 11px;
+  }
+
+  .tisso-banner__strip {
+    height: 24px;
+    font-size: 8px;
+  }
+}
 </style>
 
 {% schema %}
