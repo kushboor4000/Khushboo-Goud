@@ -1,0 +1,211 @@
+<section class="eg-banner">
+  <div class="eg-banner__top">
+    <div class="eg-banner__logo">{{ section.settings.logo_text }}</div>
+    <div class="eg-banner__tagline">{{ section.settings.top_text }}</div>
+    <a href="{{ section.settings.button_link }}" class="eg-banner__top-btn">
+      {{ section.settings.top_button }} <span>→</span>
+    </a>
+  </div>
+
+  <div class="eg-banner__content">
+    <h1>{{ section.settings.heading }}</h1>
+    <p>{{ section.settings.description }}</p>
+    <a href="{{ section.settings.main_button_link }}" class="eg-banner__main-btn">
+      {{ section.settings.main_button }} <span>→</span>
+    </a>
+  </div>
+
+  <div class="eg-banner__bottom">
+    {{ section.settings.bottom_text }}
+  </div>
+</section>
+
+<style>
+.eg-banner {
+  max-width: 1440px;
+  margin: 0 auto;
+  min-height: 650px;
+  background-image: url({{ section.settings.banner_image | image_url: width: 1800 }});
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+
+.eg-banner__top {
+  height: 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  padding: 0 50px;
+  background: #fff;
+}
+
+.eg-banner__logo {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.eg-banner__tagline {
+  text-align: center;
+  font-size: 14px;
+}
+
+.eg-banner__top-btn,
+.eg-banner__main-btn {
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.25s ease;
+}
+
+.eg-banner__top-btn {
+  background: #fff544;
+  color: #000;
+  padding: 18px 34px;
+  font-size: 13px;
+}
+
+.eg-banner__main-btn {
+  display: inline-flex;
+  gap: 20px;
+  background: #000;
+  color: #fff;
+  padding: 16px 42px;
+  margin-top: 28px;
+  font-size: 13px;
+}
+
+.eg-banner__top-btn:hover,
+.eg-banner__main-btn:hover {
+  transform: translateY(-3px);
+}
+
+.eg-banner__content {
+  width: 390px;
+  padding: 210px 0 0 70px;
+}
+
+.eg-banner__content h1 {
+  font-size: 58px;
+  line-height: 1;
+  margin: 0 0 24px;
+  color: #000;
+}
+
+.eg-banner__content p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  color: #000;
+}
+
+.eg-banner__bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #f6f6f6;
+  text-align: center;
+  padding: 12px;
+  font-size: 13px;
+}
+
+@media (max-width: 749px) {
+  .eg-banner {
+    min-height: 690px;
+    background-position: center top;
+  }
+
+  .eg-banner__top {
+    grid-template-columns: 1fr auto;
+    padding: 0 18px;
+  }
+
+  .eg-banner__tagline {
+    display: none;
+  }
+
+  .eg-banner__top-btn {
+    padding: 15px 18px;
+    font-size: 11px;
+  }
+
+  .eg-banner__content {
+    width: auto;
+    padding: 370px 24px 70px;
+  }
+
+  .eg-banner__content h1 {
+    font-size: 42px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Custom Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "text",
+      "id": "top_text",
+      "label": "Top text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "top_button",
+      "label": "Top button text",
+      "default": "CHOOSE GIFT"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Top button link"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
+    },
+    {
+      "type": "text",
+      "id": "main_button",
+      "label": "Main button text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "main_button_link",
+      "label": "Main button link"
+    },
+    {
+      "type": "text",
+      "id": "bottom_text",
+      "label": "Bottom text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Banner"
+    }
+  ]
+}
+{% endschema %}
