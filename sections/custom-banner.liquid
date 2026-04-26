@@ -1,31 +1,43 @@
 <section class="tisso-banner">
   <div class="tisso-mobile-menu" id="TissoMobileMenu">
-    <div class="tisso-mobile-menu__logo">{{ section.settings.logo_text }}</div>
-    <p>{{ section.settings.top_text }}</p>
+    <div class="tisso-mobile-menu__logo">{{ section.settings.mobile_logo_text }}</div>
+    <p>{{ section.settings.mobile_menu_text }}</p>
     <a href="{{ section.settings.top_button_link | default: '#' }}">
-      {{ section.settings.top_button }} <span>→</span>
+      {{ section.settings.mobile_menu_button }} <span>→</span>
     </a>
   </div>
 
   <div class="tisso-banner__top">
     <button type="button" class="tisso-banner__hamburger" id="TissoMenuOpen">☰</button>
 
-    <div class="tisso-banner__logo">{{ section.settings.logo_text }}</div>
+    <div class="tisso-banner__logo">
+      <span class="desktop-text">{{ section.settings.desktop_logo_text }}</span>
+      <span class="mobile-text">{{ section.settings.mobile_logo_text }}</span>
+    </div>
 
-    <div class="tisso-banner__tagline">{{ section.settings.top_text }}</div>
+    <div class="tisso-banner__tagline">{{ section.settings.desktop_top_text }}</div>
 
     <a href="{{ section.settings.top_button_link | default: '#' }}" class="tisso-banner__choose">
-      {{ section.settings.top_button }} <span>→</span>
+      {{ section.settings.desktop_top_button }} <span>→</span>
     </a>
   </div>
 
   <div class="tisso-banner__content">
-    <h1>{{ section.settings.heading }}</h1>
-    <p>{{ section.settings.description }}</p>
+    <h1>
+      <span class="desktop-text">{{ section.settings.desktop_heading }}</span>
+      <span class="mobile-text">{{ section.settings.mobile_heading }}</span>
+    </h1>
+
+    <p>
+      <span class="desktop-text">{{ section.settings.desktop_description }}</span>
+      <span class="mobile-text">{{ section.settings.mobile_description }}</span>
+    </p>
   </div>
 
   <a href="{{ section.settings.main_button_link | default: '#' }}" class="tisso-banner__shop">
-    {{ section.settings.main_button }} <span>→</span>
+    <span class="desktop-text">{{ section.settings.desktop_main_button }}</span>
+    <span class="mobile-text">{{ section.settings.mobile_main_button }}</span>
+    <span>→</span>
   </a>
 </section>
 
@@ -40,10 +52,14 @@
   font-family: Arial, Helvetica, sans-serif;
   color: #000;
   background-color: #fff;
-  background-image: url({{ section.settings.desktop_banner | image_url: width: 1800 }});
+  background-image: url({{ section.settings.desktop_banner_image | image_url: width: 1800 }});
   background-size: 100% auto;
   background-position: center top;
   background-repeat: no-repeat;
+}
+
+.mobile-text {
+  display: none;
 }
 
 .tisso-banner__top {
@@ -130,9 +146,17 @@
 }
 
 @media screen and (max-width: 749px) {
+  .desktop-text {
+    display: none;
+  }
+
+  .mobile-text {
+    display: inline;
+  }
+
   .tisso-banner {
     height: 405px;
-    background-image: url({{ section.settings.mobile_banner | image_url: width: 900 }});
+    background-image: url({{ section.settings.mobile_banner_image | image_url: width: 900 }});
     background-size: 160% auto;
     background-position: center 150px;
     background-repeat: no-repeat;
@@ -144,7 +168,6 @@
     grid-template-columns: 28px 1fr 28px;
     padding: 0 20px;
     background: #fff;
-    box-shadow: none;
   }
 
   .tisso-banner__hamburger {
@@ -253,12 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (toggleBtn && menu) {
     toggleBtn.addEventListener('click', function () {
       menu.classList.toggle('is-open');
-
-      if (menu.classList.contains('is-open')) {
-        toggleBtn.textContent = '×';
-      } else {
-        toggleBtn.textContent = '☰';
-      }
+      toggleBtn.textContent = menu.classList.contains('is-open') ? '×' : '☰';
     });
   }
 });
@@ -270,30 +288,36 @@ document.addEventListener('DOMContentLoaded', function () {
   "settings": [
     {
       "type": "image_picker",
-      "id": "desktop_banner",
+      "id": "desktop_banner_image",
       "label": "Desktop banner image"
     },
     {
       "type": "image_picker",
-      "id": "mobile_banner",
+      "id": "mobile_banner_image",
       "label": "Mobile banner image"
     },
     {
       "type": "text",
-      "id": "logo_text",
-      "label": "Logo text",
+      "id": "desktop_logo_text",
+      "label": "Desktop logo text",
       "default": "TISSO VISON"
     },
     {
       "type": "text",
-      "id": "top_text",
-      "label": "Top text",
+      "id": "mobile_logo_text",
+      "label": "Mobile logo text",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "text",
+      "id": "desktop_top_text",
+      "label": "Desktop top text",
       "default": "Find the ideal gift for your loved ones."
     },
     {
       "type": "text",
-      "id": "top_button",
-      "label": "Top button text",
+      "id": "desktop_top_button",
+      "label": "Desktop top button text",
       "default": "CHOOSE GIFT"
     },
     {
@@ -303,26 +327,56 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     {
       "type": "text",
-      "id": "heading",
-      "label": "Heading",
+      "id": "desktop_heading",
+      "label": "Desktop heading",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "text",
+      "id": "mobile_heading",
+      "label": "Mobile heading",
       "default": "The Gift Guide"
     },
     {
       "type": "textarea",
-      "id": "description",
-      "label": "Description",
+      "id": "desktop_description",
+      "label": "Desktop description",
       "default": "Discover joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
     },
     {
+      "type": "textarea",
+      "id": "mobile_description",
+      "label": "Mobile description",
+      "default": "Discover joy: Your Ultimate Holiday Gift Destination."
+    },
+    {
       "type": "text",
-      "id": "main_button",
-      "label": "Main button text",
+      "id": "desktop_main_button",
+      "label": "Desktop main button text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "text",
+      "id": "mobile_main_button",
+      "label": "Mobile main button text",
       "default": "SHOP NOW"
     },
     {
       "type": "url",
       "id": "main_button_link",
       "label": "Main button link"
+    },
+    {
+      "type": "text",
+      "id": "mobile_menu_text",
+      "label": "Mobile menu text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "mobile_menu_button",
+      "label": "Mobile menu button text",
+      "default": "CHOOSE GIFT"
     }
   ],
   "presets": [
