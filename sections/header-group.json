@@ -112,10 +112,10 @@
         "announcement_bEMfHU": {
           "type": "_announcement",
           "settings": {
-            "text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL",
+            "text": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR",
             "link": "",
             "font": "var(--font-body--family)",
-            "font_size": "1rem",
+            "font_size": "0.75rem",
             "weight": "",
             "letter_spacing": "normal",
             "case": "none"
