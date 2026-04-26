@@ -1,143 +1,207 @@
-<section class="eg-banner">
-  <div class="eg-banner__top">
-    <div class="eg-banner__logo">{{ section.settings.logo_text }}</div>
-    <div class="eg-banner__tagline">{{ section.settings.top_text }}</div>
-    <a href="{{ section.settings.button_link }}" class="eg-banner__top-btn">
-      {{ section.settings.top_button }} <span>→</span>
+<section class="tisso-banner">
+  <div class="tisso-banner__top">
+    <div class="tisso-banner__logo">{{ section.settings.logo_text }}</div>
+    <div class="tisso-banner__tagline">{{ section.settings.top_text }}</div>
+
+    <a href="{{ section.settings.top_button_link | default: '#' }}" class="tisso-banner__choose">
+      {{ section.settings.top_button }}
+      <span>→</span>
     </a>
   </div>
 
-  <div class="eg-banner__content">
+  <div class="tisso-banner__content">
     <h1>{{ section.settings.heading }}</h1>
     <p>{{ section.settings.description }}</p>
-    <a href="{{ section.settings.main_button_link }}" class="eg-banner__main-btn">
-      {{ section.settings.main_button }} <span>→</span>
+
+    <a href="{{ section.settings.main_button_link | default: '#' }}" class="tisso-banner__shop">
+      {{ section.settings.main_button }}
+      <span>→</span>
     </a>
   </div>
 
-  <div class="eg-banner__bottom">
+  <div class="tisso-banner__strip">
     {{ section.settings.bottom_text }}
   </div>
 </section>
 
 <style>
-.eg-banner {
-  max-width: 1440px;
-  margin: 0 auto;
-  min-height: 650px;
-  background-image: url({{ section.settings.banner_image | image_url: width: 1800 }});
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  font-family: Arial, sans-serif;
-}
-
-.eg-banner__top {
-  height: 64px;
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  align-items: center;
-  padding: 0 50px;
-  background: #fff;
-}
-
-.eg-banner__logo {
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.eg-banner__tagline {
-  text-align: center;
-  font-size: 14px;
-}
-
-.eg-banner__top-btn,
-.eg-banner__main-btn {
-  text-decoration: none;
-  font-weight: 700;
-  transition: transform 0.25s ease;
-}
-
-.eg-banner__top-btn {
-  background: #fff544;
-  color: #000;
-  padding: 18px 34px;
-  font-size: 13px;
-}
-
-.eg-banner__main-btn {
-  display: inline-flex;
-  gap: 20px;
-  background: #000;
-  color: #fff;
-  padding: 16px 42px;
-  margin-top: 28px;
-  font-size: 13px;
-}
-
-.eg-banner__top-btn:hover,
-.eg-banner__main-btn:hover {
-  transform: translateY(-3px);
-}
-
-.eg-banner__content {
-  width: 390px;
-  padding: 210px 0 0 70px;
-}
-
-.eg-banner__content h1 {
-  font-size: 58px;
-  line-height: 1;
-  margin: 0 0 24px;
-  color: #000;
-}
-
-.eg-banner__content p {
-  font-size: 15px;
-  line-height: 1.6;
-  margin: 0;
-  color: #000;
-}
-
-.eg-banner__bottom {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: #f6f6f6;
-  text-align: center;
-  padding: 12px;
-  font-size: 13px;
-}
-
-@media (max-width: 749px) {
-  .eg-banner {
-    min-height: 690px;
+  .tisso-banner {
+    width: 100%;
+    max-width: 1440px;
+    height: 878px;
+    margin: 0 auto;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+    background-color: #fff;
+    background-image: url({{ section.settings.desktop_banner | image_url: width: 1800 }});
+    background-size: cover;
     background-position: center top;
+    background-repeat: no-repeat;
+    overflow: hidden;
   }
 
-  .eg-banner__top {
-    grid-template-columns: 1fr auto;
-    padding: 0 18px;
+  .tisso-banner__top {
+    height: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 214px;
+    align-items: center;
+    background: #fff;
+    padding: 0 52px;
+    box-sizing: border-box;
   }
 
-  .eg-banner__tagline {
-    display: none;
+  .tisso-banner__logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
   }
 
-  .eg-banner__top-btn {
-    padding: 15px 18px;
+  .tisso-banner__tagline {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .tisso-banner__choose {
+    height: 44px;
+    background: #fff544;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.25s ease;
+  }
+
+  .tisso-banner__choose:hover,
+  .tisso-banner__shop:hover {
+    transform: translateY(-2px);
+  }
+
+  .tisso-banner__content {
+    position: absolute;
+    left: 64px;
+    top: 360px;
+    width: 440px;
+  }
+
+  .tisso-banner__content h1 {
+    margin: 0 0 32px;
+    font-size: 56px;
+    line-height: 1.02;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+
+  .tisso-banner__content p {
+    margin: 0;
+    max-width: 390px;
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 400;
+  }
+
+  .tisso-banner__shop {
+    margin-top: 34px;
+    width: 210px;
+    height: 52px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 38px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.25s ease;
+  }
+
+  .tisso-banner__strip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 34px;
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 11px;
+    letter-spacing: 0.2px;
+    text-align: center;
   }
 
-  .eg-banner__content {
-    width: auto;
-    padding: 370px 24px 70px;
-  }
+  @media screen and (max-width: 749px) {
+    .tisso-banner {
+      height: 445px;
+      background-image: url({{ section.settings.mobile_banner | image_url: width: 800 }});
+      background-size: cover;
+      background-position: center top;
+    }
 
-  .eg-banner__content h1 {
-    font-size: 42px;
+    .tisso-banner__top {
+      height: 48px;
+      grid-template-columns: 32px 1fr;
+      padding: 0 18px;
+      gap: 12px;
+    }
+
+    .tisso-banner__top::before {
+      content: "☰";
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .tisso-banner__logo {
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .tisso-banner__tagline,
+    .tisso-banner__choose {
+      display: none;
+    }
+
+    .tisso-banner__content {
+      left: 24px;
+      right: 24px;
+      top: 98px;
+      width: auto;
+      text-align: center;
+    }
+
+    .tisso-banner__content h1 {
+      font-size: 28px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .tisso-banner__content p {
+      max-width: 260px;
+      margin: 0 auto;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .tisso-banner__shop {
+      width: 140px;
+      height: 42px;
+      margin: 126px auto 0;
+      gap: 24px;
+      font-size: 11px;
+    }
+
+    .tisso-banner__strip {
+      height: 24px;
+      font-size: 8px;
+      padding: 0 8px;
+    }
   }
-}
 </style>
 
 {% schema %}
@@ -146,8 +210,13 @@
   "settings": [
     {
       "type": "image_picker",
-      "id": "banner_image",
-      "label": "Banner image"
+      "id": "desktop_banner",
+      "label": "Desktop banner image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_banner",
+      "label": "Mobile banner image"
     },
     {
       "type": "text",
@@ -158,7 +227,7 @@
     {
       "type": "text",
       "id": "top_text",
-      "label": "Top text",
+      "label": "Top center text",
       "default": "Find the ideal gift for your loved ones."
     },
     {
@@ -169,7 +238,7 @@
     },
     {
       "type": "url",
-      "id": "button_link",
+      "id": "top_button_link",
       "label": "Top button link"
     },
     {
@@ -198,7 +267,7 @@
     {
       "type": "text",
       "id": "bottom_text",
-      "label": "Bottom text",
+      "label": "Bottom strip text",
       "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
     }
   ],
