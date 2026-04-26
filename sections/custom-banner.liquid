@@ -1,23 +1,30 @@
 <section class="tisso-banner">
+  <div class="tisso-mobile-menu" id="TissoMobileMenu">
+    <button type="button" class="tisso-mobile-menu__close" id="TissoMenuClose">×</button>
+    <div class="tisso-mobile-menu__logo">{{ section.settings.logo_text }}</div>
+    <p>{{ section.settings.top_text }}</p>
+    <a href="{{ section.settings.top_button_link | default: '#' }}">
+      {{ section.settings.top_button }} <span>→</span>
+    </a>
+  </div>
+
   <div class="tisso-banner__top">
+    <button type="button" class="tisso-banner__hamburger" id="TissoMenuOpen">☰</button>
     <div class="tisso-banner__logo">{{ section.settings.logo_text }}</div>
     <div class="tisso-banner__tagline">{{ section.settings.top_text }}</div>
-
     <a href="{{ section.settings.top_button_link | default: '#' }}" class="tisso-banner__choose">
-      {{ section.settings.top_button }}
-      <span>→</span>
+      {{ section.settings.top_button }} <span>→</span>
     </a>
   </div>
 
   <div class="tisso-banner__content">
     <h1>{{ section.settings.heading }}</h1>
     <p>{{ section.settings.description }}</p>
-
-    <a href="{{ section.settings.main_button_link | default: '#' }}" class="tisso-banner__shop">
-      {{ section.settings.main_button }}
-      <span>→</span>
-    </a>
   </div>
+
+  <a href="{{ section.settings.main_button_link | default: '#' }}" class="tisso-banner__shop">
+    {{ section.settings.main_button }} <span>→</span>
+  </a>
 
   <div class="tisso-banner__strip">
     {{ section.settings.bottom_text }}
@@ -28,7 +35,7 @@
 .tisso-banner {
   width: 100%;
   max-width: 1440px;
-  height: 878px;
+  height: 520px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
@@ -36,34 +43,36 @@
   color: #000;
   background-color: #fff;
   background-image: url({{ section.settings.desktop_banner | image_url: width: 1800 }});
-  background-size: 100% auto;
+  background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
 }
 
 .tisso-banner__top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
+  height: 56px;
   display: grid;
-  grid-template-columns: 1fr 1fr 214px;
+  grid-template-columns: 1fr 1fr 190px;
   align-items: center;
   padding: 0 52px;
+  background: #fff;
   box-sizing: border-box;
-  background: transparent;
-  z-index: 2;
+  position: relative;
+  z-index: 3;
+}
+
+.tisso-banner__hamburger {
+  display: none;
 }
 
 .tisso-banner__logo {
   font-size: 18px;
   font-weight: 700;
+  letter-spacing: .5px;
 }
 
 .tisso-banner__tagline {
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .tisso-banner__choose {
@@ -75,97 +84,98 @@
   align-items: center;
   justify-content: center;
   gap: 28px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 .tisso-banner__content {
   position: absolute;
   left: 64px;
-  top: 382px;
-  width: 440px;
+  top: 250px;
+  width: 430px;
   z-index: 2;
 }
 
 .tisso-banner__content h1 {
-  margin: 0 0 30px;
-  font-size: 56px;
-  line-height: 1.02;
+  margin: 0 0 22px;
+  font-size: 52px;
+  line-height: 1;
   font-weight: 700;
-  letter-spacing: -1px;
 }
 
 .tisso-banner__content p {
   margin: 0;
-  max-width: 390px;
-  font-size: 15px;
-  line-height: 1.45;
+  max-width: 380px;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .tisso-banner__shop {
-  margin-top: 34px;
-  width: 210px;
-  height: 52px;
+  position: absolute;
+  left: 64px;
+  top: 390px;
+  width: 180px;
+  height: 48px;
   background: #000;
   color: #fff;
   text-decoration: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 38px;
-  font-size: 13px;
+  gap: 34px;
+  font-size: 12px;
+  z-index: 4;
 }
 
 .tisso-banner__strip {
   position: absolute;
   left: 0;
   right: 0;
-  top: 844px;
-  height: 34px;
+  bottom: 0;
+  height: 30px;
   background: #f4f4f4;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10px;
   text-align: center;
-  z-index: 2;
+  z-index: 4;
+}
+
+.tisso-mobile-menu {
+  display: none;
 }
 
 @media screen and (max-width: 749px) {
   .tisso-banner {
     height: 445px;
     background-image: url({{ section.settings.mobile_banner | image_url: width: 900 }});
-    background-size: 130% auto;
-    background-position: center 150px;
+    background-size: 160% auto;
+    background-position: center 178px;
     background-repeat: no-repeat;
-    background-color: #fff;
   }
 
   .tisso-banner__top {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     height: 54px;
-    display: grid;
-    grid-template-columns: 26px 1fr;
-    align-items: center;
-    padding: 0 22px;
+    grid-template-columns: 28px 1fr 28px;
+    padding: 0 20px;
     background: #fff;
-    z-index: 3;
   }
 
-  .tisso-banner__top::before {
-    content: "☰";
-    font-size: 18px;
+  .tisso-banner__hamburger {
+    display: block;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
     color: #000;
+    padding: 0;
+    cursor: pointer;
   }
 
   .tisso-banner__logo {
+    text-align: center;
     font-size: 20px;
     font-weight: 700;
-    text-align: center;
-    letter-spacing: 0.5px;
   }
 
   .tisso-banner__tagline,
@@ -174,63 +184,113 @@
   }
 
   .tisso-banner__content {
-    position: absolute;
-    top: 92px;
+    top: 100px;
     left: 20px;
     right: 20px;
     width: auto;
     text-align: center;
-    z-index: 2;
   }
 
   .tisso-banner__content h1 {
     font-size: 24px;
     line-height: 1.1;
-    font-weight: 700;
     margin: 0 0 14px;
   }
 
   .tisso-banner__content p {
-    max-width: 245px;
+    max-width: 255px;
     margin: 0 auto;
     font-size: 11px;
-    line-height: 1.32;
+    line-height: 1.35;
   }
 
   .tisso-banner__shop {
-    position: absolute;
-    top: 337px;
+    top: 318px;
     left: 50%;
     transform: translateX(-50%);
     width: 178px;
     height: 44px;
-    margin: 0;
-    background: #000;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 34px;
     font-size: 12px;
-    text-decoration: none;
-    z-index: 3;
   }
 
   .tisso-banner__strip {
+    bottom: 0;
+    height: 24px;
+    font-size: 8px;
+  }
+
+  .tisso-mobile-menu {
+    display: none;
     position: absolute;
-    top: 421px;
+    top: 54px;
     left: 0;
     right: 0;
-    height: 24px;
     background: #f4f4f4;
-    font-size: 8px;
+    padding: 16px 20px 22px;
+    text-align: center;
+    z-index: 20;
+    box-shadow: 0 4px 10px rgba(0,0,0,.08);
+  }
+
+  .tisso-mobile-menu.is-open {
+    display: block;
+  }
+
+  .tisso-mobile-menu__close {
+    position: absolute;
+    left: 20px;
+    top: 15px;
+    border: 0;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .tisso-mobile-menu__logo {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  .tisso-mobile-menu p {
+    margin: 0 0 14px;
+    font-size: 12px;
+  }
+
+  .tisso-mobile-menu a {
+    width: 210px;
+    height: 44px;
+    margin: 0 auto;
+    background: #fff544;
+    color: #000;
+    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    gap: 36px;
+    font-size: 12px;
   }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var openBtn = document.getElementById('TissoMenuOpen');
+  var closeBtn = document.getElementById('TissoMenuClose');
+  var menu = document.getElementById('TissoMobileMenu');
+
+  if (openBtn && closeBtn && menu) {
+    openBtn.addEventListener('click', function () {
+      menu.classList.add('is-open');
+    });
+
+    closeBtn.addEventListener('click', function () {
+      menu.classList.remove('is-open');
+    });
+  }
+});
+</script>
 
 {% schema %}
 {
@@ -255,7 +315,7 @@
     {
       "type": "text",
       "id": "top_text",
-      "label": "Top center text",
+      "label": "Top text",
       "default": "Find the ideal gift for your loved ones."
     },
     {
@@ -296,7 +356,7 @@
       "type": "text",
       "id": "bottom_text",
       "label": "Bottom strip text",
-      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+      "default": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR"
     }
   ],
   "presets": [
