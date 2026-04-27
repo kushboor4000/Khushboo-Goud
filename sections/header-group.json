@@ -90,21 +90,20 @@
       "type": "custom-banner",
       "name": "Custom Banner",
       "settings": {
+        "desktop_banner_image": "shopify://shop_images/Frame_1_ab0f3764-bb4e-4630-ac65-41f3c590e14e.png",
         "mobile_banner_image": "shopify://shop_images/Frame_1fdb8a34-4f7b-44fa-8963-07fcb8ae9f96.png",
-        "desktop_logo_text": "",
-        "mobile_logo_text": "TISSO VISON",
-        "desktop_top_text": "Find the ideal gift for your loved ones.",
-        "desktop_top_button": "CHOOSE GIFT",
-        "top_button_link": "",
-        "desktop_heading": "",
-        "mobile_heading": "The Gift Guide",
+        "logo_text": "TISSO VISON",
+        "top_text": "Find the ideal gift for your loved ones.",
+        "top_button": "CHOOSE GIFT",
+        "button_link": "",
+        "heading": "The Gift Guide",
         "desktop_description": "",
         "mobile_description": "Discover joy: Your Ultimate Holiday Gift Destination.",
-        "desktop_main_button": "",
-        "mobile_main_button": "SHOP NOW",
+        "main_button": "SHOP NOW",
         "main_button_link": "",
-        "mobile_menu_text": "Find the ideal gift for your loved ones.",
-        "mobile_menu_button": "CHOOSE GIFT"
+        "desktop_bottom_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL",
+        "mobile_bottom_text": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR",
+        "mobile_menu_text": "Find the ideal gift for your loved ones."
       }
     }
   },
