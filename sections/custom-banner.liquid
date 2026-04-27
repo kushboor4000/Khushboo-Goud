@@ -11,7 +11,7 @@
 
       <a href="{{ section.settings.button_link | default: '#' }}" class="eg-desktop-banner__choose">
         <span>{{ section.settings.top_button }}</span>
-        <span>→</span>
+        <span class="eg-long-arrow"></span>
       </a>
     </div>
 
@@ -43,7 +43,7 @@
     </div>
 
     <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-desktop-banner__shop">
-      {{ section.settings.main_button }} <span>→</span>
+      {{ section.settings.main_button }} <span class="eg-long-arrow eg-long-arrow--white"></span>
     </a>
 
     <div class="eg-desktop-banner__strip">
@@ -56,7 +56,7 @@
     <div class="eg-mobile-menu" id="EgMobileMenu">
       <p>{{ section.settings.mobile_menu_text }}</p>
       <a href="{{ section.settings.button_link | default: '#' }}">
-        {{ section.settings.top_button }} <span>→</span>
+        {{ section.settings.top_button }} <span class="eg-long-arrow"></span>
       </a>
     </div>
 
@@ -72,7 +72,7 @@
     </div>
 
     <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-mobile-banner__shop">
-      {{ section.settings.main_button }} <span>→</span>
+      {{ section.settings.main_button }} <span class="eg-long-arrow eg-long-arrow--white"></span>
     </a>
 
     <div class="eg-mobile-banner__strip">
@@ -88,11 +88,38 @@
 .eg-banner-wrap,
 .eg-banner-wrap * {
   font-family: 'Jost', Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
 }
 
 .eg-banner-wrap {
   width: 100%;
-  background: #fff;
+  background: #000;
+}
+
+/* Arrow */
+.eg-long-arrow {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  vertical-align: middle;
+}
+
+.eg-long-arrow::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.eg-long-arrow--white {
+  color: #fff;
 }
 
 /* DESKTOP */
@@ -115,8 +142,7 @@
   width: 100%;
   min-height: 64px;
   padding: 10px 140px;
-  background: #fff;
-  box-sizing: border-box;
+  background: #f7f7f7;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -150,10 +176,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 30px;
+  gap: 24px;
   font-size: 16px;
   line-height: 1;
   font-weight: 400;
+  letter-spacing: -0.2px;
   position: relative;
   overflow: hidden;
 }
@@ -209,12 +236,12 @@
   position: absolute;
   left: 67px;
   top: 492px;
-  width: 560px;
+  width: 590px;
   z-index: 10;
 }
 
 .eg-desktop-banner__content h1 {
-  margin: 0 0 34px;
+  margin: 0 0 28px;
   font-size: 70px;
   line-height: 1;
   font-weight: 500;
@@ -223,12 +250,13 @@
 
 .eg-desktop-banner__content p {
   margin: 0;
-  width: 570px;
-  max-width: 570px;
+  width: 610px;
+  max-width: 610px;
   font-size: 20px;
   line-height: 140%;
   font-weight: 400;
   color: #000;
+  letter-spacing: -0.15px;
 }
 
 .eg-desktop-banner__shop {
@@ -243,10 +271,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 42px;
+  gap: 36px;
   font-size: 14px;
   line-height: 1;
   font-weight: 400;
+  letter-spacing: -0.2px;
   z-index: 10;
 }
 
@@ -307,8 +336,7 @@
     grid-template-columns: 32px 1fr 32px;
     align-items: center;
     padding: 0 20px;
-    background: #f4f4f4;
-    box-sizing: border-box;
+    background: #f7f7f7;
     position: relative;
     z-index: 20;
   }
@@ -326,7 +354,9 @@
   .eg-mobile-banner__logo {
     text-align: center;
     font-size: 21px;
+    line-height: 1;
     font-weight: 700;
+    letter-spacing: 0.2px;
   }
 
   .eg-mobile-banner__content {
@@ -350,6 +380,7 @@
     margin: 0 auto;
     font-size: 14px;
     line-height: 1.35;
+    font-weight: 400;
   }
 
   .eg-mobile-banner__shop {
@@ -365,7 +396,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 34px;
+    gap: 30px;
     font-size: 15px;
     z-index: 10;
   }
@@ -389,7 +420,7 @@
     top: 45px;
     left: 0;
     right: 0;
-    background: #f4f4f4;
+    background: #f7f7f7;
     padding: 20px 20px 26px;
     text-align: center;
     z-index: 30;
@@ -420,7 +451,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
+    gap: 34px;
     font-size: 15px;
   }
 }
