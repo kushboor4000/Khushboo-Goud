@@ -55,15 +55,20 @@
 
       <div class="eg-option">
         <label>Size</label>
-        <div class="eg-size-select-wrap">
-          <select id="EgSizeSelect">
-            <option value="">Choose your size</option>
-            <option value="XS">XS</option>
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-          </select>
+
+        <div class="eg-size-dropdown" id="EgSizeDropdown">
+          <button type="button" class="eg-size-trigger" id="EgSizeTrigger">
+            <span id="EgSizeText">Choose your size</span>
+            <span class="eg-size-arrow"></span>
+          </button>
+
+          <div class="eg-size-menu" id="EgSizeMenu">
+            <button type="button" data-size="XS">XS</button>
+            <button type="button" data-size="S">S</button>
+            <button type="button" data-size="M">M</button>
+            <button type="button" data-size="L">L</button>
+            <button type="button" data-size="XL">XL</button>
+          </div>
         </div>
       </div>
 
@@ -185,7 +190,7 @@
   border: 1px solid #000;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .eg-popup__close {
@@ -279,8 +284,8 @@
 }
 
 .eg-color-btn:hover {
-  background: #000;
-  color: #fff;
+  background: #fff;
+  color: #000;
 }
 
 .eg-color-btn.is-selected {
@@ -289,52 +294,94 @@
 }
 
 .eg-color-btn.is-selected::before {
-  display: none;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: #1f5fbf;
 }
 
-.eg-size-select-wrap {
+.eg-size-dropdown {
   position: relative;
+  width: 100%;
+}
+
+.eg-size-trigger {
+  width: 100%;
   height: 41px;
   border: 1px solid #777;
+  background: #fff;
+  color: #000;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 68px;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-.eg-size-select-wrap::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 53px;
-  width: 1px;
-  height: 100%;
-  background: #777;
-  pointer-events: none;
+.eg-size-trigger span:first-child {
+  text-align: left;
+  padding-left: 15px;
 }
 
-.eg-size-select-wrap::after {
-  content: "";
-  position: absolute;
-  right: 17px;
-  top: 14px;
-  width: 10px;
-  height: 10px;
-  border-right: 1.5px solid #000;
-  border-bottom: 1.5px solid #000;
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
-#EgSizeSelect {
+.eg-size-arrow {
   width: 100%;
   height: 100%;
+  border-left: 1px solid #777;
+  position: relative;
+}
+
+.eg-size-arrow::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 27px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #000;
+  border-top: 2px solid #000;
+  transform: rotate(225deg);
+}
+
+.eg-size-dropdown.is-open .eg-size-arrow::after {
+  top: 16px;
+  transform: rotate(45deg);
+}
+
+.eg-size-menu {
+  display: none;
+  width: 100%;
+  border-left: 1px solid #777;
+  border-right: 1px solid #777;
+  border-bottom: 1px solid #777;
+  background: #fff;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 41px;
+  z-index: 20;
+}
+
+.eg-size-dropdown.is-open .eg-size-menu {
+  display: block;
+}
+
+.eg-size-menu button {
+  width: 100%;
+  height: 39px;
   border: 0;
   background: #fff;
   color: #000;
-  padding: 0 58px 0 11px;
-  font-size: 15px;
-  appearance: none;
+  font-size: 16px;
+  text-align: center;
   cursor: pointer;
 }
 
-#EgSizeSelect option:checked {
+.eg-size-menu button:hover,
+.eg-size-menu button.is-selected {
   background: #000;
   color: #fff;
 }
@@ -352,11 +399,8 @@
   letter-spacing: 0.2px;
 }
 
-.eg-popup__cart::after {
-  content: " →";
-  font-size: 29px;
-  margin-left: 28px;
-  vertical-align: -4px;
+.eg-size-dropdown.is-open + .eg-popup__cart {
+  margin-top: 49px;
 }
 
 #EgMessage {
@@ -364,6 +408,13 @@
   font-size: 11px;
   line-height: 1.2;
   color: #000;
+}
+
+.eg-popup__cart::after {
+  content: " →";
+  font-size: 29px;
+  margin-left: 28px;
+  vertical-align: -4px;
 }
 
 @media (max-width: 749px) {
@@ -438,7 +489,10 @@
   const price = document.getElementById('EgPrice');
   const desc = document.getElementById('EgDesc');
   const colorOptions = document.getElementById('EgColorOptions');
-  const sizeSelect = document.getElementById('EgSizeSelect');
+  const sizeDropdown = document.getElementById('EgSizeDropdown');
+  const sizeTrigger = document.getElementById('EgSizeTrigger');
+  const sizeText = document.getElementById('EgSizeText');
+  const sizeMenu = document.getElementById('EgSizeMenu');
   const cartBtn = document.getElementById('EgCartBtn');
   const message = document.getElementById('EgMessage');
 
@@ -456,6 +510,7 @@
     popup.classList.remove('is-open');
     document.body.style.overflow = '';
     message.textContent = '';
+    sizeDropdown.classList.remove('is-open');
   }
 
   function getOptionName(option) {
@@ -514,6 +569,16 @@
     });
   }
 
+  function resetSize() {
+    selectedSize = '';
+    sizeText.textContent = 'Choose your size';
+    sizeDropdown.classList.remove('is-open');
+
+    sizeMenu.querySelectorAll('button').forEach(function (item) {
+      item.classList.remove('is-selected');
+    });
+  }
+
   function loadPopup(btn) {
     title.textContent = btn.dataset.title || '';
     price.textContent = btn.dataset.price || '';
@@ -530,9 +595,7 @@
       currentOptions = [];
     }
 
-    selectedSize = '';
-    sizeSelect.value = '';
-
+    resetSize();
     renderColors();
     openPopup();
   }
@@ -543,8 +606,31 @@
     });
   });
 
-  sizeSelect.addEventListener('change', function () {
-    selectedSize = sizeSelect.value;
+  sizeTrigger.addEventListener('click', function (event) {
+    event.stopPropagation();
+    sizeDropdown.classList.toggle('is-open');
+  });
+
+  sizeMenu.querySelectorAll('button').forEach(function (btn) {
+    btn.addEventListener('click', function (event) {
+      event.stopPropagation();
+
+      selectedSize = btn.dataset.size;
+      sizeText.textContent = selectedSize;
+
+      sizeMenu.querySelectorAll('button').forEach(function (item) {
+        item.classList.remove('is-selected');
+      });
+
+      btn.classList.add('is-selected');
+      sizeDropdown.classList.remove('is-open');
+    });
+  });
+
+  document.addEventListener('click', function (event) {
+    if (!sizeDropdown.contains(event.target)) {
+      sizeDropdown.classList.remove('is-open');
+    }
   });
 
   document.querySelectorAll('[data-close]').forEach(function (btn) {
