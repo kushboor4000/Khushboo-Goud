@@ -173,17 +173,27 @@
     height: 520px;
     position: relative;
     overflow: hidden;
-    background-image: url({{ section.settings.mobile_banner_image | image_url: width: 900 }});
-    background-size: 100% auto;
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-color: #fff;
+    background: #fff;
     font-family: Arial, Helvetica, sans-serif;
     color: #000;
   }
 
+  .eg-mobile-banner::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 205px;
+    height: 245px;
+    background-image: url({{ section.settings.mobile_banner_image | image_url: width: 900 }});
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    z-index: 1;
+  }
+
   .eg-mobile-banner__top {
-    height: 64px;
+    height: 45px;
     display: grid;
     grid-template-columns: 32px 1fr 32px;
     align-items: center;
@@ -197,8 +207,7 @@
   .eg-mobile-banner__hamburger {
     border: 0;
     background: transparent;
-    font-size: 24px;
-    line-height: 1;
+    font-size: 22px;
     padding: 0;
     color: #000;
     cursor: pointer;
@@ -206,13 +215,13 @@
 
   .eg-mobile-banner__logo {
     text-align: center;
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 700;
   }
 
   .eg-mobile-banner__content {
     position: absolute;
-    top: 116px;
+    top: 92px;
     left: 24px;
     right: 24px;
     text-align: center;
@@ -220,7 +229,7 @@
   }
 
   .eg-mobile-banner__content h1 {
-    margin: 0 0 24px;
+    margin: 0 0 18px;
     font-size: 30px;
     line-height: 1.1;
     font-weight: 700;
@@ -236,7 +245,7 @@
   .eg-mobile-banner__shop {
     position: absolute;
     left: 50%;
-    top: 384px;
+    top: 365px;
     transform: translateX(-50%);
     width: 190px;
     height: 48px;
@@ -248,7 +257,7 @@
     justify-content: center;
     gap: 34px;
     font-size: 15px;
-    z-index: 5;
+    z-index: 10;
   }
 
   .eg-mobile-banner__strip {
@@ -262,12 +271,12 @@
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    z-index: 5;
+    z-index: 10;
   }
 
   .eg-mobile-menu {
     position: absolute;
-    top: 64px;
+    top: 45px;
     left: 0;
     right: 0;
     background: #f4f4f4;
@@ -305,7 +314,6 @@
     font-size: 15px;
   }
 }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
