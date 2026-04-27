@@ -367,250 +367,217 @@
 
 <script>
 (function () {
-  const popup = document.getElementById('EgPopup');
-  const image = document.getElementById('EgImage');
-  const title = document.getElementById('EgTitle');
-  const price = document.getElementById('EgPrice');
-  const desc = document.getElementById('EgDesc');
-  const optionsBox = document.getElementById('EgOptions');
-  const cartBtn = document.getElementById('EgCartBtn');
-  const message = document.getElementById('EgMessage');
+  function initEgGrid() {
+    const popup = document.getElementById('EgPopup');
+    const image = document.getElementById('EgImage');
+    const title = document.getElementById('EgTitle');
+    const price = document.getElementById('EgPrice');
+    const desc = document.getElementById('EgDesc');
+    const optionsBox = document.getElementById('EgOptions');
+    const cartBtn = document.getElementById('EgCartBtn');
+    const message = document.getElementById('EgMessage');
 
-  let currentProduct = null;
-  let selectedOptions = [];
+    if (!popup || !image || !title || !price || !desc || !optionsBox || !cartBtn) return;
 
-  const colorMap = {
-    White: '#ffffff',
-    Black: '#000000',
-    Grey: '#b8b8b8',
-    Gray: '#b8b8b8',
-    Red: '#c90035',
-    Blue: '#1f57c8'
-  };
+    let currentProduct = null;
+    let selectedOptions = [];
 
-  function money(cents) {
-    return (cents / 100).toLocaleString('en-US', {
-      style: 'currency',
-      currency: '{{ cart.currency.iso_code }}'
-    });
-  }
-
-  function openPopup() {
-    popup.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePopup() {
-    popup.classList.remove('is-open');
-    document.body.style.overflow = '';
-    message.textContent = '';
-  }
-
-  function selectedVariant() {
-    if (!currentProduct) return null;
-
-    return currentProduct.variants.find(function (variant) {
-      return variant.options.every(function (value, index) {
-        return value === selectedOptions[index];
+    function money(cents) {
+      return (cents / 100).toLocaleString('en-US', {
+        style: 'currency',
+        currency: '{{ cart.currency.iso_code }}'
       });
-    });
-  }
-
-  function updatePrice() {
-    const variant = selectedVariant();
-    if (variant) {
-      price.textContent = money(variant.price);
     }
-  }
 
-  function getOptionValues(optionIndex) {
-    const values = [];
-    currentProduct.variants.forEach(function (variant) {
-      const value = variant.options[optionIndex];
-      if (!values.includes(value)) values.push(value);
-    });
-    return values;
-  }
+    function openPopup() {
+      popup.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
 
-  function renderColorOption(optionName, optionIndex) {
-    const wrap = document.createElement('div');
-    wrap.className = 'eg-option';
+    function closePopup() {
+      popup.classList.remove('is-open');
+      document.body.style.overflow = '';
+      if (message) message.textContent = '';
+    }
 
-    const label = document.createElement('label');
-    label.className = 'eg-option__label';
-    label.textContent = optionName;
+    function selectedVariant() {
+      if (!currentProduct) return null;
 
-    const colors = document.createElement('div');
-    colors.className = 'eg-colors';
+      return currentProduct.variants.find(function (variant) {
+        return variant.options.every(function (value, index) {
+          return value === selectedOptions[index];
+        });
+      });
+    }
 
-    getOptionValues(optionIndex).slice(0, 2).forEach(function (value) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'eg-color';
-      btn.textContent = value;
-      btn.style.setProperty('--swatch-color', colorMap[value] || '#000');
+    function updatePrice() {
+      const variant = selectedVariant();
+      if (variant) price.textContent = money(variant.price);
+    }
 
-      if (selectedOptions[optionIndex] === value) {
-        btn.classList.add('is-selected');
-      }
+    function renderOptions() {
+      optionsBox.innerHTML = '';
 
-      btn.addEventListener('click', function () {
-        selectedOptions[optionIndex] = value;
+      currentProduct.options.forEach(function (optionName, optionIndex) {
+        const values = [];
 
-        colors.querySelectorAll('.eg-color').forEach(function (item) {
-          item.classList.remove('is-selected');
+        currentProduct.variants.forEach(function (variant) {
+          const value = variant.options[optionIndex];
+          if (!values.includes(value)) values.push(value);
         });
 
-        btn.classList.add('is-selected');
+        const wrap = document.createElement('div');
+        wrap.className = 'eg-option';
+
+        const label = document.createElement('label');
+        label.className = 'eg-option__label';
+        label.textContent = optionName;
+
+        const valuesWrap = document.createElement('div');
+
+        if (optionName.toLowerCase().includes('color') || optionName.toLowerCase().includes('colour')) {
+          valuesWrap.className = 'eg-colors';
+
+          values.slice(0, 2).forEach(function (value) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'eg-color';
+            btn.textContent = value;
+
+            const colorMap = {
+              White: '#fff',
+              Black: '#000',
+              Grey: '#b8b8b8',
+              Gray: '#b8b8b8',
+              Red: '#c90035',
+              Blue: '#1f57c8'
+            };
+
+            btn.style.setProperty('--swatch-color', colorMap[value] || '#000');
+
+            if (selectedOptions[optionIndex] === value) {
+              btn.classList.add('is-selected');
+            }
+
+            btn.addEventListener('click', function () {
+              selectedOptions[optionIndex] = value;
+
+              valuesWrap.querySelectorAll('button').forEach(function (item) {
+                item.classList.remove('is-selected');
+              });
+
+              btn.classList.add('is-selected');
+              updatePrice();
+            });
+
+            valuesWrap.appendChild(btn);
+          });
+        } else if (optionName.toLowerCase().includes('size')) {
+          valuesWrap.className = 'eg-size-wrap';
+
+          const select = document.createElement('select');
+          select.className = 'eg-size';
+
+          const placeholder = document.createElement('option');
+          placeholder.textContent = 'Choose your size';
+          placeholder.value = '';
+          select.appendChild(placeholder);
+
+          values.forEach(function (value) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+          });
+
+          select.addEventListener('change', function () {
+            if (select.value) {
+              selectedOptions[optionIndex] = select.value;
+              updatePrice();
+            }
+          });
+
+          valuesWrap.appendChild(select);
+        }
+
+        wrap.appendChild(label);
+        wrap.appendChild(valuesWrap);
+        optionsBox.appendChild(wrap);
+      });
+    }
+
+    async function loadProduct(handle) {
+      if (!handle) return;
+
+      try {
+        if (message) message.textContent = 'Loading...';
+
+        const res = await fetch('/products/' + handle + '.js');
+        currentProduct = await res.json();
+
+        selectedOptions = currentProduct.variants[0].options.slice();
+
+        image.src = currentProduct.featured_image || '';
+        image.alt = currentProduct.title;
+        title.textContent = currentProduct.title;
+        price.textContent = money(currentProduct.variants[0].price);
+        desc.innerHTML = currentProduct.description || 'This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.';
+
+        renderOptions();
         updatePrice();
-      });
 
-      colors.appendChild(btn);
-    });
+        if (message) message.textContent = '';
+        openPopup();
+      } catch (error) {
+        if (message) message.textContent = 'Product could not be loaded.';
+      }
+    }
 
-    wrap.appendChild(label);
-    wrap.appendChild(colors);
-    optionsBox.appendChild(wrap);
-  }
+    document.addEventListener('click', function (event) {
+      const plus = event.target.closest('.eg-grid__plus');
 
-  function renderSizeOption(optionName, optionIndex) {
-    const wrap = document.createElement('div');
-    wrap.className = 'eg-option';
+      if (plus) {
+        event.preventDefault();
+        event.stopPropagation();
+        loadProduct(plus.getAttribute('data-handle'));
+      }
 
-    const label = document.createElement('label');
-    label.className = 'eg-option__label';
-    label.textContent = optionName;
-
-    const selectWrap = document.createElement('div');
-    selectWrap.className = 'eg-size-wrap';
-
-    const select = document.createElement('select');
-    select.className = 'eg-size';
-
-    const placeholder = document.createElement('option');
-    placeholder.textContent = 'Choose your size';
-    placeholder.value = '';
-    select.appendChild(placeholder);
-
-    getOptionValues(optionIndex).forEach(function (value) {
-      const option = document.createElement('option');
-      option.value = value;
-      option.textContent = value;
-      select.appendChild(option);
-    });
-
-    select.addEventListener('change', function () {
-      if (select.value) {
-        selectedOptions[optionIndex] = select.value;
-        updatePrice();
+      if (event.target.closest('[data-close]')) {
+        closePopup();
       }
     });
 
-    selectWrap.appendChild(select);
-    wrap.appendChild(label);
-    wrap.appendChild(selectWrap);
-    optionsBox.appendChild(wrap);
-  }
+    cartBtn.addEventListener('click', async function () {
+      const variant = selectedVariant();
 
-  function renderOptions() {
-    optionsBox.innerHTML = '';
+      if (!variant) {
+        message.textContent = 'Please select available options.';
+        return;
+      }
 
-    currentProduct.options.forEach(function (optionName, index) {
-      const lowerName = optionName.toLowerCase();
+      message.textContent = 'Adding...';
 
-      if (lowerName.includes('color') || lowerName.includes('colour')) {
-        renderColorOption(optionName, index);
-      } else if (lowerName.includes('size')) {
-        renderSizeOption(optionName, index);
+      try {
+        await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: variant.id,
+            quantity: 1
+          })
+        });
+
+        message.textContent = 'Added to cart.';
+      } catch (error) {
+        message.textContent = 'Could not add to cart.';
       }
     });
   }
 
-  async function loadProduct(handle) {
-    message.textContent = 'Loading...';
+  initEgGrid();
 
-    try {
-      const res = await fetch('/products/' + handle + '.js');
-      currentProduct = await res.json();
-
-      selectedOptions = currentProduct.variants[0].options.slice();
-
-      image.src = currentProduct.featured_image || '';
-      image.alt = currentProduct.title;
-      title.textContent = currentProduct.title;
-      price.textContent = money(currentProduct.variants[0].price);
-      desc.innerHTML = currentProduct.description || 'This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.';
-
-      renderOptions();
-      updatePrice();
-      message.textContent = '';
-      openPopup();
-    } catch (error) {
-      message.textContent = 'Product could not be loaded.';
-    }
-  }
-
-  async function addSoftWinterJacket() {
-    try {
-      const res = await fetch('/products/soft-winter-jacket.js');
-      const jacket = await res.json();
-
-      if (!jacket.variants || !jacket.variants[0]) return;
-
-      await fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: jacket.variants[0].id, quantity: 1 })
-      });
-    } catch (error) {
-      console.log('Soft Winter Jacket not added');
-    }
-  }
-
-  document.addEventListener('click', function (event) {
-    const plusBtn = event.target.closest('.eg-grid__plus');
-    if (plusBtn) {
-      const handle = plusBtn.getAttribute('data-handle');
-      if (handle) loadProduct(handle);
-    }
-
-    if (event.target.closest('[data-close]')) {
-      closePopup();
-    }
-  });
-
-  document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') closePopup();
-  });
-
-  cartBtn.addEventListener('click', async function () {
-    const variant = selectedVariant();
-
-    if (!variant) {
-      message.textContent = 'Please select available options.';
-      return;
-    }
-
-    message.textContent = 'Adding...';
-
-    try {
-      await fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: variant.id, quantity: 1 })
-      });
-
-      const hasBlack = selectedOptions.includes('Black');
-      const hasMedium = selectedOptions.includes('Medium') || selectedOptions.includes('M');
-
-      if (hasBlack && hasMedium) {
-        await addSoftWinterJacket();
-      }
-
-      message.textContent = 'Added to cart.';
-    } catch (error) {
-      message.textContent = 'Could not add to cart.';
-    }
+  document.addEventListener('shopify:section:load', function () {
+    initEgGrid();
   });
 })();
 </script>
