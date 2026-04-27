@@ -86,7 +86,7 @@
         "collection_color_scheme": "default"
       }
     },
-    "custom_banner_MfEAYr": {
+    "custom_banner_hViJhG": {
       "type": "custom-banner",
       "name": "Custom Banner",
       "settings": {
@@ -110,6 +110,6 @@
   },
   "order": [
     "header_section",
-    "custom_banner_MfEAYr"
+    "custom_banner_hViJhG"
   ]
 }
