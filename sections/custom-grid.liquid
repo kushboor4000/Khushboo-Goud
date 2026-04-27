@@ -79,7 +79,7 @@
 <style>
 .eg-grid {
   max-width: 1440px;
-  margin: 0 auto;
+  margin: -30px auto 0;
   padding: 55px 50px;
   font-family: Arial, sans-serif;
 }
@@ -126,7 +126,6 @@
   z-index: 3;
 }
 
-/* Desktop plus positions exactly different */
 .eg-grid__card:nth-child(1) .eg-grid__plus {
   top: 63%;
   left: 54%;
@@ -279,14 +278,18 @@
   border-right: 0;
 }
 
+.eg-color-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.eg-color-btn.is-selected {
+  background: #000;
+  color: #fff;
+}
+
 .eg-color-btn.is-selected::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 5px;
-  background: var(--swatch-color, #000);
+  display: none;
 }
 
 .eg-size-select-wrap {
@@ -331,6 +334,11 @@
   cursor: pointer;
 }
 
+#EgSizeSelect option:checked {
+  background: #000;
+  color: #fff;
+}
+
 .eg-popup__cart {
   width: 100%;
   height: 45px;
@@ -360,7 +368,8 @@
 
 @media (max-width: 749px) {
   .eg-grid {
-    padding: 38px 0;
+    margin: -30px auto 0;
+    padding: 10px 0 38px;
   }
 
   .eg-grid h2 {
@@ -449,19 +458,6 @@
     message.textContent = '';
   }
 
-  function colorHex(name) {
-    const map = {
-      black: '#000',
-      white: '#fff',
-      blue: '#1f5fbf',
-      red: '#b00028',
-      grey: '#b8b8b8',
-      gray: '#b8b8b8'
-    };
-
-    return map[String(name).toLowerCase()] || '#000';
-  }
-
   function getOptionName(option) {
     return typeof option === 'string' ? option : option.name;
   }
@@ -499,7 +495,6 @@
       btn.type = 'button';
       btn.className = 'eg-color-btn';
       btn.textContent = color;
-      btn.style.setProperty('--swatch-color', colorHex(color));
 
       if (index === 0) {
         btn.classList.add('is-selected');
