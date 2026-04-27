@@ -7,23 +7,18 @@
       {% if product != blank %}
         <div class="eg-grid__card" {{ block.shopify_attributes }}>
           <img
-            src="{{ product.featured_image | image_url: width: 900 }}"
+            src="{{ product.featured_image | image_url: width: 700 }}"
             alt="{{ product.title | escape }}"
-            width="900"
-            height="1100"
+            width="700"
+            height="850"
             loading="lazy"
           >
 
           <button
             type="button"
             class="eg-grid__plus"
-            data-title="{{ product.title | escape }}"
-            data-price="{{ product.price | money }}"
-            data-desc="{{ product.description | strip_html | escape }}"
-            data-image="{{ product.featured_image | image_url: width: 300 }}"
-            data-variants='{{ product.variants | json | escape }}'
-            data-options='{{ product.options_with_values | json | escape }}'
-            aria-label="Open {{ product.title | escape }}"
+            data-handle="{{ product.handle }}"
+            aria-label="Open product"
           >
             +
           </button>
@@ -39,38 +34,16 @@
       <button type="button" class="eg-popup__close" data-close>×</button>
 
       <div class="eg-popup__top">
-        <img id="EgImage" src="" alt="" width="120" height="140">
+        <img id="EgImage" src="" alt="" width="116" height="140">
 
-        <div class="eg-popup__info">
+        <div class="eg-popup__content">
           <h3 id="EgTitle"></h3>
           <p id="EgPrice"></p>
           <div id="EgDesc"></div>
         </div>
       </div>
 
-      <div class="eg-option">
-        <label>Color</label>
-        <div class="eg-color-boxes" id="EgColorOptions"></div>
-      </div>
-
-      <div class="eg-option">
-        <label>Size</label>
-
-        <div class="eg-size-dropdown" id="EgSizeDropdown">
-          <button type="button" class="eg-size-trigger" id="EgSizeTrigger">
-            <span id="EgSizeText">Choose your size</span>
-            <span class="eg-size-arrow"></span>
-          </button>
-
-          <div class="eg-size-menu" id="EgSizeMenu">
-            <button type="button" data-size="XS">XS</button>
-            <button type="button" data-size="S">S</button>
-            <button type="button" data-size="M">M</button>
-            <button type="button" data-size="L">L</button>
-            <button type="button" data-size="XL">XL</button>
-          </div>
-        </div>
-      </div>
+      <div id="EgOptions"></div>
 
       <button type="button" id="EgCartBtn" class="eg-popup__cart">
         ADD TO CART
@@ -82,33 +55,20 @@
 </section>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Lustria&display=swap');
-
-.eg-grid,
-.eg-grid * {
-  font-family: 'Lustria', serif;
-}
-
 .eg-grid {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 36px 67px 60px;
-  background: #fff;
-  box-shadow: 0 0 0 100vw #000;
-  clip-path: inset(0 -100vw);
+  padding: 55px 50px;
+  font-family: Arial, sans-serif;
 }
 
 .eg-grid h2 {
+  font-size: 32px;
   margin: 0 0 28px;
-  padding-left: 0;
-  font-size: 28px;
-  font-weight: 400;
-  text-align: left;
+  font-weight: 500;
 }
 
 .eg-grid__items {
-  width: 100%;
-  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
@@ -122,73 +82,92 @@
 
 .eg-grid__card img {
   width: 100%;
-  height: 500px;
+  height: 430px;
   object-fit: cover;
   display: block;
 }
 
 .eg-grid__plus {
   position: absolute;
-  transform: translate(-50%, -50%);
   width: 22px;
   height: 22px;
-  border: 0;
+  border: none;
   border-radius: 50%;
   background: #fff;
   color: #000;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 19px;
   cursor: pointer;
+  z-index: 2;
   padding: 0;
-  z-index: 3;
 }
 
-.eg-grid__card:nth-child(1) .eg-grid__plus { top: 63%; left: 54%; }
-.eg-grid__card:nth-child(2) .eg-grid__plus { top: 53%; left: 84%; }
-.eg-grid__card:nth-child(3) .eg-grid__plus { top: 21%; left: 64%; }
-.eg-grid__card:nth-child(4) .eg-grid__plus { top: 16%; left: 73%; }
-.eg-grid__card:nth-child(5) .eg-grid__plus { top: 22%; left: 52%; }
-.eg-grid__card:nth-child(6) .eg-grid__plus { top: 67%; left: 45%; }
+/* Different plus icon position for every grid card */
+.eg-grid__card:nth-child(1) .eg-grid__plus {
+  top: 10%;
+  right: 18%;
+}
+
+.eg-grid__card:nth-child(2) .eg-grid__plus {
+  top: 7%;
+  right: 15%;
+}
+
+.eg-grid__card:nth-child(3) .eg-grid__plus {
+  top: 17%;
+  right: 34%;
+}
+
+.eg-grid__card:nth-child(4) .eg-grid__plus {
+  top: 14%;
+  right: 22%;
+}
+
+.eg-grid__card:nth-child(5) .eg-grid__plus {
+  top: 15%;
+  right: 38%;
+}
+
+.eg-grid__card:nth-child(6) .eg-grid__plus {
+  top: 13%;
+  right: 28%;
+}
 
 .eg-popup {
   display: none;
   position: fixed;
   inset: 0;
   z-index: 99999;
-  align-items: center;
-  justify-content: center;
 }
 
 .eg-popup.is-open {
-  display: flex;
+  display: block;
 }
 
 .eg-popup__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0,0,0,0.45);
 }
 
 .eg-popup__box {
   position: relative;
-  z-index: 2;
-  width: 311px;
-  height: 447px;
-  padding: 20px 17px 0;
   background: #fff;
-  border: 1px solid #000;
+  width: 315px;
+  max-width: calc(100vw - 32px);
+  margin: 70px auto;
+  padding: 20px;
+  z-index: 2;
   box-sizing: border-box;
-  overflow: visible;
 }
 
 .eg-popup__close {
   position: absolute;
-  top: 9px;
+  top: 8px;
   right: 14px;
-  background: transparent;
-  border: 0;
-  color: #000;
-  font-size: 26px;
+  background: none;
+  border: none;
+  font-size: 24px;
   line-height: 1;
   cursor: pointer;
   padding: 0;
@@ -196,243 +175,125 @@
 
 .eg-popup__top {
   display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 9px;
+  grid-template-columns: 116px 1fr;
+  gap: 10px;
   align-items: start;
 }
 
 .eg-popup__top img {
-  width: 120px;
+  width: 116px;
   height: 140px;
   object-fit: cover;
   display: block;
 }
 
-.eg-popup__info {
-  padding-top: 3px;
+.eg-popup__content {
+  padding-top: 18px;
 }
 
 .eg-popup h3 {
-  margin: 0 20px 11px 0;
+  margin: 0 0 12px;
   font-size: 16px;
-  line-height: 1.22;
   font-weight: 400;
-  color: #000;
+  line-height: 1.2;
 }
 
 #EgPrice {
-  margin: 0 0 13px;
   font-size: 16px;
+  margin: 0 0 12px;
   line-height: 1.2;
-  color: #000;
 }
 
 #EgDesc {
-  height: 54px;
-  overflow: hidden;
   font-size: 12px;
-  line-height: 1.12;
-  color: #000;
+  line-height: 1.2;
+  margin-bottom: 0;
+  max-height: 56px;
+  overflow: hidden;
 }
 
 .eg-option {
   margin-top: 12px;
+  margin-bottom: 14px;
 }
 
 .eg-option label {
   display: block;
-  margin-bottom: 6px;
-  color: #000;
-  font-size: 13px;
   font-weight: 400;
-  line-height: 1;
+  margin-bottom: 6px;
+  font-size: 13px;
 }
 
-.eg-color-boxes {
-  position: relative;
+.eg-option__values {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 41px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
   border: 1px solid #777;
 }
 
-.eg-color-boxes::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 5px;
-  background: #1f5fbf;
-  z-index: 3;
-}
-
-.eg-color-btn {
-  position: relative;
-  border: 0;
+.eg-option button {
+  border: none;
   border-right: 1px solid #777;
   background: #fff;
-  color: #000;
-  padding: 0 11px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 16px;
   text-align: left;
-  font-size: 16px;
-  cursor: pointer;
+  min-height: 40px;
 }
 
-.eg-color-btn:last-child {
-  border-right: 0;
+.eg-option button:last-child {
+  border-right: none;
 }
 
-.eg-color-btn:hover {
+.eg-option button.is-selected {
   background: #fff;
   color: #000;
-}
-
-.eg-color-btn.is-selected {
-  background: #000;
-  color: #fff;
-}
-
-.eg-color-btn.is-selected::before {
-  display: none;
-}
-
-.eg-size-dropdown {
-  position: relative;
-  width: 100%;
-}
-
-.eg-size-trigger {
-  width: 100%;
-  height: 41px;
-  border: 1px solid #777;
-  background: #fff;
-  color: #000;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 68px;
-  align-items: center;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.eg-size-trigger span:first-child {
-  text-align: left;
-  padding-left: 15px;
-}
-
-.eg-size-arrow {
-  width: 100%;
-  height: 100%;
-  border-left: 1px solid #777;
-  position: relative;
-}
-
-.eg-size-arrow::after {
-  content: "";
-  position: absolute;
-  top: 12px;
-  left: 27px;
-  width: 10px;
-  height: 10px;
-  border-left: 2px solid #000;
-  border-top: 2px solid #000;
-  transform: rotate(225deg);
-}
-
-.eg-size-dropdown.is-open .eg-size-arrow::after {
-  top: 16px;
-  transform: rotate(45deg);
-}
-
-.eg-size-menu {
-  display: none;
-  width: 100%;
-  border-left: 1px solid #777;
-  border-right: 1px solid #777;
-  border-bottom: 1px solid #777;
-  background: #fff;
-  box-sizing: border-box;
-  position: absolute;
-  left: 0;
-  top: 41px;
-  z-index: 20;
-}
-
-.eg-size-dropdown.is-open .eg-size-menu {
-  display: block;
-}
-
-.eg-size-menu button {
-  width: 100%;
-  height: 39px;
-  border: 0;
-  background: #fff;
-  color: #000;
-  font-size: 16px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.eg-size-menu button:hover,
-.eg-size-menu button.is-selected {
-  background: #000;
-  color: #fff;
+  box-shadow: inset 5px 0 0 #000;
 }
 
 .eg-popup__cart {
   width: 100%;
-  height: 45px;
-  margin-top: 49px;
   background: #000;
   color: #fff;
-  border: 0;
-  font-size: 14px;
+  border: none;
+  padding: 15px;
   font-weight: 400;
   cursor: pointer;
-  letter-spacing: 0.2px;
+  font-size: 14px;
+  letter-spacing: .2px;
+  margin-top: 14px;
 }
 
 .eg-popup__cart::after {
   content: " →";
-  font-size: 29px;
+  font-size: 28px;
   margin-left: 28px;
-  vertical-align: -4px;
+  vertical-align: -3px;
 }
 
 #EgMessage {
-  margin: 6px 0 0;
-  font-size: 11px;
-  line-height: 1.2;
-  color: #000;
+  font-size: 12px;
+  margin: 8px 0 0;
 }
 
 @media (max-width: 749px) {
   .eg-grid {
-    margin: 0 auto;
-    padding: 0 0 38px;
-    background: #fff;
-    box-shadow: none;
-    clip-path: none;
+    padding: 38px 0;
   }
 
   .eg-grid h2 {
-    max-width: none;
-    margin: 0 0 28px;
-    padding: 10px 16px 0;
     font-size: 26px;
-    text-align: left;
+    padding: 0 16px;
   }
 
   .eg-grid__items {
-    max-width: none;
-    margin: 0;
     grid-template-columns: repeat(2, 1fr);
     gap: 3px;
   }
 
   .eg-grid__card img {
-    height: 230px;
+    height: 190px;
   }
 
   .eg-grid__plus {
@@ -442,16 +303,53 @@
     line-height: 18px;
   }
 
-  .eg-grid__card:nth-child(1) .eg-grid__plus { top: 62%; left: 55%; }
-  .eg-grid__card:nth-child(2) .eg-grid__plus { top: 52%; left: 84%; }
-  .eg-grid__card:nth-child(3) .eg-grid__plus { top: 20%; left: 65%; }
-  .eg-grid__card:nth-child(4) .eg-grid__plus { top: 16%; left: 73%; }
-  .eg-grid__card:nth-child(5) .eg-grid__plus { top: 22%; left: 52%; }
-  .eg-grid__card:nth-child(6) .eg-grid__plus { top: 67%; left: 45%; }
+  .eg-grid__card:nth-child(1) .eg-grid__plus {
+    top: 9%;
+    right: 20%;
+  }
+
+  .eg-grid__card:nth-child(2) .eg-grid__plus {
+    top: 8%;
+    right: 16%;
+  }
+
+  .eg-grid__card:nth-child(3) .eg-grid__plus {
+    top: 18%;
+    right: 34%;
+  }
+
+  .eg-grid__card:nth-child(4) .eg-grid__plus {
+    top: 13%;
+    right: 20%;
+  }
+
+  .eg-grid__card:nth-child(5) .eg-grid__plus {
+    top: 15%;
+    right: 36%;
+  }
+
+  .eg-grid__card:nth-child(6) .eg-grid__plus {
+    top: 12%;
+    right: 28%;
+  }
 
   .eg-popup__box {
-    width: 311px;
-    height: 447px;
+    width: 315px;
+    max-width: calc(100vw - 24px);
+    margin: 28px auto;
+    padding: 20px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .eg-popup__top {
+    grid-template-columns: 116px 1fr;
+    gap: 10px;
+  }
+
+  .eg-popup__top img {
+    width: 116px;
+    height: 140px;
   }
 }
 </style>
@@ -463,18 +361,19 @@
   const title = document.getElementById('EgTitle');
   const price = document.getElementById('EgPrice');
   const desc = document.getElementById('EgDesc');
-  const colorOptions = document.getElementById('EgColorOptions');
-  const sizeDropdown = document.getElementById('EgSizeDropdown');
-  const sizeTrigger = document.getElementById('EgSizeTrigger');
-  const sizeText = document.getElementById('EgSizeText');
-  const sizeMenu = document.getElementById('EgSizeMenu');
+  const optionsBox = document.getElementById('EgOptions');
   const cartBtn = document.getElementById('EgCartBtn');
   const message = document.getElementById('EgMessage');
 
-  let currentVariants = [];
-  let currentOptions = [];
-  let selectedColor = '';
-  let selectedSize = '';
+  let currentProduct = null;
+  let selectedOptions = [];
+
+  function money(cents) {
+    return (cents / 100).toLocaleString('en-US', {
+      style: 'currency',
+      currency: '{{ cart.currency.iso_code }}'
+    });
+  }
 
   function openPopup() {
     popup.classList.add('is-open');
@@ -485,158 +384,140 @@
     popup.classList.remove('is-open');
     document.body.style.overflow = '';
     message.textContent = '';
-    sizeDropdown.classList.remove('is-open');
   }
 
-  function getOptionName(option) {
-    return typeof option === 'string' ? option : option.name;
-  }
+  function selectedVariant() {
+    if (!currentProduct) return null;
 
-  function getColorValues() {
-    const colorOption = currentOptions.find(function (option) {
-      return getOptionName(option).toLowerCase().includes('color');
+    return currentProduct.variants.find(function (variant) {
+      return variant.options.every(function (value, index) {
+        return value === selectedOptions[index];
+      });
     });
+  }
 
-    if (colorOption && colorOption.values && colorOption.values.length) {
-      return colorOption.values.slice(0, 2);
+  function updatePrice() {
+    const variant = selectedVariant();
+    if (variant) {
+      price.textContent = money(variant.price);
     }
-
-    return ['White', 'Black'];
   }
 
-  function findVariant() {
-    if (!currentVariants.length) return null;
+  function renderOptions() {
+    optionsBox.innerHTML = '';
 
-    return currentVariants.find(function (variant) {
-      const opts = variant.options || [];
-      const colorMatch = !selectedColor || opts.includes(selectedColor);
-      const sizeMatch = !selectedSize || opts.includes(selectedSize);
-      return colorMatch && sizeMatch;
-    }) || currentVariants[0];
-  }
+    currentProduct.options.forEach(function (optionName, optionIndex) {
+      const values = [];
 
-  function renderColors() {
-    const colors = getColorValues();
-    colorOptions.innerHTML = '';
-    selectedColor = colors[0] || '';
-
-    colors.forEach(function (color, index) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'eg-color-btn';
-      btn.textContent = color;
-
-      if (index === 0) {
-        btn.classList.add('is-selected');
-      }
-
-      btn.addEventListener('click', function () {
-        selectedColor = color;
-
-        colorOptions.querySelectorAll('.eg-color-btn').forEach(function (item) {
-          item.classList.remove('is-selected');
-        });
-
-        btn.classList.add('is-selected');
+      currentProduct.variants.forEach(function (variant) {
+        const value = variant.options[optionIndex];
+        if (!values.includes(value)) values.push(value);
       });
 
-      colorOptions.appendChild(btn);
+      const wrap = document.createElement('div');
+      wrap.className = 'eg-option';
+
+      const label = document.createElement('label');
+      label.textContent = optionName;
+
+      const valuesWrap = document.createElement('div');
+      valuesWrap.className = 'eg-option__values';
+
+      values.forEach(function (value) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = value;
+
+        if (selectedOptions[optionIndex] === value) {
+          btn.classList.add('is-selected');
+        }
+
+        btn.addEventListener('click', function () {
+          selectedOptions[optionIndex] = value;
+
+          valuesWrap.querySelectorAll('button').forEach(function (item) {
+            item.classList.remove('is-selected');
+          });
+
+          btn.classList.add('is-selected');
+          updatePrice();
+        });
+
+        valuesWrap.appendChild(btn);
+      });
+
+      wrap.appendChild(label);
+      wrap.appendChild(valuesWrap);
+      optionsBox.appendChild(wrap);
     });
   }
 
-  function resetSize() {
-    selectedSize = '';
-    sizeText.textContent = 'Choose your size';
-    sizeDropdown.classList.remove('is-open');
-
-    sizeMenu.querySelectorAll('button').forEach(function (item) {
-      item.classList.remove('is-selected');
-    });
-  }
-
-  function loadPopup(btn) {
-    title.textContent = btn.dataset.title || '';
-    price.textContent = btn.dataset.price || '';
-    desc.textContent = btn.dataset.desc || '';
-    image.src = btn.dataset.image || '';
-    image.alt = btn.dataset.title || '';
-    message.textContent = '';
+  async function loadProduct(handle) {
+    message.textContent = 'Loading...';
+    openPopup();
 
     try {
-      currentVariants = JSON.parse(btn.dataset.variants || '[]');
-      currentOptions = JSON.parse(btn.dataset.options || '[]');
-    } catch (error) {
-      currentVariants = [];
-      currentOptions = [];
-    }
+      const res = await fetch('/products/' + handle + '.js');
+      currentProduct = await res.json();
 
-    resetSize();
-    renderColors();
-    openPopup();
+      selectedOptions = currentProduct.variants[0].options.slice();
+
+      image.src = currentProduct.featured_image || '';
+      image.alt = currentProduct.title;
+      title.textContent = currentProduct.title;
+      desc.innerHTML = currentProduct.description || '';
+
+      renderOptions();
+      updatePrice();
+
+      message.textContent = '';
+    } catch (error) {
+      message.textContent = 'Product could not be loaded.';
+    }
+  }
+
+  async function addSoftWinterJacket() {
+    try {
+      const res = await fetch('/products/soft-winter-jacket.js');
+      const jacket = await res.json();
+
+      if (!jacket.variants || !jacket.variants[0]) return;
+
+      await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: jacket.variants[0].id,
+          quantity: 1
+        })
+      });
+    } catch (error) {
+      console.log('Soft Winter Jacket not found');
+    }
   }
 
   document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      loadPopup(btn);
+      loadProduct(btn.dataset.handle);
     });
-  });
-
-  sizeTrigger.addEventListener('click', function (event) {
-    event.stopPropagation();
-    sizeDropdown.classList.toggle('is-open');
-  });
-
-  sizeMenu.querySelectorAll('button').forEach(function (btn) {
-    btn.addEventListener('click', function (event) {
-      event.stopPropagation();
-
-      selectedSize = btn.dataset.size;
-      sizeText.textContent = selectedSize;
-
-      sizeMenu.querySelectorAll('button').forEach(function (item) {
-        item.classList.remove('is-selected');
-      });
-
-      btn.classList.add('is-selected');
-      sizeDropdown.classList.remove('is-open');
-    });
-  });
-
-  document.addEventListener('click', function (event) {
-    if (!sizeDropdown.contains(event.target)) {
-      sizeDropdown.classList.remove('is-open');
-    }
   });
 
   document.querySelectorAll('[data-close]').forEach(function (btn) {
     btn.addEventListener('click', closePopup);
   });
 
-  document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') closePopup();
-  });
-
   cartBtn.addEventListener('click', async function () {
-    if (!selectedSize) {
-      message.textContent = 'Please choose your size.';
-      return;
-    }
+    const variant = selectedVariant();
 
-    const variant = findVariant();
-
-    if (!variant || !variant.id) {
-      message.textContent = 'Selected variant is not available.';
+    if (!variant) {
+      message.textContent = 'Please select available options.';
       return;
     }
 
     message.textContent = 'Adding...';
 
     try {
-      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
-        ? window.Shopify.routes.root
-        : '/';
-
-      await fetch(root + 'cart/add.js', {
+      await fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -644,6 +525,10 @@
           quantity: 1
         })
       });
+
+      if (selectedOptions.includes('Black') && selectedOptions.includes('Medium')) {
+        await addSoftWinterJacket();
+      }
 
       message.textContent = 'Added to cart.';
     } catch (error) {
