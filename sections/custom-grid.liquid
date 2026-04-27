@@ -4,7 +4,6 @@
   <div class="eg-grid__items">
     {% for block in section.blocks %}
       {% assign product = block.settings.product %}
-
       {% if product != blank %}
         <div
           class="eg-grid__card"
@@ -27,7 +26,7 @@
           <button
             type="button"
             class="eg-grid__plus"
-            data-handle="{{ product.handle }}"
+            data-product='{{ product | json | escape }}'
             aria-label="Open {{ product.title | escape }}"
           >
             +
@@ -44,7 +43,7 @@
       <button type="button" class="eg-popup__close" data-close>×</button>
 
       <div class="eg-popup__top">
-        <img id="EgImage" src="" alt="" width="120" height="150">
+        <img id="EgImage" src="" alt="" width="120" height="140">
 
         <div class="eg-popup__info">
           <h3 id="EgTitle"></h3>
@@ -53,7 +52,19 @@
         </div>
       </div>
 
-      <div id="EgOptions"></div>
+      <div class="eg-option eg-color-option" id="EgColorWrap">
+        <label>Color</label>
+        <div class="eg-color-boxes" id="EgColorOptions"></div>
+      </div>
+
+      <div class="eg-option eg-size-option" id="EgSizeWrap">
+        <label>Size</label>
+        <div class="eg-size-select-wrap">
+          <select id="EgSizeSelect">
+            <option value="">Choose your size</option>
+          </select>
+        </div>
+      </div>
 
       <button type="button" id="EgCartBtn" class="eg-popup__cart">
         ADD TO CART
@@ -116,7 +127,6 @@
   z-index: 3;
 }
 
-/* Popup */
 .eg-popup {
   display: none;
   position: fixed;
@@ -137,56 +147,58 @@
 .eg-popup__box {
   position: relative;
   z-index: 2;
+  width: 311px;
+  height: 447px;
+  margin: 35px auto;
+  padding: 20px 18px 0;
   background: #fff;
-  width: 315px;
-  max-width: calc(100vw - 24px);
-  margin: 55px auto;
-  padding: 20px;
   border: 1px solid #000;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
 .eg-popup__close {
   position: absolute;
   top: 10px;
-  right: 14px;
+  right: 15px;
   background: transparent;
   border: 0;
-  font-size: 26px;
+  color: #000;
+  font-size: 27px;
   line-height: 1;
   cursor: pointer;
   padding: 0;
-  color: #000;
 }
 
 .eg-popup__top {
   display: grid;
   grid-template-columns: 120px 1fr;
-  gap: 10px;
+  gap: 9px;
   align-items: start;
 }
 
 .eg-popup__top img {
   width: 120px;
-  height: 150px;
+  height: 140px;
   object-fit: cover;
   display: block;
 }
 
 .eg-popup__info {
-  padding-top: 18px;
+  padding-top: 3px;
 }
 
 .eg-popup h3 {
-  margin: 0 18px 12px 0;
+  margin: 0 22px 11px 0;
   font-size: 16px;
-  line-height: 1.2;
+  line-height: 1.22;
   font-weight: 400;
   color: #000;
 }
 
 #EgPrice {
-  margin: 0 0 12px;
+  margin: 0 0 13px;
   font-size: 16px;
   line-height: 1.2;
   color: #000;
@@ -194,9 +206,9 @@
 
 #EgDesc {
   font-size: 12px;
-  line-height: 1.15;
+  line-height: 1.12;
   color: #000;
-  max-height: 58px;
+  height: 54px;
   overflow: hidden;
 }
 
@@ -206,52 +218,92 @@
 
 .eg-option label {
   display: block;
-  font-size: 13px;
-  font-weight: 400;
   margin-bottom: 6px;
   color: #000;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
 }
 
-.eg-option__values {
+.eg-color-boxes {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
+  height: 41px;
   border: 1px solid #777;
 }
 
-.eg-option button {
-  min-height: 40px;
+.eg-color-btn {
+  position: relative;
   border: 0;
   border-right: 1px solid #777;
   background: #fff;
   color: #000;
-  padding: 9px 12px;
-  font-size: 16px;
+  padding: 0 11px;
   text-align: left;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.eg-option button:last-child {
+.eg-color-btn:last-child {
   border-right: 0;
 }
 
-.eg-option button.is-selected {
-  box-shadow: inset 5px 0 0 #000;
+.eg-color-btn.is-selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--swatch-color, #000);
 }
 
-.eg-option select {
-  width: 100%;
-  height: 40px;
+.eg-size-select-wrap {
+  position: relative;
+  height: 41px;
   border: 1px solid #777;
+}
+
+.eg-size-select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 17px;
+  top: 14px;
+  width: 10px;
+  height: 10px;
+  border-right: 1.5px solid #000;
+  border-bottom: 1.5px solid #000;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.eg-size-select-wrap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 53px;
+  width: 1px;
+  height: 100%;
+  background: #777;
+  pointer-events: none;
+}
+
+#EgSizeSelect {
+  width: 100%;
+  height: 100%;
+  border: 0;
   background: #fff;
   color: #000;
-  padding: 0 12px;
+  padding: 0 58px 0 11px;
   font-size: 15px;
+  appearance: none;
+  cursor: pointer;
 }
 
 .eg-popup__cart {
   width: 100%;
   height: 45px;
-  margin-top: 18px;
+  margin-top: 49px;
   background: #000;
   color: #fff;
   border: 0;
@@ -263,15 +315,15 @@
 
 .eg-popup__cart::after {
   content: " →";
-  font-size: 28px;
+  font-size: 29px;
   margin-left: 28px;
-  vertical-align: -3px;
+  vertical-align: -4px;
 }
 
 #EgMessage {
-  margin: 8px 0 0;
-  font-size: 12px;
-  line-height: 1.3;
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.2;
   color: #000;
 }
 
@@ -304,11 +356,9 @@
   }
 
   .eg-popup__box {
-    width: 315px;
-    max-width: calc(100vw - 24px);
-    margin: 24px auto;
-    max-height: 92vh;
-    overflow-y: auto;
+    width: 311px;
+    height: 447px;
+    margin: 4px auto;
   }
 }
 </style>
@@ -320,7 +370,10 @@
   const title = document.getElementById('EgTitle');
   const price = document.getElementById('EgPrice');
   const desc = document.getElementById('EgDesc');
-  const optionsBox = document.getElementById('EgOptions');
+  const colorWrap = document.getElementById('EgColorWrap');
+  const colorOptions = document.getElementById('EgColorOptions');
+  const sizeWrap = document.getElementById('EgSizeWrap');
+  const sizeSelect = document.getElementById('EgSizeSelect');
   const cartBtn = document.getElementById('EgCartBtn');
   const message = document.getElementById('EgMessage');
 
@@ -334,6 +387,35 @@
     });
   }
 
+  function getImage(product) {
+    if (product.featured_image) return product.featured_image;
+    if (product.images && product.images.length) return product.images[0];
+    return '';
+  }
+
+  function cleanDescription(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html || '';
+    return div.textContent || div.innerText || '';
+  }
+
+  function colorValue(colorName) {
+    const colors = {
+      black: '#000',
+      white: '#fff',
+      blue: '#1f5fbf',
+      red: '#b00028',
+      grey: '#b8b8b8',
+      gray: '#b8b8b8',
+      green: '#2f6b4f',
+      yellow: '#f2c94c',
+      pink: '#f2a3b3',
+      brown: '#7a4a28'
+    };
+
+    return colors[String(colorName).toLowerCase()] || '#000';
+  }
+
   function openPopup() {
     popup.classList.add('is-open');
     document.body.style.overflow = 'hidden';
@@ -345,164 +427,138 @@
     message.textContent = '';
   }
 
+  function findOptionIndex(name) {
+    if (!currentProduct || !currentProduct.options) return -1;
+
+    return currentProduct.options.findIndex(function (option) {
+      const optionName = typeof option === 'string' ? option : option.name;
+      return optionName && optionName.toLowerCase().includes(name);
+    });
+  }
+
+  function uniqueValues(optionIndex) {
+    const values = [];
+
+    currentProduct.variants.forEach(function (variant) {
+      const value = variant.options[optionIndex];
+      if (value && !values.includes(value)) {
+        values.push(value);
+      }
+    });
+
+    return values;
+  }
+
   function selectedVariant() {
     if (!currentProduct) return null;
 
     return currentProduct.variants.find(function (variant) {
       return variant.options.every(function (value, index) {
-        return value === selectedOptions[index];
+        return selectedOptions[index] === value;
       });
     });
   }
 
   function updatePrice() {
-    const variant = selectedVariant();
+    const variant = selectedVariant() || currentProduct.variants[0];
+
     if (variant) {
       price.textContent = money(variant.price);
     }
   }
 
-  function renderOptions() {
-    optionsBox.innerHTML = '';
+  function renderColorOptions() {
+    const colorIndex = findOptionIndex('color');
 
-    if (!currentProduct || !currentProduct.options) return;
+    colorOptions.innerHTML = '';
 
-    currentProduct.options.forEach(function (optionName, optionIndex) {
-      const values = [];
+    if (colorIndex === -1) {
+      colorWrap.style.display = 'none';
+      return;
+    }
 
-      currentProduct.variants.forEach(function (variant) {
-        const value = variant.options[optionIndex];
-        if (value && !values.includes(value)) values.push(value);
-      });
+    colorWrap.style.display = 'block';
 
-      const wrap = document.createElement('div');
-      wrap.className = 'eg-option';
+    const values = uniqueValues(colorIndex).slice(0, 2);
 
-      const label = document.createElement('label');
-      label.textContent = optionName;
+    values.forEach(function (value, index) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'eg-color-btn';
+      btn.textContent = value;
+      btn.style.setProperty('--swatch-color', colorValue(value));
 
-      wrap.appendChild(label);
-
-      if (optionName.toLowerCase().includes('size')) {
-        const select = document.createElement('select');
-
-        values.forEach(function (value) {
-          const option = document.createElement('option');
-          option.value = value;
-          option.textContent = value;
-          if (selectedOptions[optionIndex] === value) {
-            option.selected = true;
-          }
-          select.appendChild(option);
-        });
-
-        select.addEventListener('change', function () {
-          selectedOptions[optionIndex] = select.value;
-          updatePrice();
-        });
-
-        wrap.appendChild(select);
-      } else {
-        const valuesWrap = document.createElement('div');
-        valuesWrap.className = 'eg-option__values';
-
-        values.forEach(function (value) {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.textContent = value;
-
-          if (selectedOptions[optionIndex] === value) {
-            btn.classList.add('is-selected');
-          }
-
-          btn.addEventListener('click', function () {
-            selectedOptions[optionIndex] = value;
-
-            valuesWrap.querySelectorAll('button').forEach(function (item) {
-              item.classList.remove('is-selected');
-            });
-
-            btn.classList.add('is-selected');
-            updatePrice();
-          });
-
-          valuesWrap.appendChild(btn);
-        });
-
-        wrap.appendChild(valuesWrap);
+      if (index === 0) {
+        btn.classList.add('is-selected');
+        selectedOptions[colorIndex] = value;
       }
 
-      optionsBox.appendChild(wrap);
+      btn.addEventListener('click', function () {
+        selectedOptions[colorIndex] = value;
+
+        colorOptions.querySelectorAll('.eg-color-btn').forEach(function (item) {
+          item.classList.remove('is-selected');
+        });
+
+        btn.classList.add('is-selected');
+        updatePrice();
+      });
+
+      colorOptions.appendChild(btn);
     });
   }
 
-  async function loadProduct(handle) {
-    message.textContent = 'Loading...';
-    openPopup();
+  function renderSizeOptions() {
+    const sizeIndex = findOptionIndex('size');
 
-    try {
-      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
-        ? window.Shopify.routes.root
-        : '/';
+    sizeSelect.innerHTML = '<option value="">Choose your size</option>';
 
-      const res = await fetch(root + 'products/' + handle + '.js');
-
-      if (!res.ok) {
-        throw new Error('Product fetch failed');
-      }
-
-      currentProduct = await res.json();
-
-      if (!currentProduct || !currentProduct.variants || !currentProduct.variants.length) {
-        throw new Error('No variants found');
-      }
-
-      selectedOptions = currentProduct.variants[0].options.slice();
-
-      image.src = currentProduct.featured_image || '';
-      image.alt = currentProduct.title || '';
-      title.textContent = currentProduct.title || '';
-      desc.innerHTML = currentProduct.description || '';
-
-      renderOptions();
-      updatePrice();
-
-      message.textContent = '';
-    } catch (error) {
-      message.textContent = 'Product could not be loaded.';
+    if (sizeIndex === -1) {
+      sizeWrap.style.display = 'none';
+      return;
     }
+
+    sizeWrap.style.display = 'block';
+    selectedOptions[sizeIndex] = '';
+
+    uniqueValues(sizeIndex).forEach(function (value) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      sizeSelect.appendChild(option);
+    });
+
+    sizeSelect.onchange = function () {
+      selectedOptions[sizeIndex] = sizeSelect.value;
+      updatePrice();
+    };
   }
 
-  async function addSoftWinterJacket() {
-    try {
-      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
-        ? window.Shopify.routes.root
-        : '/';
+  function loadProduct(productData) {
+    currentProduct = productData;
+    selectedOptions = currentProduct.variants[0].options.slice();
 
-      const res = await fetch(root + 'products/soft-winter-jacket.js');
+    image.src = getImage(currentProduct);
+    image.alt = currentProduct.title || '';
+    title.textContent = currentProduct.title || '';
+    desc.textContent = cleanDescription(currentProduct.description);
+    message.textContent = '';
 
-      if (!res.ok) return;
-
-      const jacket = await res.json();
-
-      if (!jacket.variants || !jacket.variants[0]) return;
-
-      await fetch(root + 'cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: jacket.variants[0].id,
-          quantity: 1
-        })
-      });
-    } catch (error) {
-      console.log('Soft Winter Jacket not found');
-    }
+    renderColorOptions();
+    renderSizeOptions();
+    updatePrice();
+    openPopup();
   }
 
   document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      loadProduct(btn.dataset.handle);
+      try {
+        const productData = JSON.parse(btn.dataset.product);
+        loadProduct(productData);
+      } catch (error) {
+        message.textContent = 'Product could not be loaded.';
+        openPopup();
+      }
     });
   });
 
@@ -511,12 +567,17 @@
   });
 
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-      closePopup();
-    }
+    if (event.key === 'Escape') closePopup();
   });
 
   cartBtn.addEventListener('click', async function () {
+    const sizeIndex = findOptionIndex('size');
+
+    if (sizeIndex !== -1 && !selectedOptions[sizeIndex]) {
+      message.textContent = 'Please choose your size.';
+      return;
+    }
+
     const variant = selectedVariant();
 
     if (!variant) {
@@ -539,10 +600,6 @@
           quantity: 1
         })
       });
-
-      if (selectedOptions.includes('Black') && selectedOptions.includes('Medium')) {
-        await addSoftWinterJacket();
-      }
 
       message.textContent = 'Added to cart.';
     } catch (error) {
