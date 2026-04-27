@@ -1,100 +1,415 @@
-{% schema %}
-{
-  "name": "Fixed Banner (Desktop + Mobile Separate)",
-  "settings": [
-    { "type": "header", "content": "DESKTOP CONTENT" },
+<section class="eg-banner-wrap">
 
-    { "type": "image_picker", "id": "desktop_image", "label": "Desktop Image" },
-    { "type": "text", "id": "desktop_heading", "label": "Desktop Heading", "default": "The Gift Guide" },
-    { "type": "textarea", "id": "desktop_subtext", "label": "Desktop Sub Text", "default": "Discover Joy: Your Ultimate Holiday Gift Destination." },
-    { "type": "text", "id": "desktop_button_text", "label": "Desktop Button Text", "default": "SHOP NOW" },
-    { "type": "url", "id": "desktop_button_link", "label": "Desktop Button Link" },
+  <!-- DESKTOP BANNER -->
+  <div class="eg-desktop-banner">
+    <div class="eg-desktop-banner__top">
+      <div class="eg-desktop-banner__logo">{{ section.settings.logo_text }}</div>
+      <div class="eg-desktop-banner__tagline">{{ section.settings.top_text }}</div>
+      <a href="{{ section.settings.button_link | default: '#' }}" class="eg-desktop-banner__choose">
+        {{ section.settings.top_button }} <span>→</span>
+      </a>
+    </div>
 
-    { "type": "header", "content": "MOBILE CONTENT" },
+    <div class="eg-desktop-banner__content">
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.desktop_description }}</p>
+      <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-desktop-banner__shop">
+        {{ section.settings.main_button }} <span>→</span>
+      </a>
+    </div>
 
-    { "type": "image_picker", "id": "mobile_image", "label": "Mobile Image" },
-    { "type": "text", "id": "mobile_heading", "label": "Mobile Heading", "default": "The Gift Guide" },
-    { "type": "textarea", "id": "mobile_subtext", "label": "Mobile Sub Text", "default": "Discover Joy: Your Ultimate Holiday Gift Destination." },
-    { "type": "text", "id": "mobile_button_text", "label": "Mobile Button Text", "default": "SHOP NOW" },
-    { "type": "url", "id": "mobile_button_link", "label": "Mobile Button Link" }
-  ],
-  "presets": [
-    { "name": "Fixed Banner – Separate Desktop & Mobile" }
-  ]
-}
-{% endschema %}
-
-<section class="fixed-banner">
-
-  <!-- DESKTOP -->
-  <div class="banner-desktop">
-    <div class="banner-inner">
-      <div class="banner-text">
-        <h1>{{ section.settings.desktop_heading }}</h1>
-        <p>{{ section.settings.desktop_subtext }}</p>
-        <a href="{{ section.settings.desktop_button_link }}" class="banner-btn">
-          {{ section.settings.desktop_button_text }} →
-        </a>
-      </div>
-
-      {% if section.settings.desktop_image %}
-        <img src="{{ section.settings.desktop_image | image_url: width: 1600 }}" alt="">
-      {% endif %}
+    <div class="eg-desktop-banner__strip">
+      {{ section.settings.desktop_bottom_text }}
     </div>
   </div>
 
-  <!-- MOBILE -->
-  <div class="banner-mobile">
-    {% if section.settings.mobile_image %}
-      <img src="{{ section.settings.mobile_image | image_url: width: 900 }}" alt="">
-    {% endif %}
-
-    <div class="mobile-text">
-      <h1>{{ section.settings.mobile_heading }}</h1>
-      <p>{{ section.settings.mobile_subtext }}</p>
-      <a href="{{ section.settings.mobile_button_link }}" class="banner-btn">
-        {{ section.settings.mobile_button_text }} →
+  <!-- MOBILE BANNER -->
+  <div class="eg-mobile-banner">
+    <div class="eg-mobile-menu" id="EgMobileMenu">
+      <p>{{ section.settings.mobile_menu_text }}</p>
+      <a href="{{ section.settings.button_link | default: '#' }}">
+        {{ section.settings.top_button }} <span>→</span>
       </a>
+    </div>
+
+    <div class="eg-mobile-banner__top">
+      <button type="button" class="eg-mobile-banner__hamburger" id="EgMenuToggle">☰</button>
+      <div class="eg-mobile-banner__logo">{{ section.settings.logo_text }}</div>
+      <div></div>
+    </div>
+
+    <div class="eg-mobile-banner__content">
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.mobile_description }}</p>
+    </div>
+
+    <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-mobile-banner__shop">
+      {{ section.settings.main_button }} <span>→</span>
+    </a>
+
+    <div class="eg-mobile-banner__strip">
+      {{ section.settings.mobile_bottom_text }}
     </div>
   </div>
 
 </section>
 
 <style>
-.fixed-banner { width:100%; }
-
-.banner-btn {
-  background:#000;
-  color:#fff;
-  padding:12px 26px;
-  text-decoration:none;
-  font-size:14px;
+.eg-banner-wrap {
+  width: 100%;
+  background: #fff;
 }
 
-/* DESKTOP */
-.banner-desktop { display:block; }
-.banner-inner {
-  max-width:1200px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  align-items:center;
-  gap:40px;
-  padding:60px 0;
+/* DESKTOP ONLY */
+.eg-desktop-banner {
+  display: block;
+  width: 100%;
+  max-width: 1440px;
+  height: 843px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background-image: url({{ section.settings.desktop_banner_image | image_url: width: 1800 }});
+  background-size: 100% auto;
+  background-position: center top;
+  background-repeat: no-repeat;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
 }
 
-/* MOBILE */
-.banner-mobile { display:none; text-align:center; }
-.banner-mobile img {
-  width:100%;
-  height:280px;
-  object-fit:cover;
+.eg-desktop-banner__top {
+  height: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 205px;
+  align-items: center;
+  padding: 0 140px;
+  background: #fff;
+  box-sizing: border-box;
 }
-.mobile-text { padding:25px 20px 40px; }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  .banner-desktop{ display:none; }
-  .banner-mobile{ display:block; }
+.eg-desktop-banner__logo {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.eg-desktop-banner__tagline {
+  text-align: center;
+  font-size: 14px;
+}
+
+.eg-desktop-banner__choose {
+  height: 44px;
+  background: #fff544;
+  color: #000;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  font-size: 14px;
+}
+
+.eg-desktop-banner__content {
+  position: absolute;
+  left: 140px;
+  top: 462px;
+  width: 460px;
+}
+
+.eg-desktop-banner__content h1 {
+  margin: 0 0 34px;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.eg-desktop-banner__content p {
+  margin: 0 0 32px;
+  max-width: 430px;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.eg-desktop-banner__shop {
+  width: 196px;
+  height: 45px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  font-size: 13px;
+}
+
+.eg-desktop-banner__strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32px;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* MOBILE HIDDEN ON DESKTOP */
+.eg-mobile-banner {
+  display: none;
+}
+
+/* MOBILE ONLY */
+@media (max-width: 749px) {
+  .eg-desktop-banner {
+    display: none;
+  }
+
+  .eg-mobile-banner {
+    display: block;
+    width: 100%;
+    height: 520px;
+    position: relative;
+    overflow: hidden;
+    background-image: url({{ section.settings.mobile_banner_image | image_url: width: 900 }});
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+  }
+
+  .eg-mobile-banner__top {
+    height: 64px;
+    display: grid;
+    grid-template-columns: 32px 1fr 32px;
+    align-items: center;
+    padding: 0 20px;
+    background: #f4f4f4;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 20;
+  }
+
+  .eg-mobile-banner__hamburger {
+    border: 0;
+    background: transparent;
+    font-size: 24px;
+    line-height: 1;
+    padding: 0;
+    color: #000;
+    cursor: pointer;
+  }
+
+  .eg-mobile-banner__logo {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .eg-mobile-banner__content {
+    position: absolute;
+    top: 116px;
+    left: 24px;
+    right: 24px;
+    text-align: center;
+    z-index: 5;
+  }
+
+  .eg-mobile-banner__content h1 {
+    margin: 0 0 24px;
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  .eg-mobile-banner__content p {
+    max-width: 285px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .eg-mobile-banner__shop {
+    position: absolute;
+    left: 50%;
+    top: 384px;
+    transform: translateX(-50%);
+    width: 190px;
+    height: 48px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 34px;
+    font-size: 15px;
+    z-index: 5;
+  }
+
+  .eg-mobile-banner__strip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 32px;
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    z-index: 5;
+  }
+
+  .eg-mobile-menu {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: #f4f4f4;
+    padding: 20px 20px 26px;
+    text-align: center;
+    z-index: 30;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity .25s ease, transform .25s ease, visibility .25s ease;
+  }
+
+  .eg-mobile-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .eg-mobile-menu p {
+    margin: 0 0 14px;
+    font-size: 14px;
+  }
+
+  .eg-mobile-menu a {
+    width: 244px;
+    height: 48px;
+    margin: 0 auto;
+    background: #fff544;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    font-size: 15px;
+  }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var btn = document.getElementById('EgMenuToggle');
+  var menu = document.getElementById('EgMobileMenu');
+
+  if (btn && menu) {
+    btn.addEventListener('click', function () {
+      menu.classList.toggle('is-open');
+      btn.textContent = menu.classList.contains('is-open') ? '×' : '☰';
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Custom Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "desktop_banner_image",
+      "label": "Desktop banner image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_banner_image",
+      "label": "Mobile banner image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "text",
+      "id": "top_text",
+      "label": "Desktop top text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "top_button",
+      "label": "Top button text",
+      "default": "CHOOSE GIFT"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Top button link"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "textarea",
+      "id": "desktop_description",
+      "label": "Desktop description",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
+    },
+    {
+      "type": "textarea",
+      "id": "mobile_description",
+      "label": "Mobile description",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
+    },
+    {
+      "type": "text",
+      "id": "main_button",
+      "label": "Main button text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "main_button_link",
+      "label": "Main button link"
+    },
+    {
+      "type": "text",
+      "id": "desktop_bottom_text",
+      "label": "Desktop bottom text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    },
+    {
+      "type": "text",
+      "id": "mobile_bottom_text",
+      "label": "Mobile bottom text",
+      "default": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR"
+    },
+    {
+      "type": "text",
+      "id": "mobile_menu_text",
+      "label": "Mobile menu text",
+      "default": "Find the ideal gift for your loved ones."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Banner"
+    }
+  ]
+}
+{% endschema %}
