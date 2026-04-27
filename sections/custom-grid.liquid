@@ -5,16 +5,7 @@
     {% for block in section.blocks %}
       {% assign product = block.settings.product %}
       {% if product != blank %}
-        <div
-          class="eg-grid__card"
-          {{ block.shopify_attributes }}
-          style="
-            --plus-x: {{ block.settings.plus_x }}%;
-            --plus-y: {{ block.settings.plus_y }}%;
-            --plus-x-mobile: {{ block.settings.plus_x_mobile }}%;
-            --plus-y-mobile: {{ block.settings.plus_y_mobile }}%;
-          "
-        >
+        <div class="eg-grid__card" {{ block.shopify_attributes }}>
           <img
             src="{{ product.featured_image | image_url: width: 900 }}"
             alt="{{ product.title | escape }}"
@@ -26,7 +17,12 @@
           <button
             type="button"
             class="eg-grid__plus"
-            data-product='{{ product | json | escape }}'
+            data-title="{{ product.title | escape }}"
+            data-price="{{ product.price | money }}"
+            data-desc="{{ product.description | strip_html | escape }}"
+            data-image="{{ product.featured_image | image_url: width: 300 }}"
+            data-variants='{{ product.variants | json | escape }}'
+            data-options='{{ product.options_with_values | json | escape }}'
             aria-label="Open {{ product.title | escape }}"
           >
             +
@@ -52,16 +48,21 @@
         </div>
       </div>
 
-      <div class="eg-option eg-color-option" id="EgColorWrap">
+      <div class="eg-option">
         <label>Color</label>
         <div class="eg-color-boxes" id="EgColorOptions"></div>
       </div>
 
-      <div class="eg-option eg-size-option" id="EgSizeWrap">
+      <div class="eg-option">
         <label>Size</label>
         <div class="eg-size-select-wrap">
           <select id="EgSizeSelect">
             <option value="">Choose your size</option>
+            <option value="XS">XS</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
           </select>
         </div>
       </div>
@@ -111,8 +112,6 @@
 
 .eg-grid__plus {
   position: absolute;
-  top: var(--plus-y);
-  left: var(--plus-x);
   transform: translate(-50%, -50%);
   width: 22px;
   height: 22px;
@@ -127,15 +126,48 @@
   z-index: 3;
 }
 
+/* Desktop plus positions exactly different */
+.eg-grid__card:nth-child(1) .eg-grid__plus {
+  top: 63%;
+  left: 54%;
+}
+
+.eg-grid__card:nth-child(2) .eg-grid__plus {
+  top: 53%;
+  left: 84%;
+}
+
+.eg-grid__card:nth-child(3) .eg-grid__plus {
+  top: 21%;
+  left: 64%;
+}
+
+.eg-grid__card:nth-child(4) .eg-grid__plus {
+  top: 16%;
+  left: 73%;
+}
+
+.eg-grid__card:nth-child(5) .eg-grid__plus {
+  top: 22%;
+  left: 52%;
+}
+
+.eg-grid__card:nth-child(6) .eg-grid__plus {
+  top: 67%;
+  left: 45%;
+}
+
 .eg-popup {
   display: none;
   position: fixed;
   inset: 0;
   z-index: 99999;
+  align-items: center;
+  justify-content: center;
 }
 
 .eg-popup.is-open {
-  display: block;
+  display: flex;
 }
 
 .eg-popup__overlay {
@@ -149,8 +181,7 @@
   z-index: 2;
   width: 311px;
   height: 447px;
-  margin: 35px auto;
-  padding: 20px 18px 0;
+  padding: 20px 17px 0;
   background: #fff;
   border: 1px solid #000;
   box-sizing: border-box;
@@ -160,12 +191,12 @@
 
 .eg-popup__close {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 9px;
+  right: 14px;
   background: transparent;
   border: 0;
   color: #000;
-  font-size: 27px;
+  font-size: 26px;
   line-height: 1;
   cursor: pointer;
   padding: 0;
@@ -190,7 +221,7 @@
 }
 
 .eg-popup h3 {
-  margin: 0 22px 11px 0;
+  margin: 0 20px 11px 0;
   font-size: 16px;
   line-height: 1.22;
   font-weight: 400;
@@ -205,11 +236,11 @@
 }
 
 #EgDesc {
+  height: 54px;
+  overflow: hidden;
   font-size: 12px;
   line-height: 1.12;
   color: #000;
-  height: 54px;
-  overflow: hidden;
 }
 
 .eg-option {
@@ -264,6 +295,17 @@
   border: 1px solid #777;
 }
 
+.eg-size-select-wrap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 53px;
+  width: 1px;
+  height: 100%;
+  background: #777;
+  pointer-events: none;
+}
+
 .eg-size-select-wrap::after {
   content: "";
   position: absolute;
@@ -274,17 +316,6 @@
   border-right: 1.5px solid #000;
   border-bottom: 1.5px solid #000;
   transform: rotate(45deg);
-  pointer-events: none;
-}
-
-.eg-size-select-wrap::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 53px;
-  width: 1px;
-  height: 100%;
-  background: #777;
   pointer-events: none;
 }
 
@@ -347,18 +378,45 @@
   }
 
   .eg-grid__plus {
-    top: var(--plus-y-mobile);
-    left: var(--plus-x-mobile);
     width: 20px;
     height: 20px;
     font-size: 16px;
     line-height: 18px;
   }
 
+  .eg-grid__card:nth-child(1) .eg-grid__plus {
+    top: 62%;
+    left: 55%;
+  }
+
+  .eg-grid__card:nth-child(2) .eg-grid__plus {
+    top: 52%;
+    left: 84%;
+  }
+
+  .eg-grid__card:nth-child(3) .eg-grid__plus {
+    top: 20%;
+    left: 65%;
+  }
+
+  .eg-grid__card:nth-child(4) .eg-grid__plus {
+    top: 16%;
+    left: 73%;
+  }
+
+  .eg-grid__card:nth-child(5) .eg-grid__plus {
+    top: 22%;
+    left: 52%;
+  }
+
+  .eg-grid__card:nth-child(6) .eg-grid__plus {
+    top: 67%;
+    left: 45%;
+  }
+
   .eg-popup__box {
     width: 311px;
     height: 447px;
-    margin: 4px auto;
   }
 }
 </style>
@@ -370,51 +428,15 @@
   const title = document.getElementById('EgTitle');
   const price = document.getElementById('EgPrice');
   const desc = document.getElementById('EgDesc');
-  const colorWrap = document.getElementById('EgColorWrap');
   const colorOptions = document.getElementById('EgColorOptions');
-  const sizeWrap = document.getElementById('EgSizeWrap');
   const sizeSelect = document.getElementById('EgSizeSelect');
   const cartBtn = document.getElementById('EgCartBtn');
   const message = document.getElementById('EgMessage');
 
-  let currentProduct = null;
-  let selectedOptions = [];
-
-  function money(cents) {
-    return (cents / 100).toLocaleString('en-US', {
-      style: 'currency',
-      currency: '{{ cart.currency.iso_code }}'
-    });
-  }
-
-  function getImage(product) {
-    if (product.featured_image) return product.featured_image;
-    if (product.images && product.images.length) return product.images[0];
-    return '';
-  }
-
-  function cleanDescription(html) {
-    const div = document.createElement('div');
-    div.innerHTML = html || '';
-    return div.textContent || div.innerText || '';
-  }
-
-  function colorValue(colorName) {
-    const colors = {
-      black: '#000',
-      white: '#fff',
-      blue: '#1f5fbf',
-      red: '#b00028',
-      grey: '#b8b8b8',
-      gray: '#b8b8b8',
-      green: '#2f6b4f',
-      yellow: '#f2c94c',
-      pink: '#f2a3b3',
-      brown: '#7a4a28'
-    };
-
-    return colors[String(colorName).toLowerCase()] || '#000';
-  }
+  let currentVariants = [];
+  let currentOptions = [];
+  let selectedColor = '';
+  let selectedSize = '';
 
   function openPopup() {
     popup.classList.add('is-open');
@@ -427,139 +449,107 @@
     message.textContent = '';
   }
 
-  function findOptionIndex(name) {
-    if (!currentProduct || !currentProduct.options) return -1;
+  function colorHex(name) {
+    const map = {
+      black: '#000',
+      white: '#fff',
+      blue: '#1f5fbf',
+      red: '#b00028',
+      grey: '#b8b8b8',
+      gray: '#b8b8b8'
+    };
 
-    return currentProduct.options.findIndex(function (option) {
-      const optionName = typeof option === 'string' ? option : option.name;
-      return optionName && optionName.toLowerCase().includes(name);
-    });
+    return map[String(name).toLowerCase()] || '#000';
   }
 
-  function uniqueValues(optionIndex) {
-    const values = [];
-
-    currentProduct.variants.forEach(function (variant) {
-      const value = variant.options[optionIndex];
-      if (value && !values.includes(value)) {
-        values.push(value);
-      }
-    });
-
-    return values;
+  function getOptionName(option) {
+    return typeof option === 'string' ? option : option.name;
   }
 
-  function selectedVariant() {
-    if (!currentProduct) return null;
-
-    return currentProduct.variants.find(function (variant) {
-      return variant.options.every(function (value, index) {
-        return selectedOptions[index] === value;
-      });
+  function getColorValues() {
+    const colorOption = currentOptions.find(function (option) {
+      return getOptionName(option).toLowerCase().includes('color');
     });
-  }
 
-  function updatePrice() {
-    const variant = selectedVariant() || currentProduct.variants[0];
-
-    if (variant) {
-      price.textContent = money(variant.price);
+    if (colorOption && colorOption.values && colorOption.values.length) {
+      return colorOption.values.slice(0, 2);
     }
+
+    return ['White', 'Black'];
   }
 
-  function renderColorOptions() {
-    const colorIndex = findOptionIndex('color');
+  function findVariant() {
+    if (!currentVariants.length) return null;
 
+    return currentVariants.find(function (variant) {
+      const opts = variant.options || [];
+      const colorMatch = !selectedColor || opts.includes(selectedColor);
+      const sizeMatch = !selectedSize || opts.includes(selectedSize);
+      return colorMatch && sizeMatch;
+    }) || currentVariants[0];
+  }
+
+  function renderColors() {
+    const colors = getColorValues();
     colorOptions.innerHTML = '';
+    selectedColor = colors[0] || '';
 
-    if (colorIndex === -1) {
-      colorWrap.style.display = 'none';
-      return;
-    }
-
-    colorWrap.style.display = 'block';
-
-    const values = uniqueValues(colorIndex).slice(0, 2);
-
-    values.forEach(function (value, index) {
+    colors.forEach(function (color, index) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'eg-color-btn';
-      btn.textContent = value;
-      btn.style.setProperty('--swatch-color', colorValue(value));
+      btn.textContent = color;
+      btn.style.setProperty('--swatch-color', colorHex(color));
 
       if (index === 0) {
         btn.classList.add('is-selected');
-        selectedOptions[colorIndex] = value;
       }
 
       btn.addEventListener('click', function () {
-        selectedOptions[colorIndex] = value;
+        selectedColor = color;
 
         colorOptions.querySelectorAll('.eg-color-btn').forEach(function (item) {
           item.classList.remove('is-selected');
         });
 
         btn.classList.add('is-selected');
-        updatePrice();
       });
 
       colorOptions.appendChild(btn);
     });
   }
 
-  function renderSizeOptions() {
-    const sizeIndex = findOptionIndex('size');
-
-    sizeSelect.innerHTML = '<option value="">Choose your size</option>';
-
-    if (sizeIndex === -1) {
-      sizeWrap.style.display = 'none';
-      return;
-    }
-
-    sizeWrap.style.display = 'block';
-    selectedOptions[sizeIndex] = '';
-
-    uniqueValues(sizeIndex).forEach(function (value) {
-      const option = document.createElement('option');
-      option.value = value;
-      option.textContent = value;
-      sizeSelect.appendChild(option);
-    });
-
-    sizeSelect.onchange = function () {
-      selectedOptions[sizeIndex] = sizeSelect.value;
-      updatePrice();
-    };
-  }
-
-  function loadProduct(productData) {
-    currentProduct = productData;
-    selectedOptions = currentProduct.variants[0].options.slice();
-
-    image.src = getImage(currentProduct);
-    image.alt = currentProduct.title || '';
-    title.textContent = currentProduct.title || '';
-    desc.textContent = cleanDescription(currentProduct.description);
+  function loadPopup(btn) {
+    title.textContent = btn.dataset.title || '';
+    price.textContent = btn.dataset.price || '';
+    desc.textContent = btn.dataset.desc || '';
+    image.src = btn.dataset.image || '';
+    image.alt = btn.dataset.title || '';
     message.textContent = '';
 
-    renderColorOptions();
-    renderSizeOptions();
-    updatePrice();
+    try {
+      currentVariants = JSON.parse(btn.dataset.variants || '[]');
+      currentOptions = JSON.parse(btn.dataset.options || '[]');
+    } catch (error) {
+      currentVariants = [];
+      currentOptions = [];
+    }
+
+    selectedSize = '';
+    sizeSelect.value = '';
+
+    renderColors();
     openPopup();
   }
 
   document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      try {
-        const productData = JSON.parse(btn.dataset.product);
-        loadProduct(productData);
-      } catch (error) {
-        message.textContent = 'Product could not be loaded.';
-        openPopup();
-      }
+      loadPopup(btn);
     });
+  });
+
+  sizeSelect.addEventListener('change', function () {
+    selectedSize = sizeSelect.value;
   });
 
   document.querySelectorAll('[data-close]').forEach(function (btn) {
@@ -571,17 +561,15 @@
   });
 
   cartBtn.addEventListener('click', async function () {
-    const sizeIndex = findOptionIndex('size');
-
-    if (sizeIndex !== -1 && !selectedOptions[sizeIndex]) {
+    if (!selectedSize) {
       message.textContent = 'Please choose your size.';
       return;
     }
 
-    const variant = selectedVariant();
+    const variant = findVariant();
 
-    if (!variant) {
-      message.textContent = 'Please select available options.';
+    if (!variant || !variant.id) {
+      message.textContent = 'Selected variant is not available.';
       return;
     }
 
@@ -629,46 +617,6 @@
           "type": "product",
           "id": "product",
           "label": "Choose product"
-        },
-        {
-          "type": "range",
-          "id": "plus_x",
-          "label": "Plus icon horizontal position",
-          "min": 0,
-          "max": 100,
-          "step": 1,
-          "unit": "%",
-          "default": 55
-        },
-        {
-          "type": "range",
-          "id": "plus_y",
-          "label": "Plus icon vertical position",
-          "min": 0,
-          "max": 100,
-          "step": 1,
-          "unit": "%",
-          "default": 55
-        },
-        {
-          "type": "range",
-          "id": "plus_x_mobile",
-          "label": "Mobile plus icon horizontal position",
-          "min": 0,
-          "max": 100,
-          "step": 1,
-          "unit": "%",
-          "default": 55
-        },
-        {
-          "type": "range",
-          "id": "plus_y_mobile",
-          "label": "Mobile plus icon vertical position",
-          "min": 0,
-          "max": 100,
-          "step": 1,
-          "unit": "%",
-          "default": 55
         }
       ]
     }
