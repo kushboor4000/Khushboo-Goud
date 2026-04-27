@@ -1,20 +1,26 @@
-<section class="eg-grid" id="EgGrid-{{ section.id }}">
+<section class="eg-grid">
   <h2>{{ section.settings.heading }}</h2>
 
   <div class="eg-grid__items">
     {% for block in section.blocks %}
       {% assign product = block.settings.product %}
+
       {% if product != blank %}
         <div
           class="eg-grid__card"
-          style="--plus-x: {{ block.settings.plus_x }}%; --plus-y: {{ block.settings.plus_y }}%;"
           {{ block.shopify_attributes }}
+          style="
+            --plus-x: {{ block.settings.plus_x }}%;
+            --plus-y: {{ block.settings.plus_y }}%;
+            --plus-x-mobile: {{ block.settings.plus_x_mobile }}%;
+            --plus-y-mobile: {{ block.settings.plus_y_mobile }}%;
+          "
         >
           <img
             src="{{ product.featured_image | image_url: width: 900 }}"
             alt="{{ product.title | escape }}"
             width="900"
-            height="1150"
+            height="1100"
             loading="lazy"
           >
 
@@ -31,29 +37,29 @@
     {% endfor %}
   </div>
 
-  <div class="eg-popup" id="EgPopup-{{ section.id }}" aria-hidden="true">
-    <div class="eg-popup__overlay" data-eg-close></div>
+  <div class="eg-popup" id="EgPopup">
+    <div class="eg-popup__overlay" data-close></div>
 
     <div class="eg-popup__box">
-      <button type="button" class="eg-popup__close" data-eg-close>×</button>
+      <button type="button" class="eg-popup__close" data-close>×</button>
 
       <div class="eg-popup__top">
-        <img class="eg-popup__image" src="" alt="" width="140" height="170">
+        <img id="EgImage" src="" alt="" width="120" height="150">
 
         <div class="eg-popup__info">
-          <h3 class="eg-popup__title"></h3>
-          <p class="eg-popup__price"></p>
-          <div class="eg-popup__desc"></div>
+          <h3 id="EgTitle"></h3>
+          <p id="EgPrice"></p>
+          <div id="EgDesc"></div>
         </div>
       </div>
 
-      <div class="eg-popup__options"></div>
+      <div id="EgOptions"></div>
 
-      <button type="button" class="eg-popup__cart">
-        ADD TO CART <span>→</span>
+      <button type="button" id="EgCartBtn" class="eg-popup__cart">
+        ADD TO CART
       </button>
 
-      <p class="eg-popup__message"></p>
+      <p id="EgMessage"></p>
     </div>
   </div>
 </section>
@@ -62,65 +68,60 @@
 .eg-grid {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 86px 176px 88px;
-  background: #fff;
-  color: #000;
-  font-family: Georgia, 'Times New Roman', serif;
+  padding: 55px 50px;
+  font-family: Arial, sans-serif;
 }
 
 .eg-grid h2 {
-  margin: 0 0 42px;
-  font-size: 31px;
-  line-height: 1;
-  font-weight: 400;
+  font-size: 32px;
+  margin: 0 0 28px;
+  font-weight: 500;
+  text-align: center;
 }
 
 .eg-grid__items {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
 .eg-grid__card {
   position: relative;
-  aspect-ratio: 1 / 1.28;
-  overflow: hidden;
   background: #f4f4f4;
+  overflow: hidden;
 }
 
 .eg-grid__card img {
   width: 100%;
-  height: 100%;
-  display: block;
+  height: 430px;
   object-fit: cover;
+  display: block;
 }
 
 .eg-grid__plus {
   position: absolute;
-  left: var(--plus-x, 64%);
-  top: var(--plus-y, 16%);
-  width: 19px;
-  height: 19px;
+  top: var(--plus-y);
+  left: var(--plus-x);
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
   border: 0;
   border-radius: 50%;
-  background: #f8f3df;
+  background: #fff;
   color: #000;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  line-height: 18px;
-  padding: 0;
+  font-size: 18px;
+  line-height: 19px;
   cursor: pointer;
-  transform: translate(-50%, -50%);
-  z-index: 50;
-  pointer-events: auto;
+  padding: 0;
+  z-index: 3;
 }
 
+/* Popup */
 .eg-popup {
   display: none;
   position: fixed;
   inset: 0;
   z-index: 99999;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 .eg-popup.is-open {
@@ -130,269 +131,201 @@
 .eg-popup__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.20);
+  background: rgba(0, 0, 0, 0.45);
 }
 
 .eg-popup__box {
   position: relative;
   z-index: 2;
-  width: 390px;
-  min-height: 448px;
-  margin: 20px auto;
   background: #fff;
+  width: 315px;
+  max-width: calc(100vw - 24px);
+  margin: 55px auto;
+  padding: 20px;
   border: 1px solid #000;
-  padding: 24px 24px 28px;
   box-sizing: border-box;
-  color: #000;
 }
 
 .eg-popup__close {
   position: absolute;
-  top: 12px;
-  right: 16px;
-  border: 0;
+  top: 10px;
+  right: 14px;
   background: transparent;
-  color: #000;
+  border: 0;
   font-size: 26px;
   line-height: 1;
   cursor: pointer;
   padding: 0;
+  color: #000;
 }
 
 .eg-popup__top {
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  grid-template-columns: 120px 1fr;
+  gap: 10px;
+  align-items: start;
 }
 
-.eg-popup__image {
-  width: 140px;
-  height: 170px;
+.eg-popup__top img {
+  width: 120px;
+  height: 150px;
   object-fit: cover;
-  background: #f5f5f5;
+  display: block;
 }
 
-.eg-popup__title {
-  margin: 8px 26px 12px 0;
-  font-size: 18px;
-  line-height: 1.18;
+.eg-popup__info {
+  padding-top: 18px;
+}
+
+.eg-popup h3 {
+  margin: 0 18px 12px 0;
+  font-size: 16px;
+  line-height: 1.2;
   font-weight: 400;
+  color: #000;
 }
 
-.eg-popup__price {
+#EgPrice {
   margin: 0 0 12px;
-  font-size: 19px;
-  line-height: 1;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #000;
 }
 
-.eg-popup__desc {
-  max-height: 76px;
+#EgDesc {
+  font-size: 12px;
+  line-height: 1.15;
+  color: #000;
+  max-height: 58px;
   overflow: hidden;
-  font-size: 14px;
-  line-height: 1.08;
 }
 
 .eg-option {
-  margin-bottom: 14px;
+  margin-top: 12px;
 }
 
-.eg-option__label {
+.eg-option label {
   display: block;
-  margin: 0 0 7px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
+  margin-bottom: 6px;
+  color: #000;
 }
 
-.eg-colors {
+.eg-option__values {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 50px;
-  border: 1px solid #000;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid #777;
 }
 
-.eg-color {
-  position: relative;
+.eg-option button {
+  min-height: 40px;
   border: 0;
-  border-right: 1px solid #000;
+  border-right: 1px solid #777;
   background: #fff;
   color: #000;
-  font-size: 18px;
+  padding: 9px 12px;
+  font-size: 16px;
   text-align: left;
-  padding: 0 12px 0 20px;
   cursor: pointer;
 }
 
-.eg-color:last-child {
+.eg-option button:last-child {
   border-right: 0;
 }
 
-.eg-color::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 6px;
-  height: 100%;
-  background: var(--swatch-color, #000);
+.eg-option button.is-selected {
+  box-shadow: inset 5px 0 0 #000;
 }
 
-.eg-color.is-selected {
-  background: #fff;
-  color: #000;
-  box-shadow: none;
-}
-
-.eg-size-wrap {
-  position: relative;
-}
-
-.eg-size {
+.eg-option select {
   width: 100%;
-  height: 50px;
-  border: 1px solid #000;
+  height: 40px;
+  border: 1px solid #777;
   background: #fff;
   color: #000;
-  font-size: 16px;
-  padding: 0 54px 0 14px;
-  appearance: none;
-  cursor: pointer;
-}
-
-.eg-size-wrap::after {
-  content: "⌄";
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 54px;
-  height: 50px;
-  border-left: 1px solid #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  pointer-events: none;
+  padding: 0 12px;
+  font-size: 15px;
 }
 
 .eg-popup__cart {
   width: 100%;
-  height: 56px;
-  margin-top: 34px;
-  border: 0;
+  height: 45px;
+  margin-top: 18px;
   background: #000;
   color: #fff;
-  font-size: 16px;
+  border: 0;
+  font-size: 14px;
   font-weight: 400;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 46px;
   cursor: pointer;
+  letter-spacing: 0.2px;
 }
 
-.eg-popup__cart span {
-  font-size: 31px;
-  line-height: 1;
+.eg-popup__cart::after {
+  content: " →";
+  font-size: 28px;
+  margin-left: 28px;
+  vertical-align: -3px;
 }
 
-.eg-popup__message {
-  margin: 10px 0 0;
-  font-size: 13px;
+#EgMessage {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.3;
+  color: #000;
 }
 
 @media (max-width: 749px) {
   .eg-grid {
-    padding: 39px 20px 26px;
+    padding: 38px 0;
   }
 
   .eg-grid h2 {
-    text-align: center;
-    font-size: 28px;
-    line-height: 1.08;
-    margin-bottom: 24px;
+    font-size: 26px;
+    padding: 0 16px;
   }
 
   .eg-grid__items {
     grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
+    gap: 3px;
   }
 
-  .eg-grid__card {
-    aspect-ratio: 1 / 1.28;
+  .eg-grid__card img {
+    height: 230px;
   }
 
   .eg-grid__plus {
-    width: 18px;
-    height: 18px;
-    font-size: 15px;
-    line-height: 17px;
+    top: var(--plus-y-mobile);
+    left: var(--plus-x-mobile);
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 18px;
   }
 
   .eg-popup__box {
-    width: calc(100% - 32px);
-    max-width: 390px;
-    min-height: 448px;
-    margin: 14px auto;
-    padding: 24px 20px 28px;
-    max-height: calc(100vh - 28px);
+    width: 315px;
+    max-width: calc(100vw - 24px);
+    margin: 24px auto;
+    max-height: 92vh;
     overflow-y: auto;
-  }
-
-  .eg-popup__top {
-    grid-template-columns: 120px 1fr;
-    gap: 10px;
-  }
-
-  .eg-popup__image {
-    width: 120px;
-    height: 140px;
-  }
-
-  .eg-popup__title {
-    font-size: 16px;
-    margin-top: 6px;
-  }
-
-  .eg-popup__price {
-    font-size: 17px;
-  }
-
-  .eg-popup__desc {
-    font-size: 12px;
-    line-height: 1.1;
-  }
-
-  .eg-color {
-    font-size: 16px;
   }
 }
 </style>
 
 <script>
 (function () {
-  const root = document.getElementById('EgGrid-{{ section.id }}');
-  if (!root) return;
-
-  const popup = root.querySelector('#EgPopup-{{ section.id }}');
-  const image = root.querySelector('.eg-popup__image');
-  const title = root.querySelector('.eg-popup__title');
-  const price = root.querySelector('.eg-popup__price');
-  const desc = root.querySelector('.eg-popup__desc');
-  const optionsBox = root.querySelector('.eg-popup__options');
-  const cartBtn = root.querySelector('.eg-popup__cart');
-  const message = root.querySelector('.eg-popup__message');
+  const popup = document.getElementById('EgPopup');
+  const image = document.getElementById('EgImage');
+  const title = document.getElementById('EgTitle');
+  const price = document.getElementById('EgPrice');
+  const desc = document.getElementById('EgDesc');
+  const optionsBox = document.getElementById('EgOptions');
+  const cartBtn = document.getElementById('EgCartBtn');
+  const message = document.getElementById('EgMessage');
 
   let currentProduct = null;
   let selectedOptions = [];
-
-  const colorMap = {
-    White: '#ffffff',
-    Black: '#000000',
-    Grey: '#b8b8b8',
-    Gray: '#b8b8b8',
-    Red: '#c90035',
-    Blue: '#1f57c8'
-  };
 
   function money(cents) {
     return (cents / 100).toLocaleString('en-US', {
@@ -403,24 +336,13 @@
 
   function openPopup() {
     popup.classList.add('is-open');
-    popup.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
   function closePopup() {
     popup.classList.remove('is-open');
-    popup.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     message.textContent = '';
-  }
-
-  function getValues(optionIndex) {
-    const values = [];
-    currentProduct.variants.forEach(function (variant) {
-      const value = variant.options[optionIndex];
-      if (!values.includes(value)) values.push(value);
-    });
-    return values;
   }
 
   function selectedVariant() {
@@ -435,129 +357,116 @@
 
   function updatePrice() {
     const variant = selectedVariant();
-    if (variant) price.textContent = money(variant.price);
-  }
-
-  function renderColorOption(optionName, optionIndex) {
-    const wrap = document.createElement('div');
-    wrap.className = 'eg-option';
-
-    const label = document.createElement('label');
-    label.className = 'eg-option__label';
-    label.textContent = optionName;
-
-    const colors = document.createElement('div');
-    colors.className = 'eg-colors';
-
-    getValues(optionIndex).slice(0, 2).forEach(function (value) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'eg-color';
-      btn.textContent = value;
-      btn.style.setProperty('--swatch-color', colorMap[value] || '#000');
-
-      if (selectedOptions[optionIndex] === value) {
-        btn.classList.add('is-selected');
-      }
-
-      btn.addEventListener('click', function () {
-        selectedOptions[optionIndex] = value;
-
-        colors.querySelectorAll('.eg-color').forEach(function (item) {
-          item.classList.remove('is-selected');
-        });
-
-        btn.classList.add('is-selected');
-        updatePrice();
-      });
-
-      colors.appendChild(btn);
-    });
-
-    wrap.appendChild(label);
-    wrap.appendChild(colors);
-    optionsBox.appendChild(wrap);
-  }
-
-  function renderSizeOption(optionName, optionIndex) {
-    const wrap = document.createElement('div');
-    wrap.className = 'eg-option';
-
-    const label = document.createElement('label');
-    label.className = 'eg-option__label';
-    label.textContent = optionName;
-
-    const selectWrap = document.createElement('div');
-    selectWrap.className = 'eg-size-wrap';
-
-    const select = document.createElement('select');
-    select.className = 'eg-size';
-
-    const placeholder = document.createElement('option');
-    placeholder.textContent = 'Choose your size';
-    placeholder.value = '';
-    placeholder.selected = true;
-    select.appendChild(placeholder);
-
-    getValues(optionIndex).forEach(function (value) {
-      const option = document.createElement('option');
-      option.value = value;
-      option.textContent = value;
-      select.appendChild(option);
-    });
-
-    select.value = '';
-
-    select.addEventListener('change', function () {
-      if (select.value) {
-        selectedOptions[optionIndex] = select.value;
-        updatePrice();
-      }
-    });
-
-    selectWrap.appendChild(select);
-    wrap.appendChild(label);
-    wrap.appendChild(selectWrap);
-    optionsBox.appendChild(wrap);
+    if (variant) {
+      price.textContent = money(variant.price);
+    }
   }
 
   function renderOptions() {
     optionsBox.innerHTML = '';
 
-    currentProduct.options.forEach(function (optionName, index) {
-      const lower = optionName.toLowerCase();
+    if (!currentProduct || !currentProduct.options) return;
 
-      if (lower.includes('color') || lower.includes('colour')) {
-        renderColorOption(optionName, index);
-      } else if (lower.includes('size')) {
-        renderSizeOption(optionName, index);
+    currentProduct.options.forEach(function (optionName, optionIndex) {
+      const values = [];
+
+      currentProduct.variants.forEach(function (variant) {
+        const value = variant.options[optionIndex];
+        if (value && !values.includes(value)) values.push(value);
+      });
+
+      const wrap = document.createElement('div');
+      wrap.className = 'eg-option';
+
+      const label = document.createElement('label');
+      label.textContent = optionName;
+
+      wrap.appendChild(label);
+
+      if (optionName.toLowerCase().includes('size')) {
+        const select = document.createElement('select');
+
+        values.forEach(function (value) {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          if (selectedOptions[optionIndex] === value) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        });
+
+        select.addEventListener('change', function () {
+          selectedOptions[optionIndex] = select.value;
+          updatePrice();
+        });
+
+        wrap.appendChild(select);
+      } else {
+        const valuesWrap = document.createElement('div');
+        valuesWrap.className = 'eg-option__values';
+
+        values.forEach(function (value) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = value;
+
+          if (selectedOptions[optionIndex] === value) {
+            btn.classList.add('is-selected');
+          }
+
+          btn.addEventListener('click', function () {
+            selectedOptions[optionIndex] = value;
+
+            valuesWrap.querySelectorAll('button').forEach(function (item) {
+              item.classList.remove('is-selected');
+            });
+
+            btn.classList.add('is-selected');
+            updatePrice();
+          });
+
+          valuesWrap.appendChild(btn);
+        });
+
+        wrap.appendChild(valuesWrap);
       }
+
+      optionsBox.appendChild(wrap);
     });
   }
 
   async function loadProduct(handle) {
-    if (!handle) return;
-
-    openPopup();
     message.textContent = 'Loading...';
+    openPopup();
 
     try {
-      const rootPath = window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/';
-      const res = await fetch(rootPath + 'products/' + handle + '.js');
+      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+        ? window.Shopify.routes.root
+        : '/';
 
-      if (!res.ok) throw new Error('Product fetch failed');
+      const res = await fetch(root + 'products/' + handle + '.js');
+
+      if (!res.ok) {
+        throw new Error('Product fetch failed');
+      }
 
       currentProduct = await res.json();
+
+      if (!currentProduct || !currentProduct.variants || !currentProduct.variants.length) {
+        throw new Error('No variants found');
+      }
+
       selectedOptions = currentProduct.variants[0].options.slice();
 
       image.src = currentProduct.featured_image || '';
-      image.alt = currentProduct.title;
-      title.textContent = currentProduct.title;
-      price.textContent = money(currentProduct.variants[0].price);
-      desc.innerHTML = currentProduct.description || 'This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.';
+      image.alt = currentProduct.title || '';
+      title.textContent = currentProduct.title || '';
+      desc.innerHTML = currentProduct.description || '';
 
       renderOptions();
       updatePrice();
+
       message.textContent = '';
     } catch (error) {
       message.textContent = 'Product could not be loaded.';
@@ -566,41 +475,45 @@
 
   async function addSoftWinterJacket() {
     try {
-      const rootPath = window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/';
-      const res = await fetch(rootPath + 'products/soft-winter-jacket.js');
+      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+        ? window.Shopify.routes.root
+        : '/';
+
+      const res = await fetch(root + 'products/soft-winter-jacket.js');
 
       if (!res.ok) return;
 
       const jacket = await res.json();
+
       if (!jacket.variants || !jacket.variants[0]) return;
 
-      await fetch(rootPath + 'cart/add.js', {
+      await fetch(root + 'cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: jacket.variants[0].id, quantity: 1 })
+        body: JSON.stringify({
+          id: jacket.variants[0].id,
+          quantity: 1
+        })
       });
     } catch (error) {
-      console.log('Soft Winter Jacket could not be added.');
+      console.log('Soft Winter Jacket not found');
     }
   }
 
-  root.addEventListener('click', function (event) {
-    const plus = event.target.closest('.eg-grid__plus');
+  document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      loadProduct(btn.dataset.handle);
+    });
+  });
 
-    if (plus) {
-      event.preventDefault();
-      event.stopPropagation();
-      loadProduct(plus.getAttribute('data-handle'));
-      return;
-    }
-
-    if (event.target.closest('[data-eg-close]')) {
-      closePopup();
-    }
+  document.querySelectorAll('[data-close]').forEach(function (btn) {
+    btn.addEventListener('click', closePopup);
   });
 
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') closePopup();
+    if (event.key === 'Escape') {
+      closePopup();
+    }
   });
 
   cartBtn.addEventListener('click', async function () {
@@ -614,18 +527,20 @@
     message.textContent = 'Adding...';
 
     try {
-      const rootPath = window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/';
+      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+        ? window.Shopify.routes.root
+        : '/';
 
-      await fetch(rootPath + 'cart/add.js', {
+      await fetch(root + 'cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: variant.id, quantity: 1 })
+        body: JSON.stringify({
+          id: variant.id,
+          quantity: 1
+        })
       });
 
-      const hasBlack = selectedOptions.includes('Black');
-      const hasMedium = selectedOptions.includes('Medium') || selectedOptions.includes('M');
-
-      if (hasBlack && hasMedium) {
+      if (selectedOptions.includes('Black') && selectedOptions.includes('Medium')) {
         await addSoftWinterJacket();
       }
 
@@ -665,7 +580,8 @@
           "min": 0,
           "max": 100,
           "step": 1,
-          "default": 64
+          "unit": "%",
+          "default": 55
         },
         {
           "type": "range",
@@ -674,7 +590,28 @@
           "min": 0,
           "max": 100,
           "step": 1,
-          "default": 16
+          "unit": "%",
+          "default": 55
+        },
+        {
+          "type": "range",
+          "id": "plus_x_mobile",
+          "label": "Mobile plus icon horizontal position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 55
+        },
+        {
+          "type": "range",
+          "id": "plus_y_mobile",
+          "label": "Mobile plus icon vertical position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 55
         }
       ]
     }
