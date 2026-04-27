@@ -2,11 +2,48 @@
 
   <!-- DESKTOP BANNER -->
   <div class="eg-desktop-banner">
+
+    {% if section.settings.desktop_top_image != blank %}
+      <img
+        class="eg-desktop-banner__img eg-desktop-banner__img--top"
+        src="{{ section.settings.desktop_top_image | image_url: width: 1800 }}"
+        alt=""
+        width="1800"
+        height="500"
+        loading="eager"
+      >
+    {% endif %}
+
+    {% if section.settings.desktop_bottom_image != blank %}
+      <img
+        class="eg-desktop-banner__img eg-desktop-banner__img--bottom"
+        src="{{ section.settings.desktop_bottom_image | image_url: width: 1800 }}"
+        alt=""
+        width="1800"
+        height="500"
+        loading="eager"
+      >
+    {% elsif section.settings.desktop_banner_image != blank %}
+      <img
+        class="eg-desktop-banner__img eg-desktop-banner__img--single"
+        src="{{ section.settings.desktop_banner_image | image_url: width: 1800 }}"
+        alt=""
+        width="1800"
+        height="843"
+        loading="eager"
+      >
+    {% endif %}
+
     <div class="eg-desktop-banner__top">
       <div class="eg-desktop-banner__logo">{{ section.settings.logo_text }}</div>
-      <div class="eg-desktop-banner__tagline">{{ section.settings.top_text }}</div>
+
+      <div class="eg-desktop-banner__tagline">
+        {{ section.settings.top_text }}
+      </div>
+
       <a href="{{ section.settings.button_link | default: '#' }}" class="eg-desktop-banner__choose">
-        {{ section.settings.top_button }} <span>→</span>
+        <span class="eg-btn-text">{{ section.settings.top_button }}</span>
+        <span class="eg-btn-arrow">→</span>
       </a>
     </div>
 
@@ -67,7 +104,7 @@
   background: #fff;
 }
 
-/* DESKTOP ONLY */
+/* DESKTOP */
 .eg-desktop-banner {
   display: block;
   width: 100%;
@@ -76,34 +113,70 @@
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  background-image: url({{ section.settings.desktop_banner_image | image_url: width: 1800 }});
-  background-size: 100% auto;
-  background-position: center top;
-  background-repeat: no-repeat;
+  background: #fff;
   color: #000;
+}
+
+.eg-desktop-banner__img {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.eg-desktop-banner__img--top {
+  top: 48px;
+  z-index: 1;
+}
+
+.eg-desktop-banner__img--bottom {
+  bottom: 32px;
+  z-index: 1;
+}
+
+.eg-desktop-banner__img--single {
+  top: 48px;
+  z-index: 1;
 }
 
 .eg-desktop-banner__top {
   height: 48px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 205px;
-  align-items: center;
-  padding: 0 140px;
+  position: relative;
+  z-index: 5;
   background: #fff;
-  box-sizing: border-box;
 }
 
 .eg-desktop-banner__logo {
-  font-size: 16px;
+  position: absolute;
+  left: 140px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  line-height: 1;
   font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
 .eg-desktop-banner__tagline {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: max-content;
   text-align: center;
   font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
 }
 
 .eg-desktop-banner__choose {
+  position: absolute;
+  right: 140px;
+  top: 8px;
+  width: 205px;
   height: 44px;
   background: #fff544;
   color: #000;
@@ -113,6 +186,35 @@
   justify-content: center;
   gap: 30px;
   font-size: 14px;
+  font-weight: 400;
+  overflow: hidden;
+}
+
+.eg-desktop-banner__choose::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+  z-index: 1;
+}
+
+.eg-desktop-banner__choose:hover::before {
+  transform: scaleX(1);
+}
+
+.eg-desktop-banner__choose .eg-btn-text,
+.eg-desktop-banner__choose .eg-btn-arrow {
+  position: relative;
+  z-index: 2;
+  transition: color 0.25s ease;
+}
+
+.eg-desktop-banner__choose:hover .eg-btn-text,
+.eg-desktop-banner__choose:hover .eg-btn-arrow {
+  color: #fff;
 }
 
 .eg-desktop-banner__content {
@@ -120,6 +222,7 @@
   left: 140px;
   top: 462px;
   width: 460px;
+  z-index: 4;
 }
 
 .eg-desktop-banner__content h1 {
@@ -134,6 +237,7 @@
   max-width: 430px;
   font-size: 16px;
   line-height: 1.45;
+  font-weight: 400;
 }
 
 .eg-desktop-banner__shop {
@@ -147,6 +251,7 @@
   justify-content: center;
   gap: 34px;
   font-size: 13px;
+  font-weight: 400;
 }
 
 .eg-desktop-banner__strip {
@@ -160,13 +265,14 @@
   align-items: center;
   justify-content: center;
   font-size: 12px;
+  z-index: 6;
 }
 
+/* MOBILE */
 .eg-mobile-banner {
   display: none;
 }
 
-/* MOBILE ONLY */
 @media (max-width: 749px) {
   .eg-desktop-banner {
     display: none;
@@ -341,8 +447,18 @@ document.addEventListener('DOMContentLoaded', function () {
   "settings": [
     {
       "type": "image_picker",
+      "id": "desktop_top_image",
+      "label": "Desktop top image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_bottom_image",
+      "label": "Desktop bottom image"
+    },
+    {
+      "type": "image_picker",
       "id": "desktop_banner_image",
-      "label": "Desktop banner image"
+      "label": "Desktop single fallback image"
     },
     {
       "type": "image_picker",
