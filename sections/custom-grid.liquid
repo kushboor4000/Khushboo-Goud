@@ -11,10 +11,10 @@
           {{ block.shopify_attributes }}
         >
           <img
-            src="{{ product.featured_image | image_url: width: 800 }}"
+            src="{{ product.featured_image | image_url: width: 900 }}"
             alt="{{ product.title | escape }}"
-            width="800"
-            height="1000"
+            width="900"
+            height="1150"
             loading="lazy"
           >
 
@@ -22,6 +22,7 @@
             type="button"
             class="eg-grid__plus"
             data-handle="{{ product.handle }}"
+            aria-label="Open {{ product.title | escape }}"
           >
             +
           </button>
@@ -30,7 +31,7 @@
     {% endfor %}
   </div>
 
-  <div class="eg-popup" id="EgPopup-{{ section.id }}">
+  <div class="eg-popup" id="EgPopup-{{ section.id }}" aria-hidden="true">
     <div class="eg-popup__overlay" data-eg-close></div>
 
     <div class="eg-popup__box">
@@ -111,7 +112,6 @@
   cursor: pointer;
   transform: translate(-50%, -50%);
   z-index: 50;
-  pointer-events: auto;
 }
 
 .eg-popup {
@@ -137,7 +137,7 @@
   z-index: 2;
   width: 390px;
   min-height: 448px;
-  margin: 60px auto;
+  margin: 20px auto;
   background: #fff;
   border: 1px solid #000;
   padding: 24px 24px 28px;
@@ -172,7 +172,7 @@
   background: #f5f5f5;
 }
 
-.eg-popup__info h3 {
+.eg-popup__title {
   margin: 8px 26px 12px 0;
   font-size: 18px;
   line-height: 1.18;
@@ -237,7 +237,9 @@
 }
 
 .eg-color.is-selected {
-  box-shadow: inset 0 0 0 2px #000;
+  background: #fff;
+  color: #000;
+  box-shadow: none;
 }
 
 .eg-size-wrap {
@@ -345,7 +347,7 @@
     height: 140px;
   }
 
-  .eg-popup__info h3 {
+  .eg-popup__title {
     font-size: 16px;
     margin-top: 6px;
   }
@@ -400,21 +402,25 @@
 
   function openPopup() {
     popup.classList.add('is-open');
+    popup.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
   function closePopup() {
     popup.classList.remove('is-open');
+    popup.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     message.textContent = '';
   }
 
   function getValues(optionIndex) {
     const values = [];
+
     currentProduct.variants.forEach(function (variant) {
       const value = variant.options[optionIndex];
       if (!values.includes(value)) values.push(value);
     });
+
     return values;
   }
 
@@ -457,9 +463,11 @@
 
       btn.addEventListener('click', function () {
         selectedOptions[optionIndex] = value;
+
         colors.querySelectorAll('.eg-color').forEach(function (item) {
           item.classList.remove('is-selected');
         });
+
         btn.classList.add('is-selected');
         updatePrice();
       });
@@ -489,6 +497,7 @@
     const placeholder = document.createElement('option');
     placeholder.textContent = 'Choose your size';
     placeholder.value = '';
+    placeholder.selected = true;
     select.appendChild(placeholder);
 
     getValues(optionIndex).forEach(function (value) {
@@ -497,6 +506,8 @@
       option.textContent = value;
       select.appendChild(option);
     });
+
+    select.value = '';
 
     select.addEventListener('change', function () {
       if (select.value) {
@@ -555,8 +566,9 @@
   async function addSoftWinterJacket() {
     try {
       const res = await fetch('/products/soft-winter-jacket.js');
-      const jacket = await res.json();
+      if (!res.ok) return;
 
+      const jacket = await res.json();
       if (!jacket.variants || !jacket.variants[0]) return;
 
       await fetch('/cart/add.js', {
@@ -565,7 +577,7 @@
         body: JSON.stringify({ id: jacket.variants[0].id, quantity: 1 })
       });
     } catch (error) {
-      console.log('Soft Winter Jacket not added');
+      console.log('Soft Winter Jacket could not be added.');
     }
   }
 
