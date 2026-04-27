@@ -1,686 +1,652 @@
-<section class="eg-grid">
-  <h2>{{ section.settings.heading }}</h2>
+<section class="eg-banner-wrap">
 
-  <div class="eg-grid__items">
-    {% for block in section.blocks %}
-      {% assign product = block.settings.product %}
-      {% if product != blank %}
-        <div class="eg-grid__card" {{ block.shopify_attributes }}>
-          <img
-            src="{{ product.featured_image | image_url: width: 900 }}"
-            alt="{{ product.title | escape }}"
-            width="900"
-            height="1100"
-            loading="lazy"
-          >
+  <!-- DESKTOP BANNER -->
+  <div class="eg-desktop-banner">
+    <div class="eg-desktop-banner__top">
+      <div class="eg-desktop-banner__logo">{{ section.settings.logo_text }}</div>
 
-          <button
-            type="button"
-            class="eg-grid__plus"
-            data-title="{{ product.title | escape }}"
-            data-price="{{ product.price | money }}"
-            data-desc="{{ product.description | strip_html | escape }}"
-            data-image="{{ product.featured_image | image_url: width: 300 }}"
-            data-variants='{{ product.variants | json | escape }}'
-            data-options='{{ product.options_with_values | json | escape }}'
-            aria-label="Open {{ product.title | escape }}"
-          >
-            +
-          </button>
-        </div>
-      {% endif %}
-    {% endfor %}
-  </div>
-
-  <div class="eg-popup" id="EgPopup">
-    <div class="eg-popup__overlay" data-close></div>
-
-    <div class="eg-popup__box">
-      <button type="button" class="eg-popup__close" data-close>×</button>
-
-      <div class="eg-popup__top">
-        <img id="EgImage" src="" alt="" width="120" height="140">
-
-        <div class="eg-popup__info">
-          <h3 id="EgTitle"></h3>
-          <p id="EgPrice"></p>
-          <div id="EgDesc"></div>
-        </div>
+      <div class="eg-desktop-banner__tagline">
+        {{ section.settings.top_text }}
       </div>
 
-      <div class="eg-option">
-        <label>Color</label>
-        <div class="eg-color-boxes" id="EgColorOptions"></div>
-      </div>
+      <a href="{{ section.settings.button_link | default: '#' }}" class="eg-desktop-banner__choose">
+        <span>{{ section.settings.top_button }}</span>
+        <span class="eg-long-arrow"></span>
+      </a>
+    </div>
 
-      <div class="eg-option">
-        <label>Size</label>
+    {% if section.settings.desktop_top_image != blank %}
+      <img
+        class="eg-desktop-banner__top-img"
+        src="{{ section.settings.desktop_top_image | image_url: width: 1800 }}"
+        alt=""
+        width="1440"
+        height="390"
+        loading="eager"
+      >
+    {% endif %}
 
-        <div class="eg-size-dropdown" id="EgSizeDropdown">
-          <button type="button" class="eg-size-trigger" id="EgSizeTrigger">
-            <span id="EgSizeText">Choose your size</span>
-            <span class="eg-size-arrow"></span>
-          </button>
+    {% if section.settings.desktop_bottom_image != blank %}
+      <img
+        class="eg-desktop-banner__bottom-img"
+        src="{{ section.settings.desktop_bottom_image | image_url: width: 1200 }}"
+        alt=""
+        width="890"
+        height="402"
+        loading="eager"
+      >
+    {% endif %}
 
-          <div class="eg-size-menu" id="EgSizeMenu">
-            <button type="button" data-size="XS">XS</button>
-            <button type="button" data-size="S">S</button>
-            <button type="button" data-size="M">M</button>
-            <button type="button" data-size="L">L</button>
-            <button type="button" data-size="XL">XL</button>
-          </div>
-        </div>
-      </div>
+    <div class="eg-desktop-banner__content">
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.desktop_description | newline_to_br }}</p>
+    </div>
 
-      <button type="button" id="EgCartBtn" class="eg-popup__cart">
-        ADD TO CART
-      </button>
+    <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-desktop-banner__shop">
+      <span>{{ section.settings.main_button }}</span>
+      <span class="eg-long-arrow"></span>
+    </a>
 
-      <p id="EgMessage"></p>
+    <div class="eg-desktop-banner__strip">
+      {{ section.settings.desktop_bottom_text }}
     </div>
   </div>
+
+  <!-- MOBILE BANNER -->
+  <div class="eg-mobile-banner">
+    <div class="eg-mobile-menu" id="EgMobileMenu">
+      <p>{{ section.settings.mobile_menu_text }}</p>
+      <a href="{{ section.settings.button_link | default: '#' }}">
+        <span>{{ section.settings.top_button }}</span>
+        <span class="eg-long-arrow"></span>
+      </a>
+    </div>
+
+    <div class="eg-mobile-banner__top">
+      <button type="button" class="eg-mobile-banner__hamburger" id="EgMenuToggle">☰</button>
+      <div class="eg-mobile-banner__logo">{{ section.settings.logo_text }}</div>
+      <div></div>
+    </div>
+
+    <div class="eg-mobile-banner__content">
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.mobile_description }}</p>
+    </div>
+
+    <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-mobile-banner__shop">
+      <span>{{ section.settings.main_button }}</span>
+      <span class="eg-long-arrow"></span>
+    </a>
+
+    <div class="eg-mobile-banner__strip">
+      {{ section.settings.mobile_bottom_text }}
+    </div>
+  </div>
+
 </section>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Lustria&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap');
 
-.eg-grid,
-.eg-grid * {
-  font-family: 'Lustria', serif;
-}
-
-.eg-grid {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 36px 67px 60px;
-  background: #fff;
-  box-shadow: 0 0 0 100vw #000;
-  clip-path: inset(0 -100vw);
-}
-
-.eg-grid h2 {
-  margin: 0 0 28px;
-  padding-left: 0;
-  font-size: 28px;
-  font-weight: 400;
-  text-align: left;
-}
-
-.eg-grid__items {
-  width: 100%;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.eg-grid__card {
-  position: relative;
-  background: #f4f4f4;
-  overflow: hidden;
-}
-
-.eg-grid__card img {
-  width: 100%;
-  height: 500px;
-  object-fit: cover;
-  display: block;
-}
-
-.eg-grid__plus {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  width: 22px;
-  height: 22px;
-  border: 0;
-  border-radius: 50%;
-  background: #fff;
-  color: #000;
-  font-size: 18px;
-  line-height: 19px;
-  cursor: pointer;
-  padding: 0;
-  z-index: 3;
-}
-
-.eg-grid__card:nth-child(1) .eg-grid__plus { top: 63%; left: 54%; }
-.eg-grid__card:nth-child(2) .eg-grid__plus { top: 53%; left: 84%; }
-.eg-grid__card:nth-child(3) .eg-grid__plus { top: 21%; left: 64%; }
-.eg-grid__card:nth-child(4) .eg-grid__plus { top: 16%; left: 73%; }
-.eg-grid__card:nth-child(5) .eg-grid__plus { top: 22%; left: 52%; }
-.eg-grid__card:nth-child(6) .eg-grid__plus { top: 67%; left: 45%; }
-
-.eg-popup {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  align-items: center;
-  justify-content: center;
-}
-
-.eg-popup.is-open {
-  display: flex;
-}
-
-.eg-popup__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-}
-
-.eg-popup__box {
-  position: relative;
-  z-index: 2;
-  width: 311px;
-  height: 447px;
-  padding: 20px 17px 0;
-  background: #fff;
-  border: 1px solid #000;
+.eg-banner-wrap,
+.eg-banner-wrap * {
+  font-family: 'Jost', Arial, Helvetica, sans-serif;
   box-sizing: border-box;
-  overflow: visible;
 }
 
-.eg-popup__close {
-  position: absolute;
-  top: 9px;
-  right: 14px;
-  background: transparent;
-  border: 0;
-  color: #000;
-  font-size: 26px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.eg-popup__top {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 9px;
-  align-items: start;
-}
-
-.eg-popup__top img {
-  width: 120px;
-  height: 140px;
-  object-fit: cover;
-  display: block;
-}
-
-.eg-popup__info {
-  padding-top: 3px;
-}
-
-.eg-popup h3 {
-  margin: 0 20px 11px 0;
-  font-size: 16px;
-  line-height: 1.22;
-  font-weight: 400;
-  color: #000;
-}
-
-#EgPrice {
-  margin: 0 0 13px;
-  font-size: 16px;
-  line-height: 1.2;
-  color: #000;
-}
-
-#EgDesc {
-  height: 54px;
-  overflow: hidden;
-  font-size: 12px;
-  line-height: 1.12;
-  color: #000;
-}
-
-.eg-option {
-  margin-top: 12px;
-}
-
-.eg-option label {
-  display: block;
-  margin-bottom: 6px;
-  color: #000;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.eg-color-boxes {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 41px;
-  border: 1px solid #777;
-}
-
-.eg-color-boxes::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 5px;
-  background: #1f5fbf;
-  z-index: 3;
-}
-
-.eg-color-btn {
-  position: relative;
-  border: 0;
-  border-right: 1px solid #777;
-  background: #fff;
-  color: #000;
-  padding: 0 11px;
-  text-align: left;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.eg-color-btn:last-child {
-  border-right: 0;
-}
-
-.eg-color-btn:hover {
-  background: #fff;
-  color: #000;
-}
-
-.eg-color-btn.is-selected {
+.eg-banner-wrap {
+  width: 100%;
   background: #000;
-  color: #fff;
 }
 
-.eg-color-btn.is-selected::before {
-  display: none;
-}
-
-.eg-size-dropdown {
+.eg-long-arrow {
   position: relative;
-  width: 100%;
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  background: currentColor;
+  vertical-align: middle;
 }
 
-.eg-size-trigger {
-  width: 100%;
-  height: 41px;
-  border: 1px solid #777;
-  background: #fff;
-  color: #000;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 68px;
-  align-items: center;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.eg-size-trigger span:first-child {
-  text-align: left;
-  padding-left: 15px;
-}
-
-.eg-size-arrow {
-  width: 100%;
-  height: 100%;
-  border-left: 1px solid #777;
-  position: relative;
-}
-
-.eg-size-arrow::after {
+.eg-long-arrow::after {
   content: "";
   position: absolute;
-  top: 12px;
-  left: 27px;
-  width: 10px;
-  height: 10px;
-  border-left: 2px solid #000;
-  border-top: 2px solid #000;
-  transform: rotate(225deg);
-}
-
-.eg-size-dropdown.is-open .eg-size-arrow::after {
-  top: 16px;
+  right: 0;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
   transform: rotate(45deg);
 }
 
-.eg-size-menu {
-  display: none;
+/* DESKTOP */
+.eg-desktop-banner {
+  display: block;
   width: 100%;
-  border-left: 1px solid #777;
-  border-right: 1px solid #777;
-  border-bottom: 1px solid #777;
+  max-width: 1440px;
+  height: 876px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
   background: #fff;
-  box-sizing: border-box;
+  color: #000;
+}
+
+.eg-desktop-banner__top {
   position: absolute;
+  top: 0;
   left: 0;
-  top: 41px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 67px;
+  background: #f7f7f7;
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  align-items: center;
   z-index: 20;
 }
 
-.eg-size-dropdown.is-open .eg-size-menu {
-  display: block;
-}
-
-.eg-size-menu button {
-  width: 100%;
-  height: 39px;
-  border: 0;
-  background: #fff;
-  color: #000;
-  font-size: 16px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.eg-size-menu button:hover,
-.eg-size-menu button.is-selected {
-  background: #000;
-  color: #fff;
-}
-
-.eg-popup__cart {
-  width: 100%;
-  height: 45px;
-  margin-top: 49px;
-  background: #000;
-  color: #fff;
-  border: 0;
-  font-size: 14px;
-  font-weight: 400;
-  cursor: pointer;
+.eg-desktop-banner__logo {
+  justify-self: start;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 700;
   letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
-.eg-popup__cart::after {
-  content: " →";
-  font-size: 29px;
-  margin-left: 28px;
-  vertical-align: -4px;
-}
-
-#EgMessage {
-  margin: 6px 0 0;
-  font-size: 11px;
+.eg-desktop-banner__tagline {
+  justify-self: center;
+  font-size: 16px;
   line-height: 1.2;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.eg-desktop-banner__choose {
+  justify-self: end;
+  width: 220px;
+  height: 44px;
+  background: #fff544;
   color: #000;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.eg-desktop-banner__choose::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+  z-index: 1;
+}
+
+.eg-desktop-banner__choose:hover::before {
+  transform: scaleX(1);
+}
+
+.eg-desktop-banner__choose span {
+  position: relative;
+  z-index: 2;
+  transition: color 0.25s ease;
+}
+
+.eg-desktop-banner__choose:hover span {
+  color: #fff;
+}
+
+.eg-desktop-banner__top-img {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  width: 1440px;
+  height: 390px;
+  object-fit: cover;
+  object-position: center top;
+  z-index: 1;
+}
+
+.eg-desktop-banner__bottom-img {
+  position: absolute;
+  top: 442px;
+  left: 550px;
+  width: 890px;
+  height: 402px;
+  object-fit: cover;
+  object-position: center top;
+  z-index: 1;
+}
+
+.eg-desktop-banner__content {
+  position: absolute;
+  left: 67px;
+  top: 492px;
+  width: 650px;
+  z-index: 10;
+}
+
+.eg-desktop-banner__content h1 {
+  margin: 0 0 28px;
+  font-size: 70px;
+  line-height: 1;
+  font-weight: 500;
+  color: #000;
+}
+
+.eg-desktop-banner__content p {
+  margin: 0;
+  width: 540px;
+  max-width: 540px;
+  font-size: 20px;
+  line-height: 140%;
+  font-weight: 400;
+  color: #000;
+  letter-spacing: -0.15px;
+}
+
+.eg-desktop-banner__shop {
+  position: absolute;
+  top: 735px;
+  left: 67px;
+  width: 220px;
+  height: 50px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  z-index: 20;
+  overflow: hidden;
+}
+
+.eg-desktop-banner__shop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff544;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+  z-index: 1;
+}
+
+.eg-desktop-banner__shop:hover::before {
+  transform: scaleX(1);
+}
+
+.eg-desktop-banner__shop span {
+  position: relative;
+  z-index: 2;
+  transition: color 0.25s ease;
+}
+
+.eg-desktop-banner__shop:hover span {
+  color: #000;
+}
+
+.eg-desktop-banner__strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32px;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
+  color: #000;
+  z-index: 15;
+}
+
+/* MOBILE */
+.eg-mobile-banner {
+  display: none;
 }
 
 @media (max-width: 749px) {
-  .eg-grid {
-    margin: 0 auto;
-    padding: 0 0 38px;
+  .eg-desktop-banner {
+    display: none;
+  }
+
+  .eg-mobile-banner {
+    display: block;
+    width: 100%;
+    height: 487px;
+    position: relative;
+    overflow: hidden;
     background: #fff;
-    box-shadow: none;
-    clip-path: none;
+    color: #000;
   }
 
-  .eg-grid h2 {
-    max-width: none;
-    margin: 0 0 28px;
-    padding: 10px 16px 0;
-    font-size: 26px;
-    text-align: left;
+  .eg-mobile-banner::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 205px;
+    height: 245px;
+    background-image: url({{ section.settings.mobile_banner_image | image_url: width: 900 }});
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    z-index: 1;
   }
 
-  .eg-grid__items {
-    max-width: none;
-    margin: 0;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3px;
+  .eg-mobile-banner__top {
+    height: 45px;
+    display: grid;
+    grid-template-columns: 32px 1fr 32px;
+    align-items: center;
+    padding: 0 20px;
+    background: #f7f7f7;
+    position: relative;
+    z-index: 20;
   }
 
-  .eg-grid__card img {
-    height: 230px;
+  .eg-mobile-banner__hamburger {
+    border: 0;
+    background: transparent;
+    font-size: 22px;
+    padding: 0;
+    color: #000;
+    cursor: pointer;
+    font-family: inherit;
   }
 
-  .eg-grid__plus {
-    width: 20px;
-    height: 20px;
-    font-size: 16px;
-    line-height: 18px;
+  .eg-mobile-banner__logo {
+    text-align: center;
+    font-size: 21px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.2px;
   }
 
-  .eg-grid__card:nth-child(1) .eg-grid__plus { top: 62%; left: 55%; }
-  .eg-grid__card:nth-child(2) .eg-grid__plus { top: 52%; left: 84%; }
-  .eg-grid__card:nth-child(3) .eg-grid__plus { top: 20%; left: 65%; }
-  .eg-grid__card:nth-child(4) .eg-grid__plus { top: 16%; left: 73%; }
-  .eg-grid__card:nth-child(5) .eg-grid__plus { top: 22%; left: 52%; }
-  .eg-grid__card:nth-child(6) .eg-grid__plus { top: 67%; left: 45%; }
+  .eg-mobile-banner__content {
+    position: absolute;
+    top: 92px;
+    left: 24px;
+    right: 24px;
+    text-align: center;
+    z-index: 5;
+  }
 
-  .eg-popup__box {
-    width: 311px;
-    height: 447px;
+  .eg-mobile-banner__content h1 {
+    margin: 0 0 18px;
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  .eg-mobile-banner__content p {
+    max-width: 285px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 400;
+  }
+
+  .eg-mobile-banner__shop {
+    position: absolute;
+    left: 50%;
+    top: 380px;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 48px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    font-size: 15px;
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .eg-mobile-banner__shop::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #fff544;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+    z-index: 1;
+  }
+
+  .eg-mobile-banner__shop:hover::before {
+    transform: scaleX(1);
+  }
+
+  .eg-mobile-banner__shop span {
+    position: relative;
+    z-index: 2;
+    transition: color 0.25s ease;
+  }
+
+  .eg-mobile-banner__shop:hover span {
+    color: #000;
+  }
+
+  .eg-mobile-banner__strip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 455px;
+    height: 32px;
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    z-index: 10;
+  }
+
+  .eg-mobile-menu {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    right: 0;
+    background: #f7f7f7;
+    padding: 20px 20px 26px;
+    text-align: center;
+    z-index: 30;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity .25s ease, transform .25s ease, visibility .25s ease;
+  }
+
+  .eg-mobile-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .eg-mobile-menu p {
+    margin: 0 0 14px;
+    font-size: 14px;
+  }
+
+  .eg-mobile-menu a {
+    width: 244px;
+    height: 48px;
+    margin: 0 auto;
+    background: #fff544;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 34px;
+    font-size: 15px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .eg-mobile-menu a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #000;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+    z-index: 1;
+  }
+
+  .eg-mobile-menu a:hover::before {
+    transform: scaleX(1);
+  }
+
+  .eg-mobile-menu a span {
+    position: relative;
+    z-index: 2;
+    transition: color 0.25s ease;
+  }
+
+  .eg-mobile-menu a:hover span {
+    color: #fff;
   }
 }
 </style>
 
 <script>
-(function () {
-  const popup = document.getElementById('EgPopup');
-  const image = document.getElementById('EgImage');
-  const title = document.getElementById('EgTitle');
-  const price = document.getElementById('EgPrice');
-  const desc = document.getElementById('EgDesc');
-  const colorOptions = document.getElementById('EgColorOptions');
-  const sizeDropdown = document.getElementById('EgSizeDropdown');
-  const sizeTrigger = document.getElementById('EgSizeTrigger');
-  const sizeText = document.getElementById('EgSizeText');
-  const sizeMenu = document.getElementById('EgSizeMenu');
-  const cartBtn = document.getElementById('EgCartBtn');
-  const message = document.getElementById('EgMessage');
+document.addEventListener('DOMContentLoaded', function () {
+  var btn = document.getElementById('EgMenuToggle');
+  var menu = document.getElementById('EgMobileMenu');
 
-  let currentVariants = [];
-  let currentOptions = [];
-  let selectedColor = '';
-  let selectedSize = '';
-
-  function openPopup() {
-    popup.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePopup() {
-    popup.classList.remove('is-open');
-    document.body.style.overflow = '';
-    message.textContent = '';
-    sizeDropdown.classList.remove('is-open');
-  }
-
-  function getOptionName(option) {
-    return typeof option === 'string' ? option : option.name;
-  }
-
-  function getColorValues() {
-    const colorOption = currentOptions.find(function (option) {
-      return getOptionName(option).toLowerCase().includes('color');
-    });
-
-    if (colorOption && colorOption.values && colorOption.values.length) {
-      return colorOption.values.slice(0, 2);
-    }
-
-    return ['White', 'Black'];
-  }
-
-  function findVariant() {
-    if (!currentVariants.length) return null;
-
-    return currentVariants.find(function (variant) {
-      const opts = variant.options || [];
-      const colorMatch = !selectedColor || opts.includes(selectedColor);
-      const sizeMatch = !selectedSize || opts.includes(selectedSize);
-      return colorMatch && sizeMatch;
-    }) || currentVariants[0];
-  }
-
-  function renderColors() {
-    const colors = getColorValues();
-    colorOptions.innerHTML = '';
-    selectedColor = colors[0] || '';
-
-    colors.forEach(function (color, index) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'eg-color-btn';
-      btn.textContent = color;
-
-      if (index === 0) {
-        btn.classList.add('is-selected');
-      }
-
-      btn.addEventListener('click', function () {
-        selectedColor = color;
-
-        colorOptions.querySelectorAll('.eg-color-btn').forEach(function (item) {
-          item.classList.remove('is-selected');
-        });
-
-        btn.classList.add('is-selected');
-      });
-
-      colorOptions.appendChild(btn);
-    });
-  }
-
-  function resetSize() {
-    selectedSize = '';
-    sizeText.textContent = 'Choose your size';
-    sizeDropdown.classList.remove('is-open');
-
-    sizeMenu.querySelectorAll('button').forEach(function (item) {
-      item.classList.remove('is-selected');
-    });
-  }
-
-  function loadPopup(btn) {
-    title.textContent = btn.dataset.title || '';
-    price.textContent = btn.dataset.price || '';
-    desc.textContent = btn.dataset.desc || '';
-    image.src = btn.dataset.image || '';
-    image.alt = btn.dataset.title || '';
-    message.textContent = '';
-
-    try {
-      currentVariants = JSON.parse(btn.dataset.variants || '[]');
-      currentOptions = JSON.parse(btn.dataset.options || '[]');
-    } catch (error) {
-      currentVariants = [];
-      currentOptions = [];
-    }
-
-    resetSize();
-    renderColors();
-    openPopup();
-  }
-
-  document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
+  if (btn && menu) {
     btn.addEventListener('click', function () {
-      loadPopup(btn);
+      menu.classList.toggle('is-open');
+      btn.textContent = menu.classList.contains('is-open') ? '×' : '☰';
     });
-  });
-
-  sizeTrigger.addEventListener('click', function (event) {
-    event.stopPropagation();
-    sizeDropdown.classList.toggle('is-open');
-  });
-
-  sizeMenu.querySelectorAll('button').forEach(function (btn) {
-    btn.addEventListener('click', function (event) {
-      event.stopPropagation();
-
-      selectedSize = btn.dataset.size;
-      sizeText.textContent = selectedSize;
-
-      sizeMenu.querySelectorAll('button').forEach(function (item) {
-        item.classList.remove('is-selected');
-      });
-
-      btn.classList.add('is-selected');
-      sizeDropdown.classList.remove('is-open');
-    });
-  });
-
-  document.addEventListener('click', function (event) {
-    if (!sizeDropdown.contains(event.target)) {
-      sizeDropdown.classList.remove('is-open');
-    }
-  });
-
-  document.querySelectorAll('[data-close]').forEach(function (btn) {
-    btn.addEventListener('click', closePopup);
-  });
-
-  document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') closePopup();
-  });
-
-  cartBtn.addEventListener('click', async function () {
-    if (!selectedSize) {
-      message.textContent = 'Please choose your size.';
-      return;
-    }
-
-    const variant = findVariant();
-
-    if (!variant || !variant.id) {
-      message.textContent = 'Selected variant is not available.';
-      return;
-    }
-
-    message.textContent = 'Adding...';
-
-    try {
-      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
-        ? window.Shopify.routes.root
-        : '/';
-
-      await fetch(root + 'cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: variant.id,
-          quantity: 1
-        })
-      });
-
-      message.textContent = 'Added to cart.';
-    } catch (error) {
-      message.textContent = 'Could not add to cart.';
-    }
-  });
-})();
+  }
+});
 </script>
 
 {% schema %}
 {
-  "name": "Custom Grid",
+  "name": "Custom Banner",
   "settings": [
+    {
+      "type": "image_picker",
+      "id": "desktop_top_image",
+      "label": "Desktop top image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_bottom_image",
+      "label": "Desktop bottom image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_banner_image",
+      "label": "Desktop single fallback image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_banner_image",
+      "label": "Mobile banner image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "text",
+      "id": "top_text",
+      "label": "Desktop top text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "top_button",
+      "label": "Top button text",
+      "default": "CHOOSE GIFT"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Top button link"
+    },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Tisso vison in the wild"
-    }
-  ],
-  "blocks": [
+      "default": "The Gift Guide"
+    },
     {
-      "type": "product_card",
-      "name": "Product card",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Choose product"
-        }
-      ]
+      "type": "textarea",
+      "id": "desktop_description",
+      "label": "Desktop description",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination.\nExplore our curated selection and find the perfect gifts to\ndelight your loved ones this holiday season."
+    },
+    {
+      "type": "textarea",
+      "id": "mobile_description",
+      "label": "Mobile description",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
+    },
+    {
+      "type": "text",
+      "id": "main_button",
+      "label": "Main button text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "main_button_link",
+      "label": "Main button link"
+    },
+    {
+      "type": "text",
+      "id": "desktop_bottom_text",
+      "label": "Desktop bottom text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    },
+    {
+      "type": "text",
+      "id": "mobile_bottom_text",
+      "label": "Mobile bottom text",
+      "default": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR"
+    },
+    {
+      "type": "text",
+      "id": "mobile_menu_text",
+      "label": "Mobile menu text",
+      "default": "Find the ideal gift for your loved ones."
     }
   ],
-  "max_blocks": 6,
   "presets": [
     {
-      "name": "Custom Grid"
+      "name": "Custom Banner"
     }
   ]
 }
