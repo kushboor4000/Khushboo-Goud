@@ -1,23 +1,28 @@
 {% schema %}
 {
-  "name": "Custom Gift Guide Banner",
+  "name": "Fixed Gift Guide Banner",
   "settings": [
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop Banner Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile Banner Image"
+    },
     {
       "type": "text",
       "id": "heading",
-      "label": "Main Heading",
+      "label": "Banner Heading",
       "default": "The Gift Guide"
     },
     {
       "type": "textarea",
       "id": "subtext",
-      "label": "Sub Text",
+      "label": "Banner Sub Text",
       "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
-    },
-    {
-      "type": "image_picker",
-      "id": "banner_image",
-      "label": "Banner Illustration Image"
     },
     {
       "type": "text",
@@ -33,90 +38,143 @@
   ],
   "presets": [
     {
-      "name": "Custom Gift Guide Banner"
+      "name": "Fixed Banner (Desktop + Mobile)"
     }
   ]
 }
 {% endschema %}
 
-<section class="gift-banner">
-  <div class="gift-banner__inner">
-    
-    <div class="gift-banner__content">
-      <h1>{{ section.settings.heading }}</h1>
-      <p>{{ section.settings.subtext }}</p>
+<section class="fixed-banner">
 
-      {% if section.settings.button_text != blank %}
-        <a href="{{ section.settings.button_link }}" class="gift-btn">
+  <!-- DESKTOP BANNER -->
+  <div class="banner-desktop">
+    <div class="banner-desktop-inner">
+      <div class="banner-text">
+        <h1>{{ section.settings.heading }}</h1>
+        <p>{{ section.settings.subtext }}</p>
+        <a href="{{ section.settings.button_link }}" class="banner-btn">
           {{ section.settings.button_text }} →
         </a>
+      </div>
+
+      {% if section.settings.desktop_image %}
+        <div class="banner-image">
+          <img
+            src="{{ section.settings.desktop_image | image_url: width: 1600 }}"
+            alt="Desktop Banner"
+          >
+        </div>
       {% endif %}
     </div>
+  </div>
 
-    {% if section.settings.banner_image %}
-      <div class="gift-banner__image">
-        <img
-          src="{{ section.settings.banner_image | image_url: width: 1600 }}"
-          alt="Gift Guide Banner"
-          loading="lazy"
-        >
-      </div>
+  <!-- MOBILE BANNER -->
+  <div class="banner-mobile">
+    {% if section.settings.mobile_image %}
+      <img
+        src="{{ section.settings.mobile_image | image_url: width: 900 }}"
+        alt="Mobile Banner"
+      >
     {% endif %}
 
+    <div class="mobile-text">
+      <h1>{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.subtext }}</p>
+      <a href="{{ section.settings.button_link }}" class="banner-btn">
+        {{ section.settings.button_text }} →
+      </a>
+    </div>
   </div>
+
 </section>
 
 <style>
-.gift-banner {
+/* COMMON */
+.fixed-banner {
+  width: 100%;
   background: #fff;
-  padding: 60px 0;
 }
 
-.gift-banner__inner {
+.banner-btn {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  padding: 12px 26px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* ===================== */
+/* DESKTOP ONLY */
+/* ===================== */
+.banner-desktop {
+  display: block;
+}
+
+.banner-desktop-inner {
   max-width: 1200px;
   margin: auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
   align-items: center;
+  gap: 40px;
+  padding: 60px 0;
 }
 
-.gift-banner__content h1 {
+.banner-text h1 {
   font-size: 48px;
-  font-weight: 700;
   margin-bottom: 15px;
 }
 
-.gift-banner__content p {
+.banner-text p {
   font-size: 16px;
-  color: #555;
   margin-bottom: 25px;
 }
 
-.gift-btn {
-  display: inline-block;
-  background: #000;
-  color: #fff;
-  padding: 12px 28px;
-  text-decoration: none;
-  font-size: 14px;
-  letter-spacing: 1px;
-}
-
-.gift-banner__image img {
+.banner-image img {
   width: 100%;
   height: auto;
 }
 
-/* 🔹 Mobile Fix */
+/* ===================== */
+/* MOBILE ONLY */
+/* ===================== */
+.banner-mobile {
+  display: none;
+  text-align: center;
+}
+
+/* MOBILE IMAGE HEIGHT REDUCED ~30% */
+.banner-mobile img {
+  width: 100%;
+  height: 280px;        /* 👈 height reduced */
+  object-fit: cover;
+}
+
+.mobile-text {
+  padding: 25px 20px 40px;
+}
+
+.mobile-text h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.mobile-text p {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ===================== */
+/* RESPONSIVE SWITCH */
+/* ===================== */
 @media (max-width: 768px) {
-  .gift-banner__inner {
-    grid-template-columns: 1fr;
-    text-align: center;
+  .banner-desktop {
+    display: none;
   }
 
-  .gift-banner__content h1 {
-    font-size: 34px;
+  .banner-mobile {
+    display: block;
   }
 }
 </style>
