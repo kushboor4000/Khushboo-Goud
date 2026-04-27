@@ -93,16 +93,22 @@
   max-width: 1440px;
   margin: 30px auto 0;
   padding: 55px 50px;
+  background: #fff;
+  box-shadow: 0 0 0 100vw #000;
+  clip-path: inset(0 -100vw);
 }
 
 .eg-grid h2 {
+  max-width: 1080px;
+  margin: 0 auto 28px;
   font-size: 32px;
-  margin: 0 0 28px;
   font-weight: 400;
-  text-align: center;
+  text-align: right;
 }
 
 .eg-grid__items {
+  max-width: 1080px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
@@ -405,14 +411,22 @@
   .eg-grid {
     margin: 30px auto 0;
     padding: 10px 0 38px;
+    background: #fff;
+    box-shadow: none;
+    clip-path: none;
   }
 
   .eg-grid h2 {
+    max-width: none;
+    margin: 0 0 28px;
     font-size: 26px;
     padding: 0 16px;
+    text-align: left;
   }
 
   .eg-grid__items {
+    max-width: none;
+    margin: 0;
     grid-template-columns: repeat(2, 1fr);
     gap: 3px;
   }
