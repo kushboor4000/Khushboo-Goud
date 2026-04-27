@@ -2,38 +2,6 @@
 
   <!-- DESKTOP BANNER -->
   <div class="eg-desktop-banner">
-
-    {% if section.settings.desktop_top_image != blank %}
-      <img
-        class="eg-desktop-banner__img eg-desktop-banner__img--top"
-        src="{{ section.settings.desktop_top_image | image_url: width: 1800 }}"
-        alt=""
-        width="1800"
-        height="500"
-        loading="eager"
-      >
-    {% endif %}
-
-    {% if section.settings.desktop_bottom_image != blank %}
-      <img
-        class="eg-desktop-banner__img eg-desktop-banner__img--bottom"
-        src="{{ section.settings.desktop_bottom_image | image_url: width: 1800 }}"
-        alt=""
-        width="1800"
-        height="500"
-        loading="eager"
-      >
-    {% elsif section.settings.desktop_banner_image != blank %}
-      <img
-        class="eg-desktop-banner__img eg-desktop-banner__img--single"
-        src="{{ section.settings.desktop_banner_image | image_url: width: 1800 }}"
-        alt=""
-        width="1800"
-        height="843"
-        loading="eager"
-      >
-    {% endif %}
-
     <div class="eg-desktop-banner__top">
       <div class="eg-desktop-banner__logo">{{ section.settings.logo_text }}</div>
 
@@ -42,18 +10,41 @@
       </div>
 
       <a href="{{ section.settings.button_link | default: '#' }}" class="eg-desktop-banner__choose">
-        <span class="eg-btn-text">{{ section.settings.top_button }}</span>
-        <span class="eg-btn-arrow">→</span>
+        <span>{{ section.settings.top_button }}</span>
+        <span>→</span>
       </a>
     </div>
+
+    {% if section.settings.desktop_top_image != blank %}
+      <img
+        class="eg-desktop-banner__top-img"
+        src="{{ section.settings.desktop_top_image | image_url: width: 1800 }}"
+        alt=""
+        width="1440"
+        height="390"
+        loading="eager"
+      >
+    {% endif %}
+
+    {% if section.settings.desktop_bottom_image != blank %}
+      <img
+        class="eg-desktop-banner__bottom-img"
+        src="{{ section.settings.desktop_bottom_image | image_url: width: 1200 }}"
+        alt=""
+        width="890"
+        height="402"
+        loading="eager"
+      >
+    {% endif %}
 
     <div class="eg-desktop-banner__content">
       <h1>{{ section.settings.heading }}</h1>
       <p>{{ section.settings.desktop_description }}</p>
-      <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-desktop-banner__shop">
-        {{ section.settings.main_button }} <span>→</span>
-      </a>
     </div>
+
+    <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-desktop-banner__shop">
+      {{ section.settings.main_button }} <span>→</span>
+    </a>
 
     <div class="eg-desktop-banner__strip">
       {{ section.settings.desktop_bottom_text }}
@@ -109,7 +100,7 @@
   display: block;
   width: 100%;
   max-width: 1440px;
-  height: 843px;
+  height: 876px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
@@ -117,65 +108,40 @@
   color: #000;
 }
 
-.eg-desktop-banner__img {
+.eg-desktop-banner__top {
   position: absolute;
+  top: 0;
   left: 0;
   width: 100%;
-  height: auto;
-  object-fit: cover;
-  pointer-events: none;
-  user-select: none;
-}
-
-.eg-desktop-banner__img--top {
-  top: 48px;
-  z-index: 1;
-}
-
-.eg-desktop-banner__img--bottom {
-  bottom: 32px;
-  z-index: 1;
-}
-
-.eg-desktop-banner__img--single {
-  top: 48px;
-  z-index: 1;
-}
-
-.eg-desktop-banner__top {
-  height: 48px;
-  position: relative;
-  z-index: 5;
+  min-height: 64px;
+  padding: 10px 140px;
   background: #fff;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: 360px;
+  z-index: 20;
 }
 
 .eg-desktop-banner__logo {
-  position: absolute;
-  left: 140px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
+  font-size: 24px;
   line-height: 1;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 .eg-desktop-banner__tagline {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: max-content;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1;
+  font-size: 16px;
+  line-height: 1.2;
   font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .eg-desktop-banner__choose {
-  position: absolute;
-  right: 140px;
-  top: 8px;
+  justify-self: end;
   width: 205px;
   height: 44px;
   background: #fff544;
@@ -185,8 +151,10 @@
   align-items: center;
   justify-content: center;
   gap: 30px;
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1;
   font-weight: 400;
+  position: relative;
   overflow: hidden;
 }
 
@@ -205,53 +173,81 @@
   transform: scaleX(1);
 }
 
-.eg-desktop-banner__choose .eg-btn-text,
-.eg-desktop-banner__choose .eg-btn-arrow {
+.eg-desktop-banner__choose span {
   position: relative;
   z-index: 2;
   transition: color 0.25s ease;
 }
 
-.eg-desktop-banner__choose:hover .eg-btn-text,
-.eg-desktop-banner__choose:hover .eg-btn-arrow {
+.eg-desktop-banner__choose:hover span {
   color: #fff;
+}
+
+.eg-desktop-banner__top-img {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  width: 1440px;
+  height: 390px;
+  object-fit: cover;
+  object-position: center top;
+  z-index: 1;
+}
+
+.eg-desktop-banner__bottom-img {
+  position: absolute;
+  top: 442px;
+  left: 550px;
+  width: 890px;
+  height: 402px;
+  object-fit: cover;
+  object-position: center top;
+  z-index: 1;
 }
 
 .eg-desktop-banner__content {
   position: absolute;
-  left: 140px;
-  top: 462px;
-  width: 460px;
-  z-index: 4;
+  left: 67px;
+  top: 492px;
+  width: 560px;
+  z-index: 10;
 }
 
 .eg-desktop-banner__content h1 {
   margin: 0 0 34px;
-  font-size: 56px;
+  font-size: 70px;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 500;
+  color: #000;
 }
 
 .eg-desktop-banner__content p {
-  margin: 0 0 32px;
-  max-width: 430px;
-  font-size: 16px;
-  line-height: 1.45;
+  margin: 0;
+  width: 570px;
+  max-width: 570px;
+  font-size: 20px;
+  line-height: 140%;
   font-weight: 400;
+  color: #000;
 }
 
 .eg-desktop-banner__shop {
-  width: 196px;
-  height: 45px;
+  position: absolute;
+  top: 743px;
+  left: 67px;
+  width: 220px;
+  height: 50px;
   background: #000;
   color: #fff;
   text-decoration: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 34px;
-  font-size: 13px;
+  gap: 42px;
+  font-size: 14px;
+  line-height: 1;
   font-weight: 400;
+  z-index: 10;
 }
 
 .eg-desktop-banner__strip {
@@ -264,8 +260,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  z-index: 6;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
+  color: #000;
+  z-index: 15;
 }
 
 /* MOBILE */
