@@ -16,6 +16,7 @@
       "blocks": {
         "header-logo": {
           "type": "_header-logo",
+          "disabled": true,
           "static": true,
           "settings": {
             "hide_logo_on_home_page": false,
@@ -85,61 +86,30 @@
         "collection_color_scheme": "default"
       }
     },
-    "custom_banner_JrGULb": {
+    "custom_banner_MfEAYr": {
       "type": "custom-banner",
       "name": "Custom Banner",
       "settings": {
-        "mobile_banner_image": "shopify://shop_images/Frame.png",
-        "desktop_logo_text": "TISSO VISON",
+        "mobile_banner_image": "shopify://shop_images/Frame_1fdb8a34-4f7b-44fa-8963-07fcb8ae9f96.png",
+        "desktop_logo_text": "",
         "mobile_logo_text": "TISSO VISON",
         "desktop_top_text": "Find the ideal gift for your loved ones.",
         "desktop_top_button": "CHOOSE GIFT",
         "top_button_link": "",
-        "desktop_heading": "The Gift Guide",
+        "desktop_heading": "",
         "mobile_heading": "The Gift Guide",
-        "desktop_description": "Discover joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
+        "desktop_description": "",
         "mobile_description": "Discover joy: Your Ultimate Holiday Gift Destination.",
-        "desktop_main_button": "SHOP NOW",
+        "desktop_main_button": "",
         "mobile_main_button": "SHOP NOW",
         "main_button_link": "",
         "mobile_menu_text": "Find the ideal gift for your loved ones.",
         "mobile_menu_button": "CHOOSE GIFT"
       }
-    },
-    "header_announcements_cpkDPR": {
-      "type": "header-announcements",
-      "blocks": {
-        "announcement_bEMfHU": {
-          "type": "_announcement",
-          "settings": {
-            "text": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR",
-            "link": "",
-            "font": "var(--font-body--family)",
-            "font_size": "0.75rem",
-            "weight": "",
-            "letter_spacing": "normal",
-            "case": "none"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "announcement_bEMfHU"
-      ],
-      "name": "t:names.announcement_bar",
-      "settings": {
-        "speed": 5,
-        "section_width": "page-width",
-        "color_scheme": "scheme-3",
-        "divider_width": 0,
-        "padding-block-start": 15,
-        "padding-block-end": 15
-      }
     }
   },
   "order": [
     "header_section",
-    "custom_banner_JrGULb",
-    "header_announcements_cpkDPR"
+    "custom_banner_MfEAYr"
   ]
 }
