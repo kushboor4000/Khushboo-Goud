@@ -1,27 +1,27 @@
-<section class="tisso-grid">
+<section class="eg-grid">
   <h2>{{ section.settings.heading }}</h2>
 
-  <div class="tisso-grid__items">
+  <div class="eg-grid__items">
     {% for block in section.blocks %}
       {% assign product = block.settings.product %}
       {% if product != blank %}
         <div
-          class="tisso-grid__item"
+          class="eg-grid__card"
           style="--plus-x: {{ block.settings.plus_x }}%; --plus-y: {{ block.settings.plus_y }}%;"
           {{ block.shopify_attributes }}
         >
           <img
-            src="{{ product.featured_image | image_url: width: 900 }}"
+            src="{{ product.featured_image | image_url: width: 800 }}"
             alt="{{ product.title | escape }}"
-            width="900"
-            height="1100"
+            width="800"
+            height="1000"
             loading="lazy"
           >
 
           <button
             type="button"
-            class="tisso-grid__plus"
-            data-product-handle="{{ product.handle }}"
+            class="eg-grid__plus"
+            data-handle="{{ product.handle }}"
             aria-label="Open {{ product.title | escape }}"
           >
             +
@@ -31,76 +31,74 @@
     {% endfor %}
   </div>
 
-  <div class="tisso-popup" id="TissoPopup" aria-hidden="true">
-    <div class="tisso-popup__overlay" data-close-popup></div>
+  <div class="eg-popup" id="EgPopup">
+    <div class="eg-popup__overlay" data-close></div>
 
-    <div class="tisso-popup__box">
-      <button type="button" class="tisso-popup__close" data-close-popup>×</button>
+    <div class="eg-popup__box">
+      <button type="button" class="eg-popup__close" data-close>×</button>
 
-      <div class="tisso-popup__top">
-        <img id="TissoPopupImage" src="" alt="" width="140" height="170">
+      <div class="eg-popup__top">
+        <img id="EgImage" src="" alt="" width="140" height="170">
 
-        <div class="tisso-popup__info">
-          <h3 id="TissoPopupTitle"></h3>
-          <p id="TissoPopupPrice"></p>
-          <div id="TissoPopupDescription"></div>
+        <div class="eg-popup__info">
+          <h3 id="EgTitle"></h3>
+          <p id="EgPrice"></p>
+          <div id="EgDesc"></div>
         </div>
       </div>
 
-      <div id="TissoColorBox"></div>
-      <div id="TissoSizeBox"></div>
+      <div id="EgOptions"></div>
 
-      <button type="button" id="TissoAddToCart" class="tisso-popup__cart">
+      <button type="button" id="EgCartBtn" class="eg-popup__cart">
         ADD TO CART <span>→</span>
       </button>
 
-      <p id="TissoMessage" class="tisso-popup__message"></p>
+      <p id="EgMessage" class="eg-popup__message"></p>
     </div>
   </div>
 </section>
 
 <style>
-.tisso-grid {
+.eg-grid {
   max-width: 1440px;
   margin: 0 auto;
   padding: 86px 176px 88px;
-  font-family: Georgia, 'Times New Roman', serif;
-  color: #000;
   background: #fff;
+  color: #000;
+  font-family: Georgia, 'Times New Roman', serif;
 }
 
-.tisso-grid h2 {
+.eg-grid h2 {
   margin: 0 0 42px;
-  text-align: left;
   font-size: 31px;
   line-height: 1;
   font-weight: 400;
 }
 
-.tisso-grid__items {
+.eg-grid__items {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
-.tisso-grid__item {
+.eg-grid__card {
   position: relative;
   aspect-ratio: 1 / 1.28;
   overflow: hidden;
-  background: #f5f5f5;
+  background: #f4f4f4;
 }
 
-.tisso-grid__item img {
+.eg-grid__card img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
 }
 
-.tisso-grid__plus {
+.eg-grid__plus {
   position: absolute;
   left: var(--plus-x, 55%);
-  top: var(--plus-y, 55%);
+  top: var(--plus-y, 18%);
   width: 19px;
   height: 19px;
   border: 0;
@@ -109,14 +107,14 @@
   color: #000;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
-  line-height: 17px;
+  line-height: 18px;
   padding: 0;
   cursor: pointer;
   transform: translate(-50%, -50%);
   z-index: 3;
 }
 
-.tisso-popup {
+.eg-popup {
   display: none;
   position: fixed;
   inset: 0;
@@ -124,17 +122,17 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.tisso-popup.is-open {
+.eg-popup.is-open {
   display: block;
 }
 
-.tisso-popup__overlay {
+.eg-popup__overlay {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,.18);
 }
 
-.tisso-popup__box {
+.eg-popup__box {
   position: relative;
   z-index: 2;
   width: 390px;
@@ -147,7 +145,7 @@
   color: #000;
 }
 
-.tisso-popup__close {
+.eg-popup__close {
   position: absolute;
   top: 12px;
   right: 16px;
@@ -160,62 +158,60 @@
   padding: 0;
 }
 
-.tisso-popup__top {
+.eg-popup__top {
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: 12px;
   margin-bottom: 12px;
 }
 
-.tisso-popup__top img {
+.eg-popup__top img {
   width: 140px;
   height: 170px;
-  display: block;
   object-fit: cover;
   background: #f5f5f5;
 }
 
-.tisso-popup__info h3 {
+.eg-popup__info h3 {
   margin: 8px 26px 12px 0;
   font-size: 18px;
   line-height: 1.18;
   font-weight: 400;
 }
 
-.tisso-popup__info p {
+.eg-popup__info p {
   margin: 0 0 12px;
   font-size: 19px;
   line-height: 1;
 }
 
-#TissoPopupDescription {
+#EgDesc {
   max-height: 76px;
   overflow: hidden;
   font-size: 14px;
   line-height: 1.08;
 }
 
-.tisso-option {
+.eg-option {
   margin-bottom: 14px;
 }
 
-.tisso-option__label {
+.eg-option__label {
   display: block;
   margin: 0 0 7px;
   font-size: 14px;
   font-weight: 400;
 }
 
-.tisso-colors {
+.eg-colors {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border: 1px solid #000;
   height: 50px;
+  border: 1px solid #000;
 }
 
-.tisso-color {
+.eg-color {
   position: relative;
-  min-width: 0;
   border: 0;
   border-right: 1px solid #000;
   background: #fff;
@@ -226,11 +222,11 @@
   cursor: pointer;
 }
 
-.tisso-color:last-child {
+.eg-color:last-child {
   border-right: 0;
 }
 
-.tisso-color::before {
+.eg-color::before {
   content: "";
   position: absolute;
   left: 0;
@@ -240,15 +236,15 @@
   background: var(--swatch-color, #000);
 }
 
-.tisso-color.is-selected {
+.eg-color.is-selected {
   box-shadow: inset 0 0 0 2px #000;
 }
 
-.tisso-size-wrap {
+.eg-size-wrap {
   position: relative;
 }
 
-.tisso-size {
+.eg-size {
   width: 100%;
   height: 50px;
   border: 1px solid #000;
@@ -260,7 +256,7 @@
   cursor: pointer;
 }
 
-.tisso-size-wrap::after {
+.eg-size-wrap::after {
   content: "⌄";
   position: absolute;
   right: 0;
@@ -275,7 +271,7 @@
   pointer-events: none;
 }
 
-.tisso-popup__cart {
+.eg-popup__cart {
   width: 100%;
   height: 56px;
   margin-top: 34px;
@@ -291,45 +287,45 @@
   cursor: pointer;
 }
 
-.tisso-popup__cart span {
+.eg-popup__cart span {
   font-size: 31px;
   line-height: 1;
 }
 
-.tisso-popup__message {
+.eg-popup__message {
   margin: 10px 0 0;
   font-size: 13px;
 }
 
-@media screen and (max-width: 749px) {
-  .tisso-grid {
+@media (max-width: 749px) {
+  .eg-grid {
     padding: 39px 20px 26px;
   }
 
-  .tisso-grid h2 {
+  .eg-grid h2 {
     text-align: center;
     font-size: 28px;
     line-height: 1.08;
     margin-bottom: 24px;
   }
 
-  .tisso-grid__items {
+  .eg-grid__items {
     grid-template-columns: repeat(2, 1fr);
     gap: 4px;
   }
 
-  .tisso-grid__item {
+  .eg-grid__card {
     aspect-ratio: 1 / 1.28;
   }
 
-  .tisso-grid__plus {
+  .eg-grid__plus {
     width: 18px;
     height: 18px;
     font-size: 15px;
-    line-height: 16px;
+    line-height: 17px;
   }
 
-  .tisso-popup__box {
+  .eg-popup__box {
     width: calc(100% - 32px);
     max-width: 390px;
     min-height: 448px;
@@ -339,31 +335,31 @@
     overflow-y: auto;
   }
 
-  .tisso-popup__top {
+  .eg-popup__top {
     grid-template-columns: 120px 1fr;
     gap: 10px;
   }
 
-  .tisso-popup__top img {
+  .eg-popup__top img {
     width: 120px;
     height: 140px;
   }
 
-  .tisso-popup__info h3 {
+  .eg-popup__info h3 {
     font-size: 16px;
     margin-top: 6px;
   }
 
-  .tisso-popup__info p {
+  .eg-popup__info p {
     font-size: 17px;
   }
 
-  #TissoPopupDescription {
+  #EgDesc {
     font-size: 12px;
     line-height: 1.1;
   }
 
-  .tisso-color {
+  .eg-color {
     font-size: 16px;
   }
 }
@@ -371,15 +367,14 @@
 
 <script>
 (function () {
-  const popup = document.getElementById('TissoPopup');
-  const popupImage = document.getElementById('TissoPopupImage');
-  const popupTitle = document.getElementById('TissoPopupTitle');
-  const popupPrice = document.getElementById('TissoPopupPrice');
-  const popupDescription = document.getElementById('TissoPopupDescription');
-  const colorBox = document.getElementById('TissoColorBox');
-  const sizeBox = document.getElementById('TissoSizeBox');
-  const addButton = document.getElementById('TissoAddToCart');
-  const message = document.getElementById('TissoMessage');
+  const popup = document.getElementById('EgPopup');
+  const image = document.getElementById('EgImage');
+  const title = document.getElementById('EgTitle');
+  const price = document.getElementById('EgPrice');
+  const desc = document.getElementById('EgDesc');
+  const optionsBox = document.getElementById('EgOptions');
+  const cartBtn = document.getElementById('EgCartBtn');
+  const message = document.getElementById('EgMessage');
 
   let currentProduct = null;
   let selectedOptions = [];
@@ -402,18 +397,16 @@
 
   function openPopup() {
     popup.classList.add('is-open');
-    popup.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
   function closePopup() {
     popup.classList.remove('is-open');
-    popup.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     message.textContent = '';
   }
 
-  function getVariant() {
+  function selectedVariant() {
     if (!currentProduct) return null;
 
     return currentProduct.variants.find(function (variant) {
@@ -424,13 +417,13 @@
   }
 
   function updatePrice() {
-    const variant = getVariant();
+    const variant = selectedVariant();
     if (variant) {
-      popupPrice.textContent = money(variant.price);
+      price.textContent = money(variant.price);
     }
   }
 
-  function getValues(optionIndex) {
+  function getOptionValues(optionIndex) {
     const values = [];
     currentProduct.variants.forEach(function (variant) {
       const value = variant.options[optionIndex];
@@ -440,66 +433,66 @@
   }
 
   function renderColorOption(optionName, optionIndex) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'tisso-option';
+    const wrap = document.createElement('div');
+    wrap.className = 'eg-option';
 
     const label = document.createElement('label');
-    label.className = 'tisso-option__label';
+    label.className = 'eg-option__label';
     label.textContent = optionName;
 
-    const valuesWrapper = document.createElement('div');
-    valuesWrapper.className = 'tisso-colors';
+    const colors = document.createElement('div');
+    colors.className = 'eg-colors';
 
-    getValues(optionIndex).slice(0, 2).forEach(function (value) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'tisso-color';
-      button.textContent = value;
-      button.style.setProperty('--swatch-color', colorMap[value] || '#000');
+    getOptionValues(optionIndex).slice(0, 2).forEach(function (value) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'eg-color';
+      btn.textContent = value;
+      btn.style.setProperty('--swatch-color', colorMap[value] || '#000');
 
       if (selectedOptions[optionIndex] === value) {
-        button.classList.add('is-selected');
+        btn.classList.add('is-selected');
       }
 
-      button.addEventListener('click', function () {
+      btn.addEventListener('click', function () {
         selectedOptions[optionIndex] = value;
 
-        valuesWrapper.querySelectorAll('.tisso-color').forEach(function (item) {
+        colors.querySelectorAll('.eg-color').forEach(function (item) {
           item.classList.remove('is-selected');
         });
 
-        button.classList.add('is-selected');
+        btn.classList.add('is-selected');
         updatePrice();
       });
 
-      valuesWrapper.appendChild(button);
+      colors.appendChild(btn);
     });
 
-    wrapper.appendChild(label);
-    wrapper.appendChild(valuesWrapper);
-    colorBox.appendChild(wrapper);
+    wrap.appendChild(label);
+    wrap.appendChild(colors);
+    optionsBox.appendChild(wrap);
   }
 
   function renderSizeOption(optionName, optionIndex) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'tisso-option';
+    const wrap = document.createElement('div');
+    wrap.className = 'eg-option';
 
     const label = document.createElement('label');
-    label.className = 'tisso-option__label';
+    label.className = 'eg-option__label';
     label.textContent = optionName;
 
     const selectWrap = document.createElement('div');
-    selectWrap.className = 'tisso-size-wrap';
+    selectWrap.className = 'eg-size-wrap';
 
     const select = document.createElement('select');
-    select.className = 'tisso-size';
+    select.className = 'eg-size';
 
     const placeholder = document.createElement('option');
     placeholder.textContent = 'Choose your size';
     placeholder.value = '';
     select.appendChild(placeholder);
 
-    getValues(optionIndex).forEach(function (value) {
+    getOptionValues(optionIndex).forEach(function (value) {
       const option = document.createElement('option');
       option.value = value;
       option.textContent = value;
@@ -514,14 +507,13 @@
     });
 
     selectWrap.appendChild(select);
-    wrapper.appendChild(label);
-    wrapper.appendChild(selectWrap);
-    sizeBox.appendChild(wrapper);
+    wrap.appendChild(label);
+    wrap.appendChild(selectWrap);
+    optionsBox.appendChild(wrap);
   }
 
   function renderOptions() {
-    colorBox.innerHTML = '';
-    sizeBox.innerHTML = '';
+    optionsBox.innerHTML = '';
 
     currentProduct.options.forEach(function (optionName, index) {
       const lowerName = optionName.toLowerCase();
@@ -538,16 +530,16 @@
     message.textContent = 'Loading...';
 
     try {
-      const response = await fetch('/products/' + handle + '.js');
-      currentProduct = await response.json();
+      const res = await fetch('/products/' + handle + '.js');
+      currentProduct = await res.json();
 
       selectedOptions = currentProduct.variants[0].options.slice();
 
-      popupImage.src = currentProduct.featured_image || '';
-      popupImage.alt = currentProduct.title;
-      popupTitle.textContent = currentProduct.title;
-      popupPrice.textContent = money(currentProduct.variants[0].price);
-      popupDescription.innerHTML = currentProduct.description || 'This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.';
+      image.src = currentProduct.featured_image || '';
+      image.alt = currentProduct.title;
+      title.textContent = currentProduct.title;
+      price.textContent = money(currentProduct.variants[0].price);
+      desc.innerHTML = currentProduct.description || 'This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.';
 
       renderOptions();
       updatePrice();
@@ -560,8 +552,8 @@
 
   async function addSoftWinterJacket() {
     try {
-      const response = await fetch('/products/soft-winter-jacket.js');
-      const jacket = await response.json();
+      const res = await fetch('/products/soft-winter-jacket.js');
+      const jacket = await res.json();
 
       if (!jacket.variants || !jacket.variants[0]) return;
 
@@ -575,22 +567,24 @@
     }
   }
 
-  document.querySelectorAll('.tisso-grid__plus').forEach(function (button) {
-    button.addEventListener('click', function () {
-      loadProduct(button.dataset.productHandle);
-    });
-  });
+  document.addEventListener('click', function (event) {
+    const plusBtn = event.target.closest('.eg-grid__plus');
+    if (plusBtn) {
+      const handle = plusBtn.getAttribute('data-handle');
+      if (handle) loadProduct(handle);
+    }
 
-  document.querySelectorAll('[data-close-popup]').forEach(function (item) {
-    item.addEventListener('click', closePopup);
+    if (event.target.closest('[data-close]')) {
+      closePopup();
+    }
   });
 
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') closePopup();
   });
 
-  addButton.addEventListener('click', async function () {
-    const variant = getVariant();
+  cartBtn.addEventListener('click', async function () {
+    const variant = selectedVariant();
 
     if (!variant) {
       message.textContent = 'Please select available options.';
@@ -649,7 +643,7 @@
           "min": 0,
           "max": 100,
           "step": 1,
-          "default": 55
+          "default": 64
         },
         {
           "type": "range",
@@ -658,7 +652,7 @@
           "min": 0,
           "max": 100,
           "step": 1,
-          "default": 55
+          "default": 16
         }
       ]
     }
