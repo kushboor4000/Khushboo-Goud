@@ -457,7 +457,7 @@
   const cartBtn = document.getElementById('EgCartBtn');
   const message = document.getElementById('EgMessage');
 
-  const softWinterJacketVariantId = {{ section.settings.soft_winter_jacket.selected_or_first_available_variant.id | json }};
+  const customizerJacketVariantId = {{ section.settings.soft_winter_jacket.selected_or_first_available_variant.id | json }};
 
   let currentVariants = [];
   let currentOptions = [];
@@ -685,7 +685,56 @@
     });
 
     if (!response.ok) throw new Error('Cart add failed');
+
     return response.json();
+  }
+
+  async function getJacketVariantId() {
+    if (customizerJacketVariantId) {
+      return customizerJacketVariantId;
+    }
+
+    const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+      ? window.Shopify.routes.root
+      : '/';
+
+    const possibleHandles = [
+      'dark-winter-jacket',
+      'soft-winter-jacket',
+      'classic-leather-jacket'
+    ];
+
+    for (const handle of possibleHandles) {
+      try {
+        const response = await fetch(root + 'products/' + handle + '.js');
+
+        if (!response.ok) continue;
+
+        const product = await response.json();
+
+        if (!product || !product.variants || !product.variants.length) continue;
+
+        const blackMedium = product.variants.find(function (variant) {
+          const opts = variant.options || [];
+
+          return opts.some(function (opt) {
+            return normalize(opt) === 'black';
+          }) && opts.some(function (opt) {
+            return isMedium(opt);
+          });
+        });
+
+        if (blackMedium) return blackMedium.id;
+
+        const available = product.variants.find(function (variant) {
+          return variant.available;
+        });
+
+        return available ? available.id : product.variants[0].id;
+      } catch (error) {}
+    }
+
+    return null;
   }
 
   document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
@@ -731,26 +780,29 @@
     message.textContent = 'Adding...';
 
     try {
-      await addItemsToCart([
+      const items = [
         {
           id: variant.id,
           quantity: 1
         }
-      ]);
+      ];
 
       const shouldAddJacket =
         normalize(selectedDisplayColor) === 'black' &&
-        isMedium(selectedSize) &&
-        softWinterJacketVariantId;
+        isMedium(selectedSize);
 
       if (shouldAddJacket) {
-        await addItemsToCart([
-          {
-            id: softWinterJacketVariantId,
+        const jacketId = await getJacketVariantId();
+
+        if (jacketId) {
+          items.push({
+            id: jacketId,
             quantity: 1
-          }
-        ]);
+          });
+        }
       }
+
+      await addItemsToCart(items);
 
       cartBtn.textContent = 'ADDED';
       message.textContent =
