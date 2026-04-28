@@ -6,20 +6,14 @@
       {% for block in section.blocks %}
         {% assign product = block.settings.product %}
         {% if product != blank %}
-          <button
-            type="button"
-            class="eg-product-card"
-            data-product-handle="{{ product.handle }}"
-            {{ block.shopify_attributes }}
-          >
+          <button type="button" class="eg-product-card" {{ block.shopify_attributes }}>
             <span class="eg-hotspot">+</span>
 
             {% if product.featured_image %}
               <img
                 src="{{ product.featured_image | image_url: width: 700 }}"
                 alt="{{ product.title | escape }}"
-                loading="lazy"
-              >
+                loading="lazy">
             {% endif %}
 
             <div class="eg-product-info">
@@ -51,13 +45,9 @@
 
         <form class="eg-product-form">
           <div class="eg-variant-options"></div>
-
           <input type="hidden" name="id" class="eg-selected-variant-id">
 
-          <button type="submit" class="eg-add-to-cart">
-            ADD TO CART
-          </button>
-
+          <button type="submit" class="eg-add-to-cart">ADD TO CART</button>
           <p class="eg-cart-message" aria-live="polite"></p>
         </form>
       </div>
@@ -281,6 +271,7 @@
 .eg-cart-message {
   margin: 12px 0 0;
   font-size: 14px;
+  color: #008000;
 }
 
 @media (max-width: 749px) {
@@ -362,11 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function getProductImage(product) {
     if (product.featured_image) return product.featured_image;
-
-    if (product.images && product.images.length) {
-      return product.images[0];
-    }
-
+    if (product.images && product.images.length) return product.images[0];
     return '';
   }
 
@@ -390,7 +377,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     variantInput.value = selectedVariant.id;
     popupPrice.textContent = formatMoney(selectedVariant.price);
-
     addBtn.disabled = !selectedVariant.available;
     addBtn.textContent = selectedVariant.available ? 'ADD TO CART' : 'SOLD OUT';
   }
@@ -403,10 +389,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       product.variants.forEach(function (variant) {
         const value = variant.options[optionIndex];
-
-        if (!values.includes(value)) {
-          values.push(value);
-        }
+        if (!values.includes(value)) values.push(value);
       });
 
       const group = document.createElement('div');
@@ -457,8 +440,7 @@ document.addEventListener('DOMContentLoaded', function () {
     popupPrice.textContent = product.price ? formatMoney(product.price) : '';
     popupDescription.innerHTML = product.description || '';
 
-    const imageUrl = getProductImage(product);
-    popupImage.src = imageUrl;
+    popupImage.src = getProductImage(product);
     popupImage.alt = product.title;
 
     renderOptions(product);
@@ -493,10 +475,55 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (!response.ok) {
-      throw new Error('Cart request failed');
+      throw new Error('Product could not be added to cart');
     }
 
     return response.json();
+  }
+
+  async function getCart() {
+    const response = await fetch('/cart.js', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    return response.json();
+  }
+
+  function updateCartCount(cart) {
+    const cartIcon = document.querySelector('#cart-icon-bubble');
+    if (!cartIcon) return;
+
+    let bubble = cartIcon.querySelector('.cart-count-bubble');
+
+    if (!bubble) {
+      bubble = document.createElement('div');
+      bubble.className = 'cart-count-bubble';
+      bubble.innerHTML = '<span aria-hidden="true"></span><span class="visually-hidden"></span>';
+      cartIcon.appendChild(bubble);
+    }
+
+    const visibleCount = bubble.querySelector('span[aria-hidden="true"]');
+    const hiddenCount = bubble.querySelector('.visually-hidden');
+
+    if (visibleCount) visibleCount.textContent = cart.item_count;
+    if (hiddenCount) hiddenCount.textContent = cart.item_count + ' items';
+  }
+
+  function showSuccess(extraProductAdded) {
+    message.textContent = extraProductAdded
+      ? 'Added to cart with Soft Winter Jacket.'
+      : 'Added to cart.';
+
+    addBtn.textContent = 'ADDED';
+
+    setTimeout(function () {
+      addBtn.disabled = false;
+      addBtn.textContent = 'ADD TO CART';
+      message.textContent = '';
+    }, 1800);
   }
 
   productCards.forEach(function (card) {
@@ -512,15 +539,11 @@ document.addEventListener('DOMContentLoaded', function () {
   closeBtn.addEventListener('click', closePopup);
 
   overlay.addEventListener('click', function (event) {
-    if (event.target === overlay) {
-      closePopup();
-    }
+    if (event.target === overlay) closePopup();
   });
 
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && !overlay.hidden) {
-      closePopup();
-    }
+    if (event.key === 'Escape' && !overlay.hidden) closePopup();
   });
 
   form.addEventListener('submit', async function (event) {
@@ -529,6 +552,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const variantId = Number(variantInput.value);
     if (!variantId) return;
 
+    const extraProductAdded = shouldAddSoftWinterJacket() && softWinterJacketVariantId;
+
     const items = [
       {
         id: variantId,
@@ -536,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     ];
 
-    if (shouldAddSoftWinterJacket() && softWinterJacketVariantId) {
+    if (extraProductAdded) {
       items.push({
         id: softWinterJacketVariantId,
         quantity: 1
@@ -550,17 +575,21 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       await addItemsToCart(items);
 
-      message.textContent = shouldAddSoftWinterJacket() && softWinterJacketVariantId
-        ? 'Added to cart with Soft Winter Jacket.'
-        : 'Added to cart.';
+      const cart = await getCart();
+      updateCartCount(cart);
+      showSuccess(extraProductAdded);
 
-      addBtn.textContent = 'ADDED';
-
-      document.dispatchEvent(new CustomEvent('cart:refresh'));
+      document.documentElement.dispatchEvent(
+        new CustomEvent('cart:refresh', {
+          bubbles: true,
+          detail: { cart: cart }
+        })
+      );
     } catch (error) {
-      message.textContent = 'Something went wrong. Please try again.';
+      message.textContent = 'Unable to add. Please try again.';
       addBtn.disabled = false;
       addBtn.textContent = 'ADD TO CART';
+      console.error(error);
     }
   });
 });
