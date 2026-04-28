@@ -1,4 +1,6 @@
 <section class="eg-banner-wrap">
+
+  <!-- DESKTOP BANNER -->
   <div class="eg-desktop-banner">
     <div class="eg-desktop-banner__top">
       <div class="eg-desktop-banner__logo">{{ section.settings.logo_text }}</div>
@@ -17,7 +19,7 @@
       <img
         class="eg-desktop-banner__top-img"
         src="{{ section.settings.desktop_top_image | image_url: width: 1800 }}"
-        alt="{{ section.settings.heading | escape }}"
+        alt=""
         width="1440"
         height="390"
         loading="eager"
@@ -28,7 +30,7 @@
       <img
         class="eg-desktop-banner__bottom-img"
         src="{{ section.settings.desktop_bottom_image | image_url: width: 1200 }}"
-        alt="{{ section.settings.heading | escape }}"
+        alt=""
         width="890"
         height="402"
         loading="eager"
@@ -50,6 +52,7 @@
     </div>
   </div>
 
+  <!-- MOBILE BANNER -->
   <div class="eg-mobile-banner">
     <div class="eg-mobile-menu" id="EgMobileMenu-{{ section.id }}">
       <p>{{ section.settings.mobile_menu_text }}</p>
@@ -60,9 +63,7 @@
     </div>
 
     <div class="eg-mobile-banner__top">
-      <button type="button" class="eg-mobile-banner__hamburger" id="EgMenuToggle-{{ section.id }}" aria-label="Open menu">
-        ☰
-      </button>
+      <button type="button" class="eg-mobile-banner__hamburger" id="EgMenuToggle-{{ section.id }}">☰</button>
       <div class="eg-mobile-banner__logo">{{ section.settings.logo_text }}</div>
       <div></div>
     </div>
@@ -81,6 +82,7 @@
       {{ section.settings.mobile_bottom_text }}
     </div>
   </div>
+
 </section>
 
 <style>
@@ -94,7 +96,7 @@
 
 .eg-banner-wrap {
   width: 100%;
-  background: #fff;
+  background: #000;
 }
 
 .eg-long-arrow {
@@ -163,8 +165,7 @@
   white-space: nowrap;
 }
 
-.eg-desktop-banner__choose,
-.eg-mobile-menu a {
+.eg-desktop-banner__choose {
   justify-self: end;
   width: 220px;
   height: 44px;
@@ -183,8 +184,7 @@
   overflow: hidden;
 }
 
-.eg-desktop-banner__choose::before,
-.eg-mobile-menu a::before {
+.eg-desktop-banner__choose::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -195,20 +195,17 @@
   z-index: 1;
 }
 
-.eg-desktop-banner__choose:hover::before,
-.eg-mobile-menu a:hover::before {
+.eg-desktop-banner__choose:hover::before {
   transform: scaleX(1);
 }
 
-.eg-desktop-banner__choose span,
-.eg-mobile-menu a span {
+.eg-desktop-banner__choose span {
   position: relative;
   z-index: 2;
   transition: color 0.25s ease;
 }
 
-.eg-desktop-banner__choose:hover span,
-.eg-mobile-menu a:hover span {
+.eg-desktop-banner__choose:hover span {
   color: #fff;
 }
 
@@ -261,8 +258,7 @@
   letter-spacing: -0.15px;
 }
 
-.eg-desktop-banner__shop,
-.eg-mobile-banner__shop {
+.eg-desktop-banner__shop {
   position: absolute;
   top: 735px;
   left: 67px;
@@ -283,8 +279,7 @@
   overflow: hidden;
 }
 
-.eg-desktop-banner__shop::before,
-.eg-mobile-banner__shop::before {
+.eg-desktop-banner__shop::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -295,20 +290,17 @@
   z-index: 1;
 }
 
-.eg-desktop-banner__shop:hover::before,
-.eg-mobile-banner__shop:hover::before {
+.eg-desktop-banner__shop:hover::before {
   transform: scaleX(1);
 }
 
-.eg-desktop-banner__shop span,
-.eg-mobile-banner__shop span {
+.eg-desktop-banner__shop span {
   position: relative;
   z-index: 2;
   transition: color 0.25s ease;
 }
 
-.eg-desktop-banner__shop:hover span,
-.eg-mobile-banner__shop:hover span {
+.eg-desktop-banner__shop:hover span {
   color: #000;
 }
 
@@ -417,13 +409,47 @@
   }
 
   .eg-mobile-banner__shop {
+    position: absolute;
     left: 50%;
     top: 380px;
     transform: translateX(-50%);
     width: 180px;
     height: 48px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 30px;
     font-size: 15px;
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .eg-mobile-banner__shop::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #fff544;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+    z-index: 1;
+  }
+
+  .eg-mobile-banner__shop:hover::before {
+    transform: scaleX(1);
+  }
+
+  .eg-mobile-banner__shop span {
+    position: relative;
+    z-index: 2;
+    transition: color 0.25s ease;
+  }
+
+  .eg-mobile-banner__shop:hover span {
+    color: #000;
   }
 
   .eg-mobile-banner__strip {
@@ -470,24 +496,56 @@
     width: 244px;
     height: 48px;
     margin: 0 auto;
+    background: #fff544;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 34px;
     font-size: 15px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .eg-mobile-menu a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #000;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+    z-index: 1;
+  }
+
+  .eg-mobile-menu a:hover::before {
+    transform: scaleX(1);
+  }
+
+  .eg-mobile-menu a span {
+    position: relative;
+    z-index: 2;
+    transition: color 0.25s ease;
+  }
+
+  .eg-mobile-menu a:hover span {
+    color: #fff;
   }
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const btn = document.getElementById('EgMenuToggle-{{ section.id }}');
-  const menu = document.getElementById('EgMobileMenu-{{ section.id }}');
+  var btn = document.getElementById('EgMenuToggle-{{ section.id }}');
+  var menu = document.getElementById('EgMobileMenu-{{ section.id }}');
 
-  if (!btn || !menu) return;
-
-  btn.addEventListener('click', function () {
-    const isOpen = menu.classList.toggle('is-open');
-    btn.textContent = isOpen ? '×' : '☰';
-    btn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-  });
+  if (btn && menu) {
+    btn.addEventListener('click', function () {
+      menu.classList.toggle('is-open');
+      btn.textContent = menu.classList.contains('is-open') ? '×' : '☰';
+    });
+  }
 });
 </script>
 
@@ -504,6 +562,11 @@ document.addEventListener('DOMContentLoaded', function () {
       "type": "image_picker",
       "id": "desktop_bottom_image",
       "label": "Desktop bottom image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_banner_image",
+      "label": "Desktop single fallback image"
     },
     {
       "type": "image_picker",
