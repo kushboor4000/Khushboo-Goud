@@ -49,12 +49,12 @@
       </div>
 
       <div class="eg-option">
-        <label>Color</label>
+        <label id="EgColorLabel">Color</label>
         <div class="eg-color-boxes" id="EgColorOptions"></div>
       </div>
 
       <div class="eg-option">
-        <label>Size</label>
+        <label id="EgSizeLabel">Size</label>
 
         <div class="eg-size-dropdown" id="EgSizeDropdown">
           <button type="button" class="eg-size-trigger" id="EgSizeTrigger">
@@ -167,8 +167,8 @@
   position: relative;
   z-index: 2;
   width: 311px;
-  height: 447px;
-  padding: 20px 17px 0;
+  min-height: 447px;
+  padding: 20px 17px 14px;
   background: #fff;
   border: 1px solid #000;
   box-sizing: border-box;
@@ -243,22 +243,10 @@
 }
 
 .eg-color-boxes {
-  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(var(--eg-color-count, 2), 1fr);
   height: 41px;
   border: 1px solid #777;
-}
-
-.eg-color-boxes::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 5px;
-  background: #1f5fbf;
-  z-index: 3;
 }
 
 .eg-color-btn {
@@ -267,7 +255,7 @@
   border-right: 1px solid #777;
   background: #fff;
   color: #000;
-  padding: 0 11px;
+  padding: 0 11px 0 15px;
   text-align: left;
   font-size: 16px;
   cursor: pointer;
@@ -277,18 +265,19 @@
   border-right: 0;
 }
 
-.eg-color-btn:hover {
-  background: #fff;
-  color: #000;
+.eg-color-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--eg-swatch, #000);
 }
 
 .eg-color-btn.is-selected {
   background: #000;
   color: #fff;
-}
-
-.eg-color-btn.is-selected::before {
-  display: none;
 }
 
 .eg-size-dropdown {
@@ -394,6 +383,11 @@
   vertical-align: -4px;
 }
 
+.eg-popup__cart:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 #EgMessage {
   margin: 6px 0 0;
   font-size: 11px;
@@ -445,7 +439,6 @@
 
   .eg-popup__box {
     width: 311px;
-    height: 447px;
   }
 }
 </style>
@@ -480,6 +473,29 @@
     return normalize(value) === 'm' || normalize(value) === 'medium';
   }
 
+  function getSwatchColor(value) {
+    const color = normalize(value);
+
+    const map = {
+      black: '#000000',
+      white: '#ffffff',
+      blue: '#2f6fd6',
+      red: '#b71c1c',
+      grey: '#8b8b8b',
+      gray: '#8b8b8b',
+      green: '#2f7d32',
+      brown: '#795548',
+      beige: '#d8c3a5',
+      cream: '#f5f0dc',
+      navy: '#0b1f4d',
+      pink: '#e9a6b3',
+      orange: '#f28c28',
+      yellow: '#f6d743'
+    };
+
+    return map[color] || value || '#000000';
+  }
+
   function openPopup() {
     popup.classList.add('is-open');
     document.body.style.overflow = 'hidden';
@@ -488,7 +504,7 @@
   function closePopup() {
     popup.classList.remove('is-open');
     document.body.style.overflow = '';
-    message.innerHTML = '';
+    message.textContent = '';
     sizeDropdown.classList.remove('is-open');
     cartBtn.disabled = false;
     cartBtn.textContent = 'ADD TO CART';
@@ -502,37 +518,49 @@
     return option && Array.isArray(option.values) ? option.values : [];
   }
 
-  function getColorValues() {
-    const colorOption = currentOptions.find(function (option) {
+  function getColorOption() {
+    return currentOptions.find(function (option) {
       return getOptionName(option).toLowerCase().includes('color');
     });
+  }
 
-    return colorOption && getOptionValues(colorOption).length
-      ? getOptionValues(colorOption)
-      : ['White', 'Black'];
+  function getSizeOption() {
+    return currentOptions.find(function (option) {
+      return getOptionName(option).toLowerCase().includes('size');
+    });
+  }
+
+  function getColorValues() {
+    const colorOption = getColorOption();
+
+    if (colorOption && getOptionValues(colorOption).length) {
+      return getOptionValues(colorOption);
+    }
+
+    return [];
   }
 
   function getSizeValues() {
-    const sizeOption = currentOptions.find(function (option) {
-      return getOptionName(option).toLowerCase().includes('size');
-    });
+    const sizeOption = getSizeOption();
 
-    return sizeOption && getOptionValues(sizeOption).length
-      ? getOptionValues(sizeOption)
-      : ['XS', 'S', 'M', 'L', 'XL'];
+    if (sizeOption && getOptionValues(sizeOption).length) {
+      return getOptionValues(sizeOption);
+    }
+
+    return [];
   }
 
   function findVariant() {
     return currentVariants.find(function (variant) {
       const opts = variant.options || [];
 
-      const colorMatch = opts.some(function (opt) {
-        return normalize(opt) === normalize(selectedColor);
-      });
+      const colorMatch = selectedColor
+        ? opts.some(function (opt) { return normalize(opt) === normalize(selectedColor); })
+        : true;
 
-      const sizeMatch = opts.some(function (opt) {
-        return normalize(opt) === normalize(selectedSize);
-      });
+      const sizeMatch = selectedSize
+        ? opts.some(function (opt) { return normalize(opt) === normalize(selectedSize); })
+        : true;
 
       return colorMatch && sizeMatch;
     });
@@ -540,7 +568,9 @@
 
   function renderColors() {
     const colors = getColorValues();
+
     colorOptions.innerHTML = '';
+    colorOptions.style.setProperty('--eg-color-count', colors.length || 1);
     selectedColor = colors[0] || '';
 
     colors.forEach(function (color, index) {
@@ -548,8 +578,11 @@
       btn.type = 'button';
       btn.className = 'eg-color-btn';
       btn.textContent = color;
+      btn.style.setProperty('--eg-swatch', getSwatchColor(color));
 
-      if (index === 0) btn.classList.add('is-selected');
+      if (index === 0) {
+        btn.classList.add('is-selected');
+      }
 
       btn.addEventListener('click', function () {
         selectedColor = color;
@@ -567,6 +600,7 @@
 
   function renderSizes() {
     const sizes = getSizeValues();
+
     sizeMenu.innerHTML = '';
     selectedSize = '';
 
@@ -600,7 +634,7 @@
     desc.textContent = btn.dataset.desc || '';
     image.src = btn.dataset.image || '';
     image.alt = btn.dataset.title || '';
-    message.innerHTML = '';
+    message.textContent = '';
     cartBtn.disabled = false;
     cartBtn.textContent = 'ADD TO CART';
 
@@ -620,7 +654,7 @@
     openPopup();
   }
 
-  async function addToCart(items) {
+  async function addItemsToCart(items) {
     const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
       ? window.Shopify.routes.root
       : '/';
@@ -634,40 +668,8 @@
       body: JSON.stringify({ items: items })
     });
 
-    if (!response.ok) throw new Error('Add to cart failed');
+    if (!response.ok) throw new Error('Cart add failed');
     return response.json();
-  }
-
-  async function getCart() {
-    const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
-      ? window.Shopify.routes.root
-      : '/';
-
-    const response = await fetch(root + 'cart.js', {
-      headers: { 'Accept': 'application/json' }
-    });
-
-    return response.json();
-  }
-
-  function updateCartCount(cart) {
-    const cartIcon = document.querySelector('#cart-icon-bubble');
-    if (!cartIcon) return;
-
-    let bubble = cartIcon.querySelector('.cart-count-bubble');
-
-    if (!bubble) {
-      bubble = document.createElement('div');
-      bubble.className = 'cart-count-bubble';
-      bubble.innerHTML = '<span aria-hidden="true"></span><span class="visually-hidden"></span>';
-      cartIcon.appendChild(bubble);
-    }
-
-    const visibleCount = bubble.querySelector('span[aria-hidden="true"]');
-    const hiddenCount = bubble.querySelector('.visually-hidden');
-
-    if (visibleCount) visibleCount.textContent = cart.item_count;
-    if (hiddenCount) hiddenCount.textContent = cart.item_count + ' items';
   }
 
   document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
@@ -696,19 +698,24 @@
   });
 
   cartBtn.addEventListener('click', async function () {
-    if (!selectedSize) {
-      message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Please choose your size.</span>';
+    if (getSizeValues().length && !selectedSize) {
+      message.textContent = 'Please choose your size.';
       return;
     }
 
     const variant = findVariant();
 
     if (!variant || !variant.id) {
-      message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Selected variant is not available.</span>';
+      message.textContent = 'Selected variant is not available.';
       return;
     }
 
-    const items = [{ id: variant.id, quantity: 1 }];
+    const items = [
+      {
+        id: variant.id,
+        quantity: 1
+      }
+    ];
 
     const addJacket =
       normalize(selectedColor) === 'black' &&
@@ -724,25 +731,22 @@
 
     cartBtn.disabled = true;
     cartBtn.textContent = 'ADDING';
-    message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Adding...</span>';
+    message.textContent = 'Adding...';
 
     try {
-      await addToCart(items);
-
-      const cart = await getCart();
-      updateCartCount(cart);
+      await addItemsToCart(items);
 
       cartBtn.textContent = 'ADDED';
-      message.innerHTML = addJacket
-        ? '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Added to cart with Soft Winter Jacket.</span>'
-        : '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Added to cart.</span>';
+      message.textContent = addJacket
+        ? 'Added to cart with Soft Winter Jacket.'
+        : 'Added to cart.';
 
       setTimeout(function () {
         cartBtn.disabled = false;
         cartBtn.textContent = 'ADD TO CART';
       }, 1500);
     } catch (error) {
-      message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Could not add to cart.</span>';
+      message.textContent = 'Could not add to cart.';
       cartBtn.disabled = false;
       cartBtn.textContent = 'ADD TO CART';
       console.error(error);
@@ -750,6 +754,7 @@
   });
 })();
 </script>
+
 {% schema %}
 {
   "name": "Custom Grid",
