@@ -463,10 +463,10 @@
 
   let currentVariants = [];
   let currentOptions = [];
+  let productTitle = '';
   let selectedDisplayColor = '';
   let selectedRealColor = '';
   let selectedSize = '';
-  let productTitle = '';
 
   function normalize(value) {
     return String(value || '').trim().toLowerCase();
@@ -511,44 +511,56 @@
     });
   }
 
-  function getRealColorValues() {
+  function getRealColors() {
     const colorOption = getColorOption();
     return colorOption ? getOptionValues(colorOption) : [];
   }
 
-  function getSizeValues() {
+  function getSizes() {
     const sizeOption = getSizeOption();
     return sizeOption ? getOptionValues(sizeOption) : [];
   }
 
   function getDisplayColors() {
-    const titleKey = normalize(productTitle);
+    const name = normalize(productTitle);
 
-    if (titleKey.includes('orange wide leg') || titleKey.includes('black leather bag')) {
+    if (name.includes('orange wide leg') || name.includes('black leather bag')) {
       return ['White', 'Black'];
     }
 
-    if (titleKey.includes('tailored jacket') || titleKey.includes('blue silk tuxedo')) {
+    if (name.includes('tailored jacket') || name.includes('blue silk tuxedo')) {
       return ['Blue', 'Black'];
     }
 
-    if (titleKey.includes('accordion pleated dress')) {
+    if (name.includes('accordion pleated dress') || name.includes('chequered red shirt')) {
       return ['Red', 'Grey'];
     }
 
-    if (titleKey.includes('green trench coat') || titleKey.includes('classic leather jacket')) {
+    if (name.includes('green trench coat') || name.includes('classic leather jacket')) {
       return ['White', 'Black'];
     }
 
-    if (titleKey.includes('tennis blue t-shirt')) {
+    if (name.includes('tennis blue t-shirt')) {
       return ['Grey', 'Black'];
     }
 
-    if (titleKey.includes('long sleeve tennis top')) {
+    if (name.includes('long sleeve tennis top')) {
       return ['Blue', 'Black'];
     }
 
-    return getRealColorValues();
+    return getRealColors();
+  }
+
+  function getRealColorForDisplay(displayColor, index) {
+    const realColors = getRealColors();
+
+    const exactMatch = realColors.find(function (realColor) {
+      return normalize(realColor) === normalize(displayColor);
+    });
+
+    if (exactMatch) return exactMatch;
+
+    return realColors[index] || realColors[0] || displayColor;
   }
 
   function findVariant() {
@@ -573,24 +585,21 @@
 
   function renderColors() {
     const displayColors = getDisplayColors();
-    const realColors = getRealColorValues();
 
     colorOptions.innerHTML = '';
-    selectedDisplayColor = displayColors[0] || '';
-    selectedRealColor = realColors[0] || selectedDisplayColor;
-
     colorOptions.style.gridTemplateColumns = 'repeat(' + Math.max(displayColors.length, 1) + ', 1fr)';
 
-    displayColors.forEach(function (displayColor, index) {
-      const realColor = realColors[index] || displayColor;
+    selectedDisplayColor = displayColors[0] || '';
+    selectedRealColor = getRealColorForDisplay(selectedDisplayColor, 0);
 
+    displayColors.forEach(function (displayColor, index) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'eg-color-btn';
       btn.textContent = displayColor;
+
       btn.style.position = 'relative';
       btn.style.paddingLeft = '15px';
-      btn.style.setProperty('--eg-swatch', swatch(displayColor));
 
       btn.innerHTML =
         '<span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' +
@@ -604,7 +613,7 @@
 
       btn.addEventListener('click', function () {
         selectedDisplayColor = displayColor;
-        selectedRealColor = realColor;
+        selectedRealColor = getRealColorForDisplay(displayColor, index);
 
         colorOptions.querySelectorAll('.eg-color-btn').forEach(function (item) {
           item.classList.remove('is-selected');
@@ -618,7 +627,7 @@
   }
 
   function renderSizes() {
-    const sizes = getSizeValues();
+    const sizes = getSizes();
 
     sizeMenu.innerHTML = '';
     selectedSize = '';
@@ -670,6 +679,7 @@
     desc.textContent = btn.dataset.desc || '';
     image.src = btn.dataset.image || '';
     image.alt = productTitle;
+
     message.textContent = '';
     cartBtn.disabled = false;
     cartBtn.textContent = 'ADD TO CART';
@@ -743,7 +753,12 @@
       return;
     }
 
-    const items = [{ id: variant.id, quantity: 1 }];
+    const items = [
+      {
+        id: variant.id,
+        quantity: 1
+      }
+    ];
 
     const addJacket =
       normalize(selectedDisplayColor) === 'black' &&
