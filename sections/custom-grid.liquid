@@ -49,12 +49,12 @@
       </div>
 
       <div class="eg-option">
-        <label id="EgColorLabel">Color</label>
+        <label>Color</label>
         <div class="eg-color-boxes" id="EgColorOptions"></div>
       </div>
 
       <div class="eg-option">
-        <label id="EgSizeLabel">Size</label>
+        <label>Size</label>
 
         <div class="eg-size-dropdown" id="EgSizeDropdown">
           <button type="button" class="eg-size-trigger" id="EgSizeTrigger">
@@ -167,8 +167,8 @@
   position: relative;
   z-index: 2;
   width: 311px;
-  min-height: 447px;
-  padding: 20px 17px 14px;
+  height: 447px;
+  padding: 20px 17px 0;
   background: #fff;
   border: 1px solid #000;
   box-sizing: border-box;
@@ -244,7 +244,6 @@
 
 .eg-color-boxes {
   display: grid;
-  grid-template-columns: repeat(var(--eg-color-count, 2), 1fr);
   height: 41px;
   border: 1px solid #777;
 }
@@ -273,6 +272,7 @@
   bottom: 0;
   width: 5px;
   background: var(--eg-swatch, #000);
+  border-right: 1px solid #000;
 }
 
 .eg-color-btn.is-selected {
@@ -439,6 +439,7 @@
 
   .eg-popup__box {
     width: 311px;
+    height: 447px;
   }
 }
 </style>
@@ -467,12 +468,8 @@
   let colorIndex = -1;
   let sizeIndex = -1;
 
-  function clean(value) {
-    return String(value || '').trim();
-  }
-
   function normalize(value) {
-    return clean(value).toLowerCase();
+    return String(value || '').trim().toLowerCase();
   }
 
   function isMedium(value) {
@@ -482,9 +479,9 @@
   function swatch(value) {
     const color = normalize(value);
 
-    const colors = {
-      black: '#000',
-      white: '#fff',
+    const map = {
+      black: '#000000',
+      white: '#ffffff',
       blue: '#2b6fd6',
       red: '#b30000',
       grey: '#8b8b8b',
@@ -499,18 +496,18 @@
       navy: '#0b1f4d'
     };
 
-    return colors[color] || color || '#000';
+    return map[color] || '#000000';
   }
 
   function getOptionName(option) {
     return normalize(option && option.name ? option.name : option);
   }
 
-  function getOptionValues(option) {
+  function getValues(option) {
     return option && Array.isArray(option.values) ? option.values : [];
   }
 
-  function detectOptionIndexes() {
+  function detectIndexes() {
     colorIndex = -1;
     sizeIndex = -1;
 
@@ -528,13 +525,11 @@
   }
 
   function getColorValues() {
-    if (colorIndex === -1 || !currentOptions[colorIndex]) return [];
-    return getOptionValues(currentOptions[colorIndex]);
+    return colorIndex > -1 ? getValues(currentOptions[colorIndex]) : [];
   }
 
   function getSizeValues() {
-    if (sizeIndex === -1 || !currentOptions[sizeIndex]) return [];
-    return getOptionValues(currentOptions[sizeIndex]);
+    return sizeIndex > -1 ? getValues(currentOptions[sizeIndex]) : [];
   }
 
   function findVariant() {
@@ -557,27 +552,19 @@
     const colors = getColorValues();
 
     colorOptions.innerHTML = '';
+    colorOptions.style.gridTemplateColumns = 'repeat(' + Math.max(colors.length, 1) + ', 1fr)';
     selectedColor = colors[0] || '';
-
-    if (!colors.length) {
-      colorOptions.innerHTML = '<button type="button" class="eg-color-btn is-selected">Default</button>';
-      return;
-    }
-
-    colorOptions.style.gridTemplateColumns = 'repeat(' + colors.length + ', 1fr)';
 
     colors.forEach(function (color, index) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'eg-color-btn';
       btn.textContent = color;
+      btn.style.setProperty('--eg-swatch', swatch(color));
 
-      btn.style.position = 'relative';
-      btn.style.paddingLeft = '15px';
-
-      btn.innerHTML = '<span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' + swatch(color) + ';border-right:1px solid #000;"></span>' + color;
-
-      if (index === 0) btn.classList.add('is-selected');
+      if (index === 0) {
+        btn.classList.add('is-selected');
+      }
 
       btn.addEventListener('click', function () {
         selectedColor = color;
@@ -656,7 +643,7 @@
       currentOptions = [];
     }
 
-    detectOptionIndexes();
+    detectIndexes();
     renderColors();
     renderSizes();
     openPopup();
@@ -677,6 +664,7 @@
     });
 
     if (!response.ok) throw new Error('Cart add failed');
+
     return response.json();
   }
 
@@ -706,7 +694,7 @@
   });
 
   cartBtn.addEventListener('click', async function () {
-    if (sizeIndex !== -1 && !selectedSize) {
+    if (sizeIndex > -1 && !selectedSize) {
       message.textContent = 'Please choose your size.';
       return;
     }
@@ -718,7 +706,12 @@
       return;
     }
 
-    const items = [{ id: variant.id, quantity: 1 }];
+    const items = [
+      {
+        id: variant.id,
+        quantity: 1
+      }
+    ];
 
     const addJacket =
       normalize(selectedColor) === 'black' &&
@@ -757,6 +750,7 @@
   });
 })();
 </script>
+
 {% schema %}
 {
   "name": "Custom Grid",
