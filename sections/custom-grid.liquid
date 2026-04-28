@@ -1,652 +1,612 @@
-<section class="eg-banner-wrap">
+<section class="eg-product-grid-section" id="EgProductGrid-{{ section.id }}">
+  <div class="eg-grid-container">
+    <h2>{{ section.settings.heading }}</h2>
 
-  <!-- DESKTOP BANNER -->
-  <div class="eg-desktop-banner">
-    <div class="eg-desktop-banner__top">
-      <div class="eg-desktop-banner__logo">{{ section.settings.logo_text }}</div>
+    <div class="eg-product-grid">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.product %}
+        {% if product != blank %}
+          <button
+            type="button"
+            class="eg-product-card"
+            data-product-handle="{{ product.handle }}"
+            {{ block.shopify_attributes }}
+          >
+            <span class="eg-hotspot">+</span>
 
-      <div class="eg-desktop-banner__tagline">
-        {{ section.settings.top_text }}
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 700 }}"
+                alt="{{ product.title | escape }}"
+                loading="lazy"
+              >
+            {% endif %}
+
+            <div class="eg-product-info">
+              <h3>{{ product.title }}</h3>
+              <p>{{ product.price | money }}</p>
+            </div>
+
+            <script type="application/json" class="eg-product-json">
+              {{ product | json }}
+            </script>
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="eg-popup-overlay" hidden>
+    <div class="eg-popup" role="dialog" aria-modal="true">
+      <button type="button" class="eg-popup-close" aria-label="Close popup">×</button>
+
+      <div class="eg-popup-image-wrap">
+        <img class="eg-popup-image" src="" alt="">
       </div>
 
-      <a href="{{ section.settings.button_link | default: '#' }}" class="eg-desktop-banner__choose">
-        <span>{{ section.settings.top_button }}</span>
-        <span class="eg-long-arrow"></span>
-      </a>
-    </div>
+      <div class="eg-popup-content">
+        <h3 class="eg-popup-title"></h3>
+        <p class="eg-popup-price"></p>
+        <div class="eg-popup-description"></div>
 
-    {% if section.settings.desktop_top_image != blank %}
-      <img
-        class="eg-desktop-banner__top-img"
-        src="{{ section.settings.desktop_top_image | image_url: width: 1800 }}"
-        alt=""
-        width="1440"
-        height="390"
-        loading="eager"
-      >
-    {% endif %}
+        <form class="eg-product-form">
+          <div class="eg-variant-options"></div>
 
-    {% if section.settings.desktop_bottom_image != blank %}
-      <img
-        class="eg-desktop-banner__bottom-img"
-        src="{{ section.settings.desktop_bottom_image | image_url: width: 1200 }}"
-        alt=""
-        width="890"
-        height="402"
-        loading="eager"
-      >
-    {% endif %}
+          <input type="hidden" name="id" class="eg-selected-variant-id">
 
-    <div class="eg-desktop-banner__content">
-      <h1>{{ section.settings.heading }}</h1>
-      <p>{{ section.settings.desktop_description | newline_to_br }}</p>
-    </div>
+          <button type="submit" class="eg-add-to-cart">
+            ADD TO CART
+          </button>
 
-    <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-desktop-banner__shop">
-      <span>{{ section.settings.main_button }}</span>
-      <span class="eg-long-arrow"></span>
-    </a>
-
-    <div class="eg-desktop-banner__strip">
-      {{ section.settings.desktop_bottom_text }}
+          <p class="eg-cart-message" aria-live="polite"></p>
+        </form>
+      </div>
     </div>
   </div>
-
-  <!-- MOBILE BANNER -->
-  <div class="eg-mobile-banner">
-    <div class="eg-mobile-menu" id="EgMobileMenu">
-      <p>{{ section.settings.mobile_menu_text }}</p>
-      <a href="{{ section.settings.button_link | default: '#' }}">
-        <span>{{ section.settings.top_button }}</span>
-        <span class="eg-long-arrow"></span>
-      </a>
-    </div>
-
-    <div class="eg-mobile-banner__top">
-      <button type="button" class="eg-mobile-banner__hamburger" id="EgMenuToggle">☰</button>
-      <div class="eg-mobile-banner__logo">{{ section.settings.logo_text }}</div>
-      <div></div>
-    </div>
-
-    <div class="eg-mobile-banner__content">
-      <h1>{{ section.settings.heading }}</h1>
-      <p>{{ section.settings.mobile_description }}</p>
-    </div>
-
-    <a href="{{ section.settings.main_button_link | default: '#' }}" class="eg-mobile-banner__shop">
-      <span>{{ section.settings.main_button }}</span>
-      <span class="eg-long-arrow"></span>
-    </a>
-
-    <div class="eg-mobile-banner__strip">
-      {{ section.settings.mobile_bottom_text }}
-    </div>
-  </div>
-
 </section>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap');
-
-.eg-banner-wrap,
-.eg-banner-wrap * {
-  font-family: 'Jost', Arial, Helvetica, sans-serif;
+.eg-product-grid-section,
+.eg-product-grid-section * {
   box-sizing: border-box;
+  font-family: Jost, Arial, Helvetica, sans-serif;
 }
 
-.eg-banner-wrap {
+.eg-product-grid-section {
   width: 100%;
-  background: #000;
-}
-
-.eg-long-arrow {
-  position: relative;
-  display: inline-block;
-  width: 32px;
-  height: 1px;
-  background: currentColor;
-  vertical-align: middle;
-}
-
-.eg-long-arrow::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: -4px;
-  width: 8px;
-  height: 8px;
-  border-top: 1px solid currentColor;
-  border-right: 1px solid currentColor;
-  transform: rotate(45deg);
-}
-
-/* DESKTOP */
-.eg-desktop-banner {
-  display: block;
-  width: 100%;
-  max-width: 1440px;
-  height: 876px;
-  margin: 0 auto;
-  position: relative;
-  overflow: hidden;
   background: #fff;
   color: #000;
+  padding: 70px 20px;
 }
 
-.eg-desktop-banner__top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 64px;
-  padding: 10px 67px;
-  background: #f7f7f7;
-  display: grid;
-  grid-template-columns: 220px 1fr 220px;
-  align-items: center;
-  z-index: 20;
+.eg-grid-container {
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
-.eg-desktop-banner__logo {
-  justify-self: start;
-  font-size: 24px;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
-}
-
-.eg-desktop-banner__tagline {
-  justify-self: center;
-  font-size: 16px;
-  line-height: 1.2;
-  font-weight: 400;
+.eg-grid-container h2 {
+  margin: 0 0 36px;
   text-align: center;
-  white-space: nowrap;
-}
-
-.eg-desktop-banner__choose {
-  justify-self: end;
-  width: 220px;
-  height: 44px;
-  background: #fff544;
-  color: #000;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 26px;
-  font-size: 16px;
-  line-height: 1;
-  font-weight: 400;
-  letter-spacing: -0.2px;
-  position: relative;
-  overflow: hidden;
-}
-
-.eg-desktop-banner__choose::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: #000;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.35s ease;
-  z-index: 1;
-}
-
-.eg-desktop-banner__choose:hover::before {
-  transform: scaleX(1);
-}
-
-.eg-desktop-banner__choose span {
-  position: relative;
-  z-index: 2;
-  transition: color 0.25s ease;
-}
-
-.eg-desktop-banner__choose:hover span {
-  color: #fff;
-}
-
-.eg-desktop-banner__top-img {
-  position: absolute;
-  top: 64px;
-  left: 0;
-  width: 1440px;
-  height: 390px;
-  object-fit: cover;
-  object-position: center top;
-  z-index: 1;
-}
-
-.eg-desktop-banner__bottom-img {
-  position: absolute;
-  top: 442px;
-  left: 550px;
-  width: 890px;
-  height: 402px;
-  object-fit: cover;
-  object-position: center top;
-  z-index: 1;
-}
-
-.eg-desktop-banner__content {
-  position: absolute;
-  left: 67px;
-  top: 492px;
-  width: 650px;
-  z-index: 10;
-}
-
-.eg-desktop-banner__content h1 {
-  margin: 0 0 28px;
-  font-size: 70px;
-  line-height: 1;
+  font-size: 36px;
+  line-height: 1.1;
   font-weight: 500;
-  color: #000;
 }
 
-.eg-desktop-banner__content p {
-  margin: 0;
-  width: 540px;
-  max-width: 540px;
-  font-size: 20px;
-  line-height: 140%;
-  font-weight: 400;
-  color: #000;
-  letter-spacing: -0.15px;
+.eg-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
 }
 
-.eg-desktop-banner__shop {
-  position: absolute;
-  top: 735px;
-  left: 67px;
-  width: 220px;
-  height: 50px;
-  background: #000;
-  color: #fff;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 36px;
-  font-size: 14px;
-  line-height: 1;
-  font-weight: 400;
-  letter-spacing: -0.2px;
-  z-index: 20;
-  overflow: hidden;
-}
-
-.eg-desktop-banner__shop::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: #fff544;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.35s ease;
-  z-index: 1;
-}
-
-.eg-desktop-banner__shop:hover::before {
-  transform: scaleX(1);
-}
-
-.eg-desktop-banner__shop span {
+.eg-product-card {
   position: relative;
-  z-index: 2;
-  transition: color 0.25s ease;
-}
-
-.eg-desktop-banner__shop:hover span {
-  color: #000;
-}
-
-.eg-desktop-banner__strip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 32px;
+  display: block;
+  width: 100%;
+  min-height: 390px;
+  padding: 0;
+  border: 0;
   background: #f4f4f4;
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+}
+
+.eg-product-card img {
+  width: 100%;
+  height: 330px;
+  display: block;
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+
+.eg-product-card:hover img {
+  transform: scale(1.04);
+}
+
+.eg-hotspot {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 28px;
+  height: 28px;
+  background: #fff544;
+  color: #000;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+  z-index: 2;
+}
+
+.eg-product-info {
+  padding: 16px;
+  background: #fff;
+}
+
+.eg-product-info h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.eg-product-info p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.eg-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  line-height: 1;
-  font-weight: 400;
-  color: #000;
-  z-index: 15;
+  padding: 20px;
 }
 
-/* MOBILE */
-.eg-mobile-banner {
+.eg-popup-overlay[hidden] {
   display: none;
 }
 
+.eg-popup {
+  position: relative;
+  width: min(900px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.eg-popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: #000;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.eg-popup-image-wrap {
+  background: #f4f4f4;
+}
+
+.eg-popup-image {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  object-fit: cover;
+  display: block;
+}
+
+.eg-popup-content {
+  padding: 48px 34px 34px;
+}
+
+.eg-popup-title {
+  margin: 0 0 10px;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 500;
+}
+
+.eg-popup-price {
+  margin: 0 0 20px;
+  font-size: 18px;
+}
+
+.eg-popup-description {
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.eg-option-group {
+  margin-bottom: 20px;
+}
+
+.eg-option-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.eg-option-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eg-option-button {
+  min-width: 64px;
+  min-height: 42px;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.eg-option-button.is-active {
+  background: #000;
+  color: #fff;
+}
+
+.eg-add-to-cart {
+  width: 100%;
+  height: 52px;
+  border: 0;
+  background: #000;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: .4px;
+}
+
+.eg-add-to-cart:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.eg-cart-message {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
 @media (max-width: 749px) {
-  .eg-desktop-banner {
-    display: none;
+  .eg-product-grid-section {
+    padding: 46px 16px;
   }
 
-  .eg-mobile-banner {
-    display: block;
-    width: 100%;
-    height: 487px;
-    position: relative;
-    overflow: hidden;
-    background: #fff;
-    color: #000;
+  .eg-grid-container h2 {
+    font-size: 28px;
+    margin-bottom: 24px;
   }
 
-  .eg-mobile-banner::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 205px;
-    height: 245px;
-    background-image: url({{ section.settings.mobile_banner_image | image_url: width: 900 }});
-    background-size: 100% auto;
-    background-position: center top;
-    background-repeat: no-repeat;
-    z-index: 1;
+  .eg-product-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
-  .eg-mobile-banner__top {
-    height: 45px;
-    display: grid;
-    grid-template-columns: 32px 1fr 32px;
-    align-items: center;
-    padding: 0 20px;
-    background: #f7f7f7;
-    position: relative;
-    z-index: 20;
+  .eg-product-card {
+    min-height: auto;
   }
 
-  .eg-mobile-banner__hamburger {
-    border: 0;
-    background: transparent;
-    font-size: 22px;
-    padding: 0;
-    color: #000;
-    cursor: pointer;
-    font-family: inherit;
+  .eg-product-card img {
+    height: 360px;
   }
 
-  .eg-mobile-banner__logo {
-    text-align: center;
-    font-size: 21px;
-    line-height: 1;
-    font-weight: 700;
-    letter-spacing: 0.2px;
+  .eg-popup {
+    grid-template-columns: 1fr;
   }
 
-  .eg-mobile-banner__content {
-    position: absolute;
-    top: 92px;
-    left: 24px;
-    right: 24px;
-    text-align: center;
-    z-index: 5;
+  .eg-popup-image {
+    min-height: 280px;
+    height: 280px;
   }
 
-  .eg-mobile-banner__content h1 {
-    margin: 0 0 18px;
-    font-size: 30px;
-    line-height: 1.1;
-    font-weight: 700;
+  .eg-popup-content {
+    padding: 34px 22px 24px;
   }
 
-  .eg-mobile-banner__content p {
-    max-width: 285px;
-    margin: 0 auto;
-    font-size: 14px;
-    line-height: 1.35;
-    font-weight: 400;
-  }
-
-  .eg-mobile-banner__shop {
-    position: absolute;
-    left: 50%;
-    top: 380px;
-    transform: translateX(-50%);
-    width: 180px;
-    height: 48px;
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    font-size: 15px;
-    z-index: 10;
-    overflow: hidden;
-  }
-
-  .eg-mobile-banner__shop::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: #fff544;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.35s ease;
-    z-index: 1;
-  }
-
-  .eg-mobile-banner__shop:hover::before {
-    transform: scaleX(1);
-  }
-
-  .eg-mobile-banner__shop span {
-    position: relative;
-    z-index: 2;
-    transition: color 0.25s ease;
-  }
-
-  .eg-mobile-banner__shop:hover span {
-    color: #000;
-  }
-
-  .eg-mobile-banner__strip {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 455px;
-    height: 32px;
-    background: #f4f4f4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    z-index: 10;
-  }
-
-  .eg-mobile-menu {
-    position: absolute;
-    top: 45px;
-    left: 0;
-    right: 0;
-    background: #f7f7f7;
-    padding: 20px 20px 26px;
-    text-align: center;
-    z-index: 30;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity .25s ease, transform .25s ease, visibility .25s ease;
-  }
-
-  .eg-mobile-menu.is-open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-
-  .eg-mobile-menu p {
-    margin: 0 0 14px;
-    font-size: 14px;
-  }
-
-  .eg-mobile-menu a {
-    width: 244px;
-    height: 48px;
-    margin: 0 auto;
-    background: #fff544;
-    color: #000;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 34px;
-    font-size: 15px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .eg-mobile-menu a::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: #000;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.35s ease;
-    z-index: 1;
-  }
-
-  .eg-mobile-menu a:hover::before {
-    transform: scaleX(1);
-  }
-
-  .eg-mobile-menu a span {
-    position: relative;
-    z-index: 2;
-    transition: color 0.25s ease;
-  }
-
-  .eg-mobile-menu a:hover span {
-    color: #fff;
+  .eg-popup-title {
+    font-size: 24px;
   }
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var btn = document.getElementById('EgMenuToggle');
-  var menu = document.getElementById('EgMobileMenu');
+  const section = document.getElementById('EgProductGrid-{{ section.id }}');
+  if (!section) return;
 
-  if (btn && menu) {
-    btn.addEventListener('click', function () {
-      menu.classList.toggle('is-open');
-      btn.textContent = menu.classList.contains('is-open') ? '×' : '☰';
+  const productCards = section.querySelectorAll('.eg-product-card');
+  const overlay = section.querySelector('.eg-popup-overlay');
+  const closeBtn = section.querySelector('.eg-popup-close');
+  const popupImage = section.querySelector('.eg-popup-image');
+  const popupTitle = section.querySelector('.eg-popup-title');
+  const popupPrice = section.querySelector('.eg-popup-price');
+  const popupDescription = section.querySelector('.eg-popup-description');
+  const optionsWrap = section.querySelector('.eg-variant-options');
+  const variantInput = section.querySelector('.eg-selected-variant-id');
+  const form = section.querySelector('.eg-product-form');
+  const addBtn = section.querySelector('.eg-add-to-cart');
+  const message = section.querySelector('.eg-cart-message');
+
+  const moneyFormat = {{ shop.money_format | json }};
+  const softWinterJacketVariantId = {{ section.settings.soft_winter_jacket.selected_or_first_available_variant.id | default: 'null' }};
+
+  let currentProduct = null;
+  let selectedOptions = [];
+
+  function formatMoney(cents) {
+    if (window.Shopify && Shopify.formatMoney) {
+      return Shopify.formatMoney(cents, moneyFormat);
+    }
+
+    return (cents / 100).toLocaleString('en-IN', {
+      style: 'currency',
+      currency: '{{ cart.currency.iso_code }}'
     });
   }
+
+  function getProductImage(product) {
+    if (product.featured_image) return product.featured_image;
+
+    if (product.images && product.images.length) {
+      return product.images[0];
+    }
+
+    return '';
+  }
+
+  function findSelectedVariant() {
+    return currentProduct.variants.find(function (variant) {
+      return variant.options.every(function (option, index) {
+        return option === selectedOptions[index];
+      });
+    });
+  }
+
+  function updateSelectedVariant() {
+    const selectedVariant = findSelectedVariant();
+
+    if (!selectedVariant) {
+      variantInput.value = '';
+      addBtn.disabled = true;
+      addBtn.textContent = 'UNAVAILABLE';
+      return;
+    }
+
+    variantInput.value = selectedVariant.id;
+    popupPrice.textContent = formatMoney(selectedVariant.price);
+
+    addBtn.disabled = !selectedVariant.available;
+    addBtn.textContent = selectedVariant.available ? 'ADD TO CART' : 'SOLD OUT';
+  }
+
+  function renderOptions(product) {
+    optionsWrap.innerHTML = '';
+
+    product.options.forEach(function (optionName, optionIndex) {
+      const values = [];
+
+      product.variants.forEach(function (variant) {
+        const value = variant.options[optionIndex];
+
+        if (!values.includes(value)) {
+          values.push(value);
+        }
+      });
+
+      const group = document.createElement('div');
+      group.className = 'eg-option-group';
+
+      const label = document.createElement('span');
+      label.className = 'eg-option-label';
+      label.textContent = optionName;
+
+      const valueWrap = document.createElement('div');
+      valueWrap.className = 'eg-option-values';
+
+      values.forEach(function (value) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'eg-option-button';
+        button.textContent = value;
+
+        if (selectedOptions[optionIndex] === value) {
+          button.classList.add('is-active');
+        }
+
+        button.addEventListener('click', function () {
+          selectedOptions[optionIndex] = value;
+
+          valueWrap.querySelectorAll('.eg-option-button').forEach(function (btn) {
+            btn.classList.remove('is-active');
+          });
+
+          button.classList.add('is-active');
+          updateSelectedVariant();
+        });
+
+        valueWrap.appendChild(button);
+      });
+
+      group.appendChild(label);
+      group.appendChild(valueWrap);
+      optionsWrap.appendChild(group);
+    });
+  }
+
+  function openPopup(product) {
+    currentProduct = product;
+    selectedOptions = product.variants[0] ? [...product.variants[0].options] : [];
+
+    popupTitle.textContent = product.title;
+    popupPrice.textContent = product.price ? formatMoney(product.price) : '';
+    popupDescription.innerHTML = product.description || '';
+
+    const imageUrl = getProductImage(product);
+    popupImage.src = imageUrl;
+    popupImage.alt = product.title;
+
+    renderOptions(product);
+    updateSelectedVariant();
+
+    message.textContent = '';
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePopup() {
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function shouldAddSoftWinterJacket() {
+    const selectedValues = selectedOptions.map(function (value) {
+      return String(value).toLowerCase();
+    });
+
+    return selectedValues.includes('black') && selectedValues.includes('medium');
+  }
+
+  async function addItemsToCart(items) {
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ items: items })
+    });
+
+    if (!response.ok) {
+      throw new Error('Cart request failed');
+    }
+
+    return response.json();
+  }
+
+  productCards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      const jsonScript = card.querySelector('.eg-product-json');
+      if (!jsonScript) return;
+
+      const product = JSON.parse(jsonScript.textContent);
+      openPopup(product);
+    });
+  });
+
+  closeBtn.addEventListener('click', closePopup);
+
+  overlay.addEventListener('click', function (event) {
+    if (event.target === overlay) {
+      closePopup();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !overlay.hidden) {
+      closePopup();
+    }
+  });
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const variantId = Number(variantInput.value);
+    if (!variantId) return;
+
+    const items = [
+      {
+        id: variantId,
+        quantity: 1
+      }
+    ];
+
+    if (shouldAddSoftWinterJacket() && softWinterJacketVariantId) {
+      items.push({
+        id: softWinterJacketVariantId,
+        quantity: 1
+      });
+    }
+
+    addBtn.disabled = true;
+    addBtn.textContent = 'ADDING...';
+    message.textContent = '';
+
+    try {
+      await addItemsToCart(items);
+
+      message.textContent = shouldAddSoftWinterJacket() && softWinterJacketVariantId
+        ? 'Added to cart with Soft Winter Jacket.'
+        : 'Added to cart.';
+
+      addBtn.textContent = 'ADDED';
+
+      document.dispatchEvent(new CustomEvent('cart:refresh'));
+    } catch (error) {
+      message.textContent = 'Something went wrong. Please try again.';
+      addBtn.disabled = false;
+      addBtn.textContent = 'ADD TO CART';
+    }
+  });
 });
 </script>
 
 {% schema %}
 {
-  "name": "Custom Banner",
+  "name": "EG Product Grid Popup",
   "settings": [
-    {
-      "type": "image_picker",
-      "id": "desktop_top_image",
-      "label": "Desktop top image"
-    },
-    {
-      "type": "image_picker",
-      "id": "desktop_bottom_image",
-      "label": "Desktop bottom image"
-    },
-    {
-      "type": "image_picker",
-      "id": "desktop_banner_image",
-      "label": "Desktop single fallback image"
-    },
-    {
-      "type": "image_picker",
-      "id": "mobile_banner_image",
-      "label": "Mobile banner image"
-    },
-    {
-      "type": "text",
-      "id": "logo_text",
-      "label": "Logo text",
-      "default": "TISSO VISON"
-    },
-    {
-      "type": "text",
-      "id": "top_text",
-      "label": "Desktop top text",
-      "default": "Find the ideal gift for your loved ones."
-    },
-    {
-      "type": "text",
-      "id": "top_button",
-      "label": "Top button text",
-      "default": "CHOOSE GIFT"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Top button link"
-    },
     {
       "type": "text",
       "id": "heading",
-      "label": "Heading",
-      "default": "The Gift Guide"
+      "label": "Grid heading",
+      "default": "Tisso vison in the wild"
     },
     {
-      "type": "textarea",
-      "id": "desktop_description",
-      "label": "Desktop description",
-      "default": "Discover Joy: Your Ultimate Holiday Gift Destination.\nExplore our curated selection and find the perfect gifts to\ndelight your loved ones this holiday season."
-    },
+      "type": "product",
+      "id": "soft_winter_jacket",
+      "label": "Soft Winter Jacket product"
+    }
+  ],
+  "blocks": [
     {
-      "type": "textarea",
-      "id": "mobile_description",
-      "label": "Mobile description",
-      "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
-    },
-    {
-      "type": "text",
-      "id": "main_button",
-      "label": "Main button text",
-      "default": "SHOP NOW"
-    },
-    {
-      "type": "url",
-      "id": "main_button_link",
-      "label": "Main button link"
-    },
-    {
-      "type": "text",
-      "id": "desktop_bottom_text",
-      "label": "Desktop bottom text",
-      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
-    },
-    {
-      "type": "text",
-      "id": "mobile_bottom_text",
-      "label": "Mobile bottom text",
-      "default": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR"
-    },
-    {
-      "type": "text",
-      "id": "mobile_menu_text",
-      "label": "Mobile menu text",
-      "default": "Find the ideal gift for your loved ones."
+      "type": "product",
+      "name": "Grid product",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select product"
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Custom Banner"
+      "name": "EG Product Grid Popup",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
     }
   ]
 }
