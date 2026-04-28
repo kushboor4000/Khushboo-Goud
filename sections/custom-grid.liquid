@@ -459,7 +459,8 @@
   const cartBtn = document.getElementById('EgCartBtn');
   const message = document.getElementById('EgMessage');
 
-  const softWinterJacketVariantId = {{ section.settings.soft_winter_jacket.selected_or_first_available_variant.id | default: 'null' }};
+  const softWinterJacketVariantId = {{ section.settings.soft_winter_jacket.selected_or_first_available_variant.id | json }};
+  const softWinterJacketHandle = {{ section.settings.soft_winter_jacket.handle | json }};
 
   let currentVariants = [];
   let currentOptions = [];
@@ -480,7 +481,7 @@
     const map = {
       black: '#000000',
       white: '#ffffff',
-      blue: '#2f6fd6',
+      blue: '#1f5fbf',
       red: '#b30000',
       grey: '#8b8b8b',
       gray: '#8b8b8b',
@@ -524,29 +525,12 @@
   function getDisplayColors() {
     const name = normalize(productTitle);
 
-    if (name.includes('orange wide leg') || name.includes('black leather bag')) {
-      return ['White', 'Black'];
-    }
-
-    if (name.includes('tailored jacket') || name.includes('blue silk tuxedo')) {
-      return ['Blue', 'Black'];
-    }
-
-    if (name.includes('accordion pleated dress') || name.includes('chequered red shirt')) {
-      return ['Red', 'Grey'];
-    }
-
-    if (name.includes('green trench coat') || name.includes('classic leather jacket')) {
-      return ['White', 'Black'];
-    }
-
-    if (name.includes('tennis blue t-shirt')) {
-      return ['Grey', 'Black'];
-    }
-
-    if (name.includes('long sleeve tennis top')) {
-      return ['Blue', 'Black'];
-    }
+    if (name.includes('orange wide leg') || name.includes('black leather bag')) return ['White', 'Black'];
+    if (name.includes('tailored jacket') || name.includes('blue silk tuxedo')) return ['Blue', 'Black'];
+    if (name.includes('accordion pleated dress') || name.includes('chequered red shirt')) return ['Red', 'Grey'];
+    if (name.includes('green trench coat') || name.includes('classic leather jacket')) return ['White', 'Black'];
+    if (name.includes('tennis blue t-shirt')) return ['Grey', 'Black'];
+    if (name.includes('long sleeve tennis top')) return ['Blue', 'Black'];
 
     return getRealColors();
   }
@@ -597,15 +581,7 @@
       btn.type = 'button';
       btn.className = 'eg-color-btn';
       btn.textContent = displayColor;
-
-      btn.style.position = 'relative';
-      btn.style.paddingLeft = '15px';
-
-      btn.innerHTML =
-        '<span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' +
-        swatch(displayColor) +
-        ';border-right:1px solid #000;"></span>' +
-        displayColor;
+      btn.style.setProperty('--eg-swatch', swatch(displayColor));
 
       if (index === 0) {
         btn.classList.add('is-selected');
@@ -697,6 +673,33 @@
     openPopup();
   }
 
+  async function getSoftWinterJacketId() {
+    if (softWinterJacketVariantId) {
+      return softWinterJacketVariantId;
+    }
+
+    if (!softWinterJacketHandle) {
+      return null;
+    }
+
+    try {
+      const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+        ? window.Shopify.routes.root
+        : '/';
+
+      const response = await fetch(root + 'products/' + softWinterJacketHandle + '.js');
+      const product = await response.json();
+
+      const availableVariant = product.variants.find(function (variant) {
+        return variant.available;
+      });
+
+      return availableVariant ? availableVariant.id : product.variants[0].id;
+    } catch (error) {
+      return null;
+    }
+  }
+
   async function addItemsToCart(items) {
     const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
       ? window.Shopify.routes.root
@@ -753,6 +756,10 @@
       return;
     }
 
+    cartBtn.disabled = true;
+    cartBtn.textContent = 'ADDING';
+    message.textContent = 'Adding...';
+
     const items = [
       {
         id: variant.id,
@@ -760,27 +767,28 @@
       }
     ];
 
-    const addJacket =
+    const shouldAddJacket =
       normalize(selectedDisplayColor) === 'black' &&
-      isMedium(selectedSize) &&
-      softWinterJacketVariantId;
+      isMedium(selectedSize);
 
-    if (addJacket) {
-      items.push({
-        id: softWinterJacketVariantId,
-        quantity: 1
-      });
+    if (shouldAddJacket) {
+      const jacketId = await getSoftWinterJacketId();
+
+      if (jacketId) {
+        items.push({
+          id: jacketId,
+          quantity: 1
+        });
+      } else {
+        console.warn('Soft Winter Jacket product is not selected in customizer.');
+      }
     }
-
-    cartBtn.disabled = true;
-    cartBtn.textContent = 'ADDING';
-    message.textContent = 'Adding...';
 
     try {
       await addItemsToCart(items);
 
       cartBtn.textContent = 'ADDED';
-      message.textContent = addJacket
+      message.textContent = shouldAddJacket
         ? 'Added to cart with Soft Winter Jacket.'
         : 'Added to cart.';
 
