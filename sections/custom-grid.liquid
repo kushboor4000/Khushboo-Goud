@@ -490,6 +490,8 @@
     document.body.style.overflow = '';
     message.innerHTML = '';
     sizeDropdown.classList.remove('is-open');
+    cartBtn.disabled = false;
+    cartBtn.textContent = 'ADD TO CART';
   }
 
   function getOptionName(option) {
@@ -505,11 +507,9 @@
       return getOptionName(option).toLowerCase().includes('color');
     });
 
-    if (colorOption && getOptionValues(colorOption).length) {
-      return getOptionValues(colorOption);
-    }
-
-    return ['White', 'Black'];
+    return colorOption && getOptionValues(colorOption).length
+      ? getOptionValues(colorOption)
+      : ['White', 'Black'];
   }
 
   function getSizeValues() {
@@ -517,11 +517,9 @@
       return getOptionName(option).toLowerCase().includes('size');
     });
 
-    if (sizeOption && getOptionValues(sizeOption).length) {
-      return getOptionValues(sizeOption);
-    }
-
-    return ['XS', 'S', 'M', 'L', 'XL'];
+    return sizeOption && getOptionValues(sizeOption).length
+      ? getOptionValues(sizeOption)
+      : ['XS', 'S', 'M', 'L', 'XL'];
   }
 
   function findVariant() {
@@ -570,6 +568,7 @@
   function renderSizes() {
     const sizes = getSizeValues();
     sizeMenu.innerHTML = '';
+    selectedSize = '';
 
     sizes.forEach(function (size) {
       const btn = document.createElement('button');
@@ -602,6 +601,8 @@
     image.src = btn.dataset.image || '';
     image.alt = btn.dataset.title || '';
     message.innerHTML = '';
+    cartBtn.disabled = false;
+    cartBtn.textContent = 'ADD TO CART';
 
     try {
       currentVariants = JSON.parse(btn.dataset.variants || '[]');
@@ -611,7 +612,6 @@
       currentOptions = [];
     }
 
-    selectedSize = '';
     sizeText.textContent = 'Choose your size';
     sizeDropdown.classList.remove('is-open');
 
@@ -635,7 +635,6 @@
     });
 
     if (!response.ok) throw new Error('Add to cart failed');
-
     return response.json();
   }
 
@@ -671,10 +670,6 @@
     if (hiddenCount) hiddenCount.textContent = cart.item_count + ' items';
   }
 
-  function shouldAddSoftWinterJacket() {
-    return normalize(selectedColor) === 'black' && isMedium(selectedSize) && softWinterJacketVariantId;
-  }
-
   document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
     btn.addEventListener('click', function () {
       loadPopup(btn);
@@ -702,20 +697,23 @@
 
   cartBtn.addEventListener('click', async function () {
     if (!selectedSize) {
-      message.textContent = 'Please choose your size.';
+      message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Please choose your size.</span>';
       return;
     }
 
     const variant = findVariant();
 
     if (!variant || !variant.id) {
-      message.textContent = 'Selected variant is not available.';
+      message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Selected variant is not available.</span>';
       return;
     }
 
     const items = [{ id: variant.id, quantity: 1 }];
 
-    const addJacket = shouldAddSoftWinterJacket();
+    const addJacket =
+      normalize(selectedColor) === 'black' &&
+      isMedium(selectedSize) &&
+      softWinterJacketVariantId;
 
     if (addJacket) {
       items.push({
@@ -726,7 +724,7 @@
 
     cartBtn.disabled = true;
     cartBtn.textContent = 'ADDING';
-    message.textContent = 'Adding...';
+    message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Adding...</span>';
 
     try {
       await addToCart(items);
@@ -735,17 +733,16 @@
       updateCartCount(cart);
 
       cartBtn.textContent = 'ADDED';
-
       message.innerHTML = addJacket
-        ? 'Added with Soft Winter Jacket. <a href="/cart">View cart</a>'
-        : 'Added to cart. <a href="/cart">View cart</a>';
+        ? '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Added to cart with Soft Winter Jacket.</span>'
+        : '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Added to cart.</span>';
 
       setTimeout(function () {
         cartBtn.disabled = false;
         cartBtn.textContent = 'ADD TO CART';
       }, 1500);
     } catch (error) {
-      message.textContent = 'Could not add to cart.';
+      message.innerHTML = '<span style="display:block;background:#000;color:#fff;padding:8px;text-align:center;">Could not add to cart.</span>';
       cartBtn.disabled = false;
       cartBtn.textContent = 'ADD TO CART';
       console.error(error);
@@ -753,7 +750,6 @@
   });
 })();
 </script>
-
 {% schema %}
 {
   "name": "Custom Grid",
