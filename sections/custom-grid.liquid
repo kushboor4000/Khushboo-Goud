@@ -464,103 +464,90 @@
   let currentOptions = [];
   let selectedColor = '';
   let selectedSize = '';
+  let colorIndex = -1;
+  let sizeIndex = -1;
+
+  function clean(value) {
+    return String(value || '').trim();
+  }
 
   function normalize(value) {
-    return String(value || '').trim().toLowerCase();
+    return clean(value).toLowerCase();
   }
 
   function isMedium(value) {
     return normalize(value) === 'm' || normalize(value) === 'medium';
   }
 
-  function getSwatchColor(value) {
+  function swatch(value) {
     const color = normalize(value);
 
-    const map = {
-      black: '#000000',
-      white: '#ffffff',
-      blue: '#2f6fd6',
-      red: '#b71c1c',
+    const colors = {
+      black: '#000',
+      white: '#fff',
+      blue: '#2b6fd6',
+      red: '#b30000',
       grey: '#8b8b8b',
       gray: '#8b8b8b',
-      green: '#2f7d32',
-      brown: '#795548',
+      green: '#2d7d46',
+      brown: '#7a4b2b',
       beige: '#d8c3a5',
       cream: '#f5f0dc',
-      navy: '#0b1f4d',
-      pink: '#e9a6b3',
       orange: '#f28c28',
-      yellow: '#f6d743'
+      yellow: '#f2d23b',
+      pink: '#e5a1b5',
+      navy: '#0b1f4d'
     };
 
-    return map[color] || value || '#000000';
-  }
-
-  function openPopup() {
-    popup.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePopup() {
-    popup.classList.remove('is-open');
-    document.body.style.overflow = '';
-    message.textContent = '';
-    sizeDropdown.classList.remove('is-open');
-    cartBtn.disabled = false;
-    cartBtn.textContent = 'ADD TO CART';
+    return colors[color] || color || '#000';
   }
 
   function getOptionName(option) {
-    return typeof option === 'string' ? option : option.name;
+    return normalize(option && option.name ? option.name : option);
   }
 
   function getOptionValues(option) {
     return option && Array.isArray(option.values) ? option.values : [];
   }
 
-  function getColorOption() {
-    return currentOptions.find(function (option) {
-      return getOptionName(option).toLowerCase().includes('color');
-    });
-  }
+  function detectOptionIndexes() {
+    colorIndex = -1;
+    sizeIndex = -1;
 
-  function getSizeOption() {
-    return currentOptions.find(function (option) {
-      return getOptionName(option).toLowerCase().includes('size');
+    currentOptions.forEach(function (option, index) {
+      const name = getOptionName(option);
+
+      if (name.includes('color') || name.includes('colour')) {
+        colorIndex = index;
+      }
+
+      if (name.includes('size')) {
+        sizeIndex = index;
+      }
     });
   }
 
   function getColorValues() {
-    const colorOption = getColorOption();
-
-    if (colorOption && getOptionValues(colorOption).length) {
-      return getOptionValues(colorOption);
-    }
-
-    return [];
+    if (colorIndex === -1 || !currentOptions[colorIndex]) return [];
+    return getOptionValues(currentOptions[colorIndex]);
   }
 
   function getSizeValues() {
-    const sizeOption = getSizeOption();
-
-    if (sizeOption && getOptionValues(sizeOption).length) {
-      return getOptionValues(sizeOption);
-    }
-
-    return [];
+    if (sizeIndex === -1 || !currentOptions[sizeIndex]) return [];
+    return getOptionValues(currentOptions[sizeIndex]);
   }
 
   function findVariant() {
     return currentVariants.find(function (variant) {
       const opts = variant.options || [];
 
-      const colorMatch = selectedColor
-        ? opts.some(function (opt) { return normalize(opt) === normalize(selectedColor); })
-        : true;
+      const colorMatch = colorIndex === -1 || !selectedColor
+        ? true
+        : normalize(opts[colorIndex]) === normalize(selectedColor);
 
-      const sizeMatch = selectedSize
-        ? opts.some(function (opt) { return normalize(opt) === normalize(selectedSize); })
-        : true;
+      const sizeMatch = sizeIndex === -1 || !selectedSize
+        ? true
+        : normalize(opts[sizeIndex]) === normalize(selectedSize);
 
       return colorMatch && sizeMatch;
     });
@@ -570,19 +557,27 @@
     const colors = getColorValues();
 
     colorOptions.innerHTML = '';
-    colorOptions.style.setProperty('--eg-color-count', colors.length || 1);
     selectedColor = colors[0] || '';
+
+    if (!colors.length) {
+      colorOptions.innerHTML = '<button type="button" class="eg-color-btn is-selected">Default</button>';
+      return;
+    }
+
+    colorOptions.style.gridTemplateColumns = 'repeat(' + colors.length + ', 1fr)';
 
     colors.forEach(function (color, index) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'eg-color-btn';
       btn.textContent = color;
-      btn.style.setProperty('--eg-swatch', getSwatchColor(color));
 
-      if (index === 0) {
-        btn.classList.add('is-selected');
-      }
+      btn.style.position = 'relative';
+      btn.style.paddingLeft = '15px';
+
+      btn.innerHTML = '<span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' + swatch(color) + ';border-right:1px solid #000;"></span>' + color;
+
+      if (index === 0) btn.classList.add('is-selected');
 
       btn.addEventListener('click', function () {
         selectedColor = color;
@@ -603,6 +598,7 @@
 
     sizeMenu.innerHTML = '';
     selectedSize = '';
+    sizeText.textContent = 'Choose your size';
 
     sizes.forEach(function (size) {
       const btn = document.createElement('button');
@@ -628,6 +624,20 @@
     });
   }
 
+  function openPopup() {
+    popup.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePopup() {
+    popup.classList.remove('is-open');
+    document.body.style.overflow = '';
+    message.textContent = '';
+    sizeDropdown.classList.remove('is-open');
+    cartBtn.disabled = false;
+    cartBtn.textContent = 'ADD TO CART';
+  }
+
   function loadPopup(btn) {
     title.textContent = btn.dataset.title || '';
     price.textContent = btn.dataset.price || '';
@@ -646,9 +656,7 @@
       currentOptions = [];
     }
 
-    sizeText.textContent = 'Choose your size';
-    sizeDropdown.classList.remove('is-open');
-
+    detectOptionIndexes();
     renderColors();
     renderSizes();
     openPopup();
@@ -698,7 +706,7 @@
   });
 
   cartBtn.addEventListener('click', async function () {
-    if (getSizeValues().length && !selectedSize) {
+    if (sizeIndex !== -1 && !selectedSize) {
       message.textContent = 'Please choose your size.';
       return;
     }
@@ -710,12 +718,7 @@
       return;
     }
 
-    const items = [
-      {
-        id: variant.id,
-        quantity: 1
-      }
-    ];
+    const items = [{ id: variant.id, quantity: 1 }];
 
     const addJacket =
       normalize(selectedColor) === 'black' &&
@@ -754,7 +757,6 @@
   });
 })();
 </script>
-
 {% schema %}
 {
   "name": "Custom Grid",
