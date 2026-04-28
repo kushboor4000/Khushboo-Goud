@@ -465,7 +465,7 @@
   const cartBtn = document.getElementById('EgCartBtn');
   const message = document.getElementById('EgMessage');
 
-  const softWinterJacketSettingId = {{ section.settings.soft_winter_jacket.selected_or_first_available_variant.id | default: 'null' }};
+  const softWinterJacketVariantId = {{ section.settings.soft_winter_jacket.selected_or_first_available_variant.id | default: 'null' }};
 
   let currentVariants = [];
   let currentOptions = [];
@@ -488,7 +488,7 @@
   function closePopup() {
     popup.classList.remove('is-open');
     document.body.style.overflow = '';
-    message.textContent = '';
+    message.innerHTML = '';
     sizeDropdown.classList.remove('is-open');
   }
 
@@ -538,27 +538,6 @@
 
       return colorMatch && sizeMatch;
     });
-  }
-
-  function getSoftWinterJacketVariantId() {
-    if (softWinterJacketSettingId) return softWinterJacketSettingId;
-
-    let jacketId = null;
-
-    document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
-      if (normalize(btn.dataset.title) === 'soft winter jacket') {
-        try {
-          const variants = JSON.parse(btn.dataset.variants || '[]');
-          const availableVariant = variants.find(function (variant) {
-            return variant.available;
-          });
-
-          jacketId = availableVariant ? availableVariant.id : variants[0]?.id;
-        } catch (error) {}
-      }
-    });
-
-    return jacketId;
   }
 
   function renderColors() {
@@ -622,7 +601,7 @@
     desc.textContent = btn.dataset.desc || '';
     image.src = btn.dataset.image || '';
     image.alt = btn.dataset.title || '';
-    message.textContent = '';
+    message.innerHTML = '';
 
     try {
       currentVariants = JSON.parse(btn.dataset.variants || '[]');
@@ -655,11 +634,45 @@
       body: JSON.stringify({ items: items })
     });
 
-    if (!response.ok) {
-      throw new Error('Add to cart failed');
-    }
+    if (!response.ok) throw new Error('Add to cart failed');
 
     return response.json();
+  }
+
+  async function getCart() {
+    const root = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+      ? window.Shopify.routes.root
+      : '/';
+
+    const response = await fetch(root + 'cart.js', {
+      headers: { 'Accept': 'application/json' }
+    });
+
+    return response.json();
+  }
+
+  function updateCartCount(cart) {
+    const cartIcon = document.querySelector('#cart-icon-bubble');
+    if (!cartIcon) return;
+
+    let bubble = cartIcon.querySelector('.cart-count-bubble');
+
+    if (!bubble) {
+      bubble = document.createElement('div');
+      bubble.className = 'cart-count-bubble';
+      bubble.innerHTML = '<span aria-hidden="true"></span><span class="visually-hidden"></span>';
+      cartIcon.appendChild(bubble);
+    }
+
+    const visibleCount = bubble.querySelector('span[aria-hidden="true"]');
+    const hiddenCount = bubble.querySelector('.visually-hidden');
+
+    if (visibleCount) visibleCount.textContent = cart.item_count;
+    if (hiddenCount) hiddenCount.textContent = cart.item_count + ' items';
+  }
+
+  function shouldAddSoftWinterJacket() {
+    return normalize(selectedColor) === 'black' && isMedium(selectedSize) && softWinterJacketVariantId;
   }
 
   document.querySelectorAll('.eg-grid__plus').forEach(function (btn) {
@@ -700,18 +713,13 @@
       return;
     }
 
-    const items = [
-      {
-        id: variant.id,
-        quantity: 1
-      }
-    ];
+    const items = [{ id: variant.id, quantity: 1 }];
 
-    const jacketId = getSoftWinterJacketVariantId();
+    const addJacket = shouldAddSoftWinterJacket();
 
-    if (normalize(selectedColor) === 'black' && isMedium(selectedSize) && jacketId) {
+    if (addJacket) {
       items.push({
-        id: jacketId,
+        id: softWinterJacketVariantId,
         quantity: 1
       });
     }
@@ -722,7 +730,20 @@
 
     try {
       await addToCart(items);
-      window.location.href = '/cart';
+
+      const cart = await getCart();
+      updateCartCount(cart);
+
+      cartBtn.textContent = 'ADDED';
+
+      message.innerHTML = addJacket
+        ? 'Added with Soft Winter Jacket. <a href="/cart">View cart</a>'
+        : 'Added to cart. <a href="/cart">View cart</a>';
+
+      setTimeout(function () {
+        cartBtn.disabled = false;
+        cartBtn.textContent = 'ADD TO CART';
+      }, 1500);
     } catch (error) {
       message.textContent = 'Could not add to cart.';
       cartBtn.disabled = false;
