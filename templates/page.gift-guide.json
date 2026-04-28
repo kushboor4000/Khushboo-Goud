@@ -8,8 +8,18 @@
  * ------------------------------------------------------------
  */
 {
-  "type": "footer",
-  "name": "Footer",
-  "sections": {},
-  "order": []
+  "sections": {
+    "banner": {
+      "type": "custom-banner",
+      "settings": {}
+    },
+    "grid": {
+      "type": "custom-grid",
+      "settings": {}
+    }
+  },
+  "order": [
+    "banner",
+    "grid"
+  ]
 }
